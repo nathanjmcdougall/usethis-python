@@ -326,6 +326,7 @@ class TestDeptry:
             # Assert
             subprocess.run(["uv", "run", "deptry", "."], cwd=uv_init_dir, check=True)
 
+        @pytest.mark.benchmark
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_pre_commit_after(
             self, uv_env_dir: Path, capfd: pytest.CaptureFixture[str]
@@ -561,6 +562,7 @@ repos:
 
 class TestPreCommit:
     class TestAdd:
+        @pytest.mark.benchmark
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_fresh(self, uv_env_dir: Path, capfd: pytest.CaptureFixture[str]):
             # Act
@@ -633,6 +635,7 @@ repos:
 """
             )
 
+        @pytest.mark.benchmark
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_bad_commit(self, uv_env_dir: Path):
             # Act
@@ -653,6 +656,7 @@ repos:
                     check=True,
                 )
 
+        @pytest.mark.benchmark
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_requirements_txt_used(self, uv_env_dir: Path):
             with change_cwd(uv_env_dir):
@@ -705,6 +709,7 @@ repos:
                 # Assert
                 assert not get_deps_from_group("dev")
 
+        @pytest.mark.benchmark
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_stdout(self, uv_env_dir: Path, capfd: pytest.CaptureFixture[str]):
             # Arrange
@@ -731,6 +736,7 @@ repos:
                 "✔ Removing dependency 'pre-commit' from the 'dev' group in 'pyproject.toml'.\n"
             )
 
+        @pytest.mark.benchmark
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_requirements_txt_used(
             self, uv_env_dir: Path, capfd: pytest.CaptureFixture[str]
@@ -753,6 +759,7 @@ repos:
                     "☐ Run 'uv export --no-dev --output-file=requirements.txt' to write \n'requirements.txt'.\n"
                 )
 
+        @pytest.mark.benchmark
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_pyproject_fmt_used(
             self, uv_env_dir: Path, capfd: pytest.CaptureFixture[str]
@@ -793,6 +800,7 @@ image: atlassian/default-image:3
             contents = (uv_init_repo_dir / "bitbucket-pipelines.yml").read_text()
             assert "pre-commit" in contents
 
+        @pytest.mark.benchmark
         def test_remove(self, uv_env_dir: Path, capfd: pytest.CaptureFixture[str]):
             # Arrange
             with change_cwd(uv_env_dir):
@@ -1541,6 +1549,7 @@ class TestRequirementsTxt:
                 "☐ Run 'uv export --no-dev --output-file=requirements.txt' to write \n'requirements.txt'.\n"
             )
 
+        @pytest.mark.benchmark
         def test_pre_commit(
             self, uv_init_repo_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
