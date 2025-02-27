@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import pytest
@@ -31,6 +32,10 @@ class TestSchemaJSON:
         # Compare the JSON
         assert local_schema_json == online_schema_json.replace("\r\n", "\n\n")
 
+    @pytest.mark.skipif(
+        bool(os.getenv("CI")),
+        reason=".python-version re-pinned in CI for test matrix",
+    )
     def test_target_python_version(self):
         # If this test fails, we should bump the version in the command in schema.py
         assert Path(".python-version").read_text().startswith("3.10")

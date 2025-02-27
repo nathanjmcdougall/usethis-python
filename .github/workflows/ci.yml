@@ -23,15 +23,10 @@ jobs:
         with:
           version: "latest"
 
-      - name: Set up Python
-        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
-        with:
-          python-version: ${{ matrix.python-version }}
-        
-      - name: Setup dependencies
+      - name: Set up environment
         run: |
-          uv export --resolution ${{ matrix.resolution }} > requirements.txt 
-          uv pip install --system --break-system-packages -r requirements.txt
+          uv python pin ${{ matrix.python-version }}
+          uv sync --resolution ${{ matrix.resolution }}
 
       - name: Run pre-commit
         if: matrix.pre-commit
@@ -41,6 +36,7 @@ jobs:
       - name: Run pytest
         uses: pavelzw/pytest-action@510c5e90c360a185039bea56ce8b3e7e51a16507 # v2.2.0
         with:
+          custom-pytest: uv run --frozen pytest
           custom-arguments: --cov --junitxml=junit.xml -o junit_family=legacy
 
       - name: Run benchmarks
@@ -48,7 +44,7 @@ jobs:
         if: matrix.codspeed
         with:
           token: ${{ secrets.CODSPEED_TOKEN }}
-          run: pytest --codspeed
+          run: uv run --frozen pytest --codspeed
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # v5.3.1
