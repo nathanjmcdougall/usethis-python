@@ -95,7 +95,7 @@ def remove_toml_value(
             d = d[key]
     except KeyError:
         msg = f"Configuration value '{'.'.join(id_keys)}' is missing."
-        raise TOMLValueMissingError(msg)
+        raise TOMLValueMissingError(msg) from None
 
     # Remove the configuration.
     d = toml_document

@@ -36,7 +36,7 @@ def set_pyproject_value(
             toml_document=pyproject, id_keys=id_keys, value=value, exists_ok=exists_ok
         )
     except TOMLValueAlreadySetError as err:
-        raise PyprojectTOMLValueAlreadySetError(err)
+        raise PyprojectTOMLValueAlreadySetError(err) from None
 
     PyprojectTOMLManager().commit(pyproject)
 
@@ -53,7 +53,7 @@ def remove_pyproject_value(
         pyproject = remove_toml_value(toml_document=pyproject, id_keys=id_keys)
     except TOMLValueMissingError as err:
         if not missing_ok:
-            raise PyprojectTOMLValueMissingError(err)
+            raise PyprojectTOMLValueMissingError(err) from None
         # Otherwise, no changes are needed so skip the write step.
         return
     PyprojectTOMLManager().commit(pyproject)

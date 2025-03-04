@@ -181,7 +181,7 @@ def _run_tool(caller: UseToolFunc, *, remove: bool):
         caller(remove=remove)
     except UsethisError as err:
         err_print(err)
-        raise typer.Exit(code=1)
+        raise typer.Exit(code=1) from None
 
 
 ALL_TOOL_COMMANDS: list[str] = [

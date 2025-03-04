@@ -85,7 +85,7 @@ class PyprojectTOMLManager:
             self._content = parse(self._path.read_text())
         except FileNotFoundError:
             msg = "'pyproject.toml' not found in the current directory."
-            raise PyprojectTOMLNotFoundError(msg)
+            raise PyprojectTOMLNotFoundError(msg) from None
         except TOMLKitError as err:
             msg = f"Failed to decode 'pyproject.toml': {err}"
             raise PyprojectTOMLDecodeError(msg) from None

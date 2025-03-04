@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+import typer
 
 from usethis._core.badge import Badge, add_badge, remove_badge
 from usethis._integrations.pyproject_toml.io_ import PyprojectTOMLManager
@@ -8,6 +9,19 @@ from usethis._test import change_cwd
 
 
 class TestAddBadge:
+    def test_not_markdown(self, bare_dir: Path):
+        # Arrange
+        path = bare_dir / "README.foo"
+        path.touch()
+
+        # Act, Assert
+        with change_cwd(bare_dir), PyprojectTOMLManager(), pytest.raises(typer.Exit):
+            add_badge(
+                Badge(
+                    markdown="![Licence](<https://img.shields.io/badge/licence-mit-green>)",
+                )
+            )
+
     def test_empty(self, bare_dir: Path, capfd: pytest.CaptureFixture[str]):
         # Arrange
         path = bare_dir / "README.md"

@@ -64,7 +64,7 @@ def add_repo(repo: LocalRepo | UriRepo) -> None:
                 hook_idx = _HOOK_ORDER.index(hook_name)
             except ValueError:
                 msg = f"Hook '{hook_name}' not recognized"
-                raise NotImplementedError(msg)
+                raise NotImplementedError(msg) from None
             precedents = _HOOK_ORDER[:hook_idx]
 
             # Find the last of the precedents in the existing hooks

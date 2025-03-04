@@ -41,3 +41,15 @@ project-key = "fun"
 
         # Assert
         assert result.exit_code == 0, result.output
+
+    def test_missing_key(self, tmp_path: Path):
+        # Arrange
+        (tmp_path / "pyproject.toml").touch()
+
+        # Act
+        runner = CliRunner()
+        with change_cwd(tmp_path):
+            result = runner.invoke(app, ["sonarqube-config"])
+
+        # Assert
+        assert result.exit_code == 1, result.output

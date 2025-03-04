@@ -14,12 +14,12 @@ def get_name() -> str:
         name = TypeAdapter(str).validate_python(project_dict["name"])
     except KeyError:
         msg = "The 'project.name' value is missing from 'pyproject.toml'."
-        raise PyprojectTOMLProjectNameError(msg)
+        raise PyprojectTOMLProjectNameError(msg) from None
     except ValidationError as err:
         msg = (
             f"The 'project.name' value in 'pyproject.toml' is not a valid string: {err}"
         )
-        raise PyprojectTOMLProjectNameError(msg)
+        raise PyprojectTOMLProjectNameError(msg) from None
 
     return name
 
@@ -31,9 +31,9 @@ def get_description() -> str:
         description = TypeAdapter(str).validate_python(project_dict["description"])
     except KeyError:
         msg = "The 'project.description' value is missing from 'pyproject.toml'."
-        raise PyprojectTOMLProjectDescriptionError(msg)
+        raise PyprojectTOMLProjectDescriptionError(msg) from None
     except ValidationError as err:
         msg = f"The 'project.description' value in 'pyproject.toml' is not a valid string: {err}"
-        raise PyprojectTOMLProjectDescriptionError(msg)
+        raise PyprojectTOMLProjectDescriptionError(msg) from None
 
     return description

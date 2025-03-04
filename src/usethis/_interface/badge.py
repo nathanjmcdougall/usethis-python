@@ -2,12 +2,11 @@ import typer
 
 from usethis._config import offline_opt, quiet_opt, usethis_config
 from usethis._core.badge import (
-    add_pre_commit_badge,
-    add_pypi_badge,
-    add_ruff_badge,
-    remove_pre_commit_badge,
-    remove_pypi_badge,
-    remove_ruff_badge,
+    add_badge,
+    get_pre_commit_badge,
+    get_pypi_badge,
+    get_ruff_badge,
+    remove_badge,
 )
 from usethis._integrations.pyproject_toml.io_ import PyprojectTOMLManager
 
@@ -29,9 +28,9 @@ def pypi(
         PyprojectTOMLManager(),
     ):
         if not remove:
-            add_pypi_badge()
+            add_badge(get_pypi_badge())
         else:
-            remove_pypi_badge()
+            remove_badge(get_pypi_badge())
 
 
 @app.command(help="Add a badge for the Ruff linter.")
@@ -45,9 +44,9 @@ def ruff(
         PyprojectTOMLManager(),
     ):
         if not remove:
-            add_ruff_badge()
+            add_badge(get_ruff_badge())
         else:
-            remove_ruff_badge()
+            remove_badge(get_ruff_badge())
 
 
 @app.command(help="Add a badge for the pre-commit framework.")
@@ -61,6 +60,6 @@ def pre_commit(
         PyprojectTOMLManager(),
     ):
         if not remove:
-            add_pre_commit_badge()
+            add_badge(get_pre_commit_badge())
         else:
-            remove_pre_commit_badge()
+            remove_badge(get_pre_commit_badge())
