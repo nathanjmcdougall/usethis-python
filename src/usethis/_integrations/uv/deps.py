@@ -7,10 +7,6 @@ from pydantic import BaseModel, TypeAdapter
 
 from usethis._config import usethis_config
 from usethis._console import box_print, tick_print
-from usethis._integrations.file.pyproject_toml.core import (
-    extend_pyproject_list,
-    get_pyproject_value,
-)
 from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
 from usethis._integrations.uv.call import call_uv_subprocess
 from usethis._integrations.uv.errors import UVDepGroupError, UVSubprocessFailedError
@@ -86,12 +82,14 @@ def register_default_group(group: str) -> None:
 
 
 def add_default_groups(groups: list[str]) -> None:
-    extend_pyproject_list(["tool", "uv", "default-groups"], groups)
+    PyprojectTOMLManager().extend_list(
+        keys=["tool", "uv", "default-groups"], values=groups
+    )
 
 
 def get_default_groups() -> list[str]:
     try:
-        default_groups = get_pyproject_value(["tool", "uv", "default-groups"])
+        default_groups = PyprojectTOMLManager()[["tool", "uv", "default-groups"]]
         if not isinstance(default_groups, list):
             default_groups = []
     except KeyError:
@@ -102,7 +100,7 @@ def get_default_groups() -> list[str]:
 
 def ensure_dev_group_is_defined() -> None:
     # Ensure dev group exists in dependency-groups
-    extend_pyproject_list(["dependency-groups", "dev"], [])
+    PyprojectTOMLManager().extend_list(keys=["dependency-groups", "dev"], values=[])
 
 
 def add_deps_to_group(deps: list[Dependency], group: str) -> None:

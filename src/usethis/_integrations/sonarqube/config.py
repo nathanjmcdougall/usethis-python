@@ -5,7 +5,7 @@ from pathlib import Path
 
 from pydantic import TypeAdapter
 
-from usethis._integrations.file.pyproject_toml.core import get_pyproject_value
+from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
 from usethis._integrations.project.layout import get_source_dir_str
 from usethis._integrations.python.version import get_python_version
 from usethis._integrations.sonarqube.errors import (
@@ -31,26 +31,24 @@ def get_sonar_project_properties() -> str:
         python_version = get_python_version()
 
     try:
-        project_key = get_pyproject_value(
-            id_keys=["tool", "usethis", "sonarqube", "project-key"]
-        )
+        project_key = PyprojectTOMLManager()[
+            ["tool", "usethis", "sonarqube", "project-key"]
+        ]
     except (FileNotFoundError, KeyError):
         msg = "Could not find SonarQube project key at 'tool.usethis.sonarqube.project-key' in 'pyproject.toml'."
         raise MissingProjectKeyError(msg) from None
     _validate_project_key(project_key)
 
     try:
-        verbose = get_pyproject_value(
-            id_keys=["tool", "usethis", "sonarqube", "verbose"]
-        )
+        verbose = PyprojectTOMLManager()[["tool", "usethis", "sonarqube", "verbose"]]
     except (FileNotFoundError, KeyError):
         verbose = False
     verbose = TypeAdapter(bool).validate_python(verbose)
 
     try:
-        exclusions = get_pyproject_value(
-            id_keys=["tool", "usethis", "sonarqube", "exclusions"]
-        )
+        exclusions = PyprojectTOMLManager()[
+            ["tool", "usethis", "sonarqube", "exclusions"]
+        ]
     except (FileNotFoundError, KeyError):
         exclusions = []
     exclusions = TypeAdapter(list).validate_python(exclusions)
@@ -58,9 +56,7 @@ def get_sonar_project_properties() -> str:
         TypeAdapter(str).validate_python(exclusion)
 
     try:
-        coverage_output = get_pyproject_value(
-            id_keys=["tool", "coverage", "xml", "output"]
-        )
+        coverage_output = PyprojectTOMLManager()[["tool", "coverage", "xml", "output"]]
     except (FileNotFoundError, KeyError):
         msg = "XML coverage report file path not found at 'tool.coverage.xml.output' in 'pyproject.toml'."
         raise CoverageReportConfigNotFoundError(msg) from None

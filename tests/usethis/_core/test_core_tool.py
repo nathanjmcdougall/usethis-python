@@ -16,7 +16,6 @@ from usethis._core.tool import (
     use_requirements_txt,
     use_ruff,
 )
-from usethis._integrations.file.pyproject_toml.core import get_pyproject_value
 from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
 from usethis._integrations.pre_commit.hooks import (
     _HOOK_ORDER,
@@ -1264,12 +1263,12 @@ minversion = "7\""""
 
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_registers_test_group(self, tmp_path: Path):
-            with change_cwd(tmp_path), PyprojectTOMLManager():
+            with change_cwd(tmp_path), PyprojectTOMLManager() as pyproject_toml:
                 # Act
                 use_pytest()
 
                 # Assert
-                default_groups = get_pyproject_value(["tool", "uv", "default-groups"])
+                default_groups = pyproject_toml[["tool", "uv", "default-groups"]]
                 assert "test" in default_groups
 
     class TestRemove:

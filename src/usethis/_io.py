@@ -46,7 +46,7 @@ class UsethisFileManager(Generic[DocumentT]):
         return self.relative_path.name
 
     def __init__(self) -> None:
-        self._path = (Path.cwd() / self.relative_path).resolve()
+        self.path = (Path.cwd() / self.relative_path).resolve()
 
     def __enter__(self) -> Self:
         if self.is_locked():
@@ -95,7 +95,7 @@ class UsethisFileManager(Generic[DocumentT]):
             # No changes made, nothing to write.
             return
 
-        self._path.write_text(self._dump_content())
+        self.path.write_text(self._dump_content())
 
     def read_file(self) -> None:
         """Read the document from disk and store it in memory."""
@@ -108,9 +108,9 @@ class UsethisFileManager(Generic[DocumentT]):
             )
             raise UnexpectedFileIOError(msg)
         try:
-            self._content = self._parse_content(self._path.read_text())
+            self._content = self._parse_content(self.path.read_text())
         except FileNotFoundError:
-            msg = f"'{self.name}' not found in the current directory at '{self._path}'"
+            msg = f"'{self.name}' not found in the current directory at '{self.path}'"
             raise FileNotFoundError(msg) from None
 
     @abstractmethod
@@ -125,11 +125,11 @@ class UsethisFileManager(Generic[DocumentT]):
 
     @property
     def _content(self) -> DocumentT | None:
-        return self._content_by_path.get(self._path)
+        return self._content_by_path.get(self.path)
 
     @_content.setter
     def _content(self, value: DocumentT | None) -> None:
-        self._content_by_path[self._path] = value
+        self._content_by_path[self.path] = value
 
     def _validate_lock(self) -> None:
         if not self.is_locked():
@@ -140,10 +140,51 @@ class UsethisFileManager(Generic[DocumentT]):
             raise UnexpectedFileIOError(msg)
 
     def is_locked(self) -> bool:
-        return self._path in self._content_by_path
+        return self.path in self._content_by_path
 
     def lock(self) -> None:
         self._content = None
 
     def unlock(self) -> None:
-        self._content_by_path.pop(self._path, None)
+        self._content_by_path.pop(self.path, None)
+
+
+class KeyValueFileManager(UsethisFileManager, Generic[DocumentT]):
+    """A manager for files which store (at least some) values in key-value mappings."""
+
+    @abstractmethod
+    def do_keys_exist(
+        self, keys: list[str]
+    ) -> bool:  # TODO this should be __contains__ or similar
+        """Check if the given ID keys exist in the configuration file."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def __getitem__(self, item: list[str]) -> Any:
+        raise NotImplementedError
+
+    @abstractmethod
+    def set_value(  # TODO naming. Could this be __setitem__ , but how to handle the exists_ok cases?
+        self, *, keys: list[str], value: Any, exists_ok: bool = False
+    ) -> None:
+        """Set a value in the configuration file."""
+        raise NotImplementedError
+
+    @abstractmethod  # TODO naming. Could this be __delitem__ , but how to handle the missing_ok cases?
+    def remove_value(self, *, keys: list[str], missing_ok: bool = False) -> None:
+        """Remove a value from the configuration file."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def extend_list(
+        self, *, keys: list[str], values: list[Any]
+    ) -> None:  # TODO id_keys naming vs keys
+        """Extend a list in the configuration file."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def remove_from_list(
+        self, *, keys: list[str], values: list[Any]
+    ) -> None:  # TODO id_keys naming vs keys
+        """Remove values from a list in the configuration file."""
+        raise NotImplementedError

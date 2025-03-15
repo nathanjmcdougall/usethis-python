@@ -4,7 +4,6 @@ from typing import Any
 import pytest
 
 import usethis._integrations.uv.call
-from usethis._integrations.file.pyproject_toml.core import do_pyproject_id_keys_exist
 from usethis._integrations.file.pyproject_toml.errors import PyprojectTOMLInitError
 from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
 from usethis._integrations.uv.errors import UVSubprocessFailedError
@@ -129,4 +128,4 @@ class TestEnsurePyprojectTOML:
             ensure_pyproject_toml()
 
             # Assert
-            assert do_pyproject_id_keys_exist(id_keys=["build-system"])
+            assert PyprojectTOMLManager().do_keys_exist(["build-system"])

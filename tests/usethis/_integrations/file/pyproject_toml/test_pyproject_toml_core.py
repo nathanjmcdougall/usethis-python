@@ -3,15 +3,11 @@ from pathlib import Path
 
 import pytest
 
-from usethis._integrations.file.pyproject_toml.core import (
+from usethis._integrations.file.pyproject_toml.errors import (
+    PyprojectTOMLNotFoundError,
     PyprojectTOMLValueAlreadySetError,
     PyprojectTOMLValueMissingError,
-    extend_pyproject_list,
-    get_pyproject_value,
-    remove_pyproject_value,
-    set_pyproject_value,
 )
-from usethis._integrations.file.pyproject_toml.errors import PyprojectTOMLNotFoundError
 from usethis._integrations.file.pyproject_toml.io_ import (
     PyprojectTOMLManager,
 )
@@ -25,7 +21,7 @@ class TestGetPyprojectValue:
             PyprojectTOMLManager(),
             pytest.raises(PyprojectTOMLNotFoundError),
         ):
-            get_pyproject_value(["tool", "usethis", "key"])
+            PyprojectTOMLManager()[["tool", "usethis", "key"]]
 
     def test_key_does_not_exist(self, tmp_path: Path):
         # Arrange
@@ -42,7 +38,7 @@ key = "value"
             PyprojectTOMLManager(),
             pytest.raises(KeyError),
         ):
-            get_pyproject_value(["tool", "usethis", "key2"])
+            PyprojectTOMLManager()[["tool", "usethis", "key2"]]
 
     def test_single_key(self, tmp_path: Path):
         # Arrange
@@ -55,7 +51,7 @@ key = "value"
 
         # Act
         with change_cwd(tmp_path), PyprojectTOMLManager():
-            value = get_pyproject_value(["tool", "usethis", "key"])
+            value = PyprojectTOMLManager()[["tool", "usethis", "key"]]
 
         # Assert
         assert value == "value"
@@ -68,7 +64,9 @@ class TestSetPyprojectValue:
 
         # Act
         with change_cwd(tmp_path), PyprojectTOMLManager():
-            set_pyproject_value(["tool", "usethis", "key"], "value")
+            PyprojectTOMLManager().set_value(
+                keys=["tool", "usethis", "key"], value="value"
+            )
 
         # Assert
         assert (
@@ -90,7 +88,9 @@ key = "value1"
 
         # Act
         with change_cwd(tmp_path), PyprojectTOMLManager():
-            set_pyproject_value(["tool", "usethis", "key"], "value2", exists_ok=True)
+            PyprojectTOMLManager().set_value(
+                keys=["tool", "usethis", "key"], value="value2", exists_ok=True
+            )
 
         # Assert
         assert (
@@ -121,7 +121,9 @@ key = "value1"
                 ),
             ),
         ):
-            set_pyproject_value(["tool", "usethis", "key"], "value2", exists_ok=False)
+            PyprojectTOMLManager().set_value(
+                keys=["tool", "usethis", "key"], value="value2", exists_ok=False
+            )
 
     def test_update_mixed_nested(self, tmp_path: Path):
         # Arrange
@@ -135,7 +137,9 @@ key2 = "value2"
 
         # Act
         with change_cwd(tmp_path), PyprojectTOMLManager():
-            set_pyproject_value(["tool", "usethis", "key1"], "value3", exists_ok=True)
+            PyprojectTOMLManager().set_value(
+                keys=["tool", "usethis", "key1"], value="value3", exists_ok=True
+            )
 
         # Assert
         assert (
@@ -159,7 +163,7 @@ class TestRemovePyprojectValue:
             PyprojectTOMLManager(),
             pytest.raises(PyprojectTOMLValueMissingError),
         ):
-            remove_pyproject_value(["tool", "usethis", "key"])
+            PyprojectTOMLManager().remove_value(keys=["tool", "usethis", "key"])
 
     def test_missing_pyproject(self, tmp_path: Path):
         with (
@@ -167,7 +171,7 @@ class TestRemovePyprojectValue:
             PyprojectTOMLManager(),
             pytest.raises(PyprojectTOMLNotFoundError),
         ):
-            remove_pyproject_value(["tool", "usethis", "key"])
+            PyprojectTOMLManager().remove_value(keys=["tool", "usethis", "key"])
 
     def test_single_key(self, tmp_path: Path):
         """This checks the empty section cleanup."""
@@ -181,7 +185,7 @@ key = "value"
 
         # Act
         with change_cwd(tmp_path), PyprojectTOMLManager():
-            remove_pyproject_value(["tool", "usethis", "key"])
+            PyprojectTOMLManager().remove_value(keys=["tool", "usethis", "key"])
 
         # Assert
         assert (tmp_path / "pyproject.toml").read_text() == ""
@@ -199,7 +203,7 @@ key2 = "value2"
 
         # Act
         with change_cwd(tmp_path), PyprojectTOMLManager():
-            remove_pyproject_value(["tool", "usethis", "key1"])
+            PyprojectTOMLManager().remove_value(keys=["tool", "usethis", "key1"])
 
         # Assert
         assert (
@@ -216,7 +220,9 @@ key2 = "value2"
 
         # Act
         with change_cwd(tmp_path), PyprojectTOMLManager():
-            remove_pyproject_value(["tool", "usethis", "key"], missing_ok=True)
+            PyprojectTOMLManager().remove_value(
+                keys=["tool", "usethis", "key"], missing_ok=True
+            )
 
         # Assert
         assert (tmp_path / "pyproject.toml").read_text() == ""
@@ -229,7 +235,9 @@ class TestExtendPyprojectList:
 
         # Act
         with change_cwd(tmp_path), PyprojectTOMLManager():
-            extend_pyproject_list(["tool", "usethis", "key"], ["value"])
+            PyprojectTOMLManager().extend_list(
+                keys=["tool", "usethis", "key"], values=["value"]
+            )
 
         # Assert
         assert (
@@ -251,7 +259,9 @@ key = ["value1"]
 
         # Act
         with change_cwd(tmp_path), PyprojectTOMLManager():
-            extend_pyproject_list(["tool", "usethis", "key"], ["value2"])
+            PyprojectTOMLManager().extend_list(
+                keys=["tool", "usethis", "key"], values=["value2"]
+            )
 
         # Assert
         assert (

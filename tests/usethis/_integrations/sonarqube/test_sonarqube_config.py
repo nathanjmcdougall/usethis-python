@@ -2,7 +2,6 @@ from pathlib import Path
 
 import pytest
 
-from usethis._integrations.file.pyproject_toml.core import set_pyproject_value
 from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
 from usethis._integrations.python.version import get_python_version
 from usethis._integrations.sonarqube.config import (
@@ -41,13 +40,11 @@ class TestGetSonarProjectProperties:
 
         with change_cwd(uv_init_dir), PyprojectTOMLManager():
             # Arrange
-            set_pyproject_value(
-                id_keys=["tool", "usethis", "sonarqube", "project-key"],
-                value="foobar",
+            PyprojectTOMLManager().set_value(
+                keys=["tool", "usethis", "sonarqube", "project-key"], value="foobar"
             )
-            set_pyproject_value(
-                id_keys=["tool", "coverage", "xml", "output"],
-                value="coverage.xml",
+            PyprojectTOMLManager().set_value(
+                keys=["tool", "coverage", "xml", "output"], value="coverage.xml"
             )
             python_pin("3.12")
 
@@ -76,13 +73,11 @@ sonar.verbose=false
             assert get_python_version()
             python_pin("3.10")
             ensure_pyproject_toml()
-            set_pyproject_value(
-                id_keys=["tool", "usethis", "sonarqube", "project-key"],
-                value="foobar",
+            PyprojectTOMLManager().set_value(
+                keys=["tool", "usethis", "sonarqube", "project-key"], value="foobar"
             )
-            set_pyproject_value(
-                id_keys=["tool", "coverage", "xml", "output"],
-                value="coverage.xml",
+            PyprojectTOMLManager().set_value(
+                keys=["tool", "coverage", "xml", "output"], value="coverage.xml"
             )
 
             # Act
@@ -106,13 +101,11 @@ sonar.verbose=false
         with change_cwd(tmp_path), PyprojectTOMLManager():
             # Arrange
             ensure_pyproject_toml()
-            set_pyproject_value(
-                id_keys=["tool", "usethis", "sonarqube", "project-key"],
-                value="foobar",
+            PyprojectTOMLManager().set_value(
+                keys=["tool", "usethis", "sonarqube", "project-key"], value="foobar"
             )
-            set_pyproject_value(
-                id_keys=["tool", "coverage", "xml", "output"],
-                value="coverage.xml",
+            PyprojectTOMLManager().set_value(
+                keys=["tool", "coverage", "xml", "output"], value="coverage.xml"
             )
 
             # Act
@@ -137,13 +130,11 @@ sonar.verbose=false
             # Arrange
             python_pin("3.12")
             ensure_pyproject_toml()
-            set_pyproject_value(
-                id_keys=["tool", "usethis", "sonarqube", "project-key"],
-                value="different",
+            PyprojectTOMLManager().set_value(
+                keys=["tool", "usethis", "sonarqube", "project-key"], value="different"
             )
-            set_pyproject_value(
-                id_keys=["tool", "coverage", "xml", "output"],
-                value="coverage.xml",
+            PyprojectTOMLManager().set_value(
+                keys=["tool", "coverage", "xml", "output"], value="coverage.xml"
             )
 
             # Act
@@ -168,17 +159,14 @@ sonar.verbose=false
             # Arrange
             python_pin("3.12")
             ensure_pyproject_toml()
-            set_pyproject_value(
-                id_keys=["tool", "usethis", "sonarqube", "project-key"],
-                value="foobar",
+            PyprojectTOMLManager().set_value(
+                keys=["tool", "usethis", "sonarqube", "project-key"], value="foobar"
             )
-            set_pyproject_value(
-                id_keys=["tool", "usethis", "sonarqube", "verbose"],
-                value=True,
+            PyprojectTOMLManager().set_value(
+                keys=["tool", "usethis", "sonarqube", "verbose"], value=True
             )
-            set_pyproject_value(
-                id_keys=["tool", "coverage", "xml", "output"],
-                value="coverage.xml",
+            PyprojectTOMLManager().set_value(
+                keys=["tool", "coverage", "xml", "output"], value="coverage.xml"
             )
 
             # Act
@@ -220,13 +208,11 @@ sonar.verbose=true
             # Arrange
             python_pin("3.12.1")
             ensure_pyproject_toml()
-            set_pyproject_value(
-                id_keys=["tool", "usethis", "sonarqube", "project-key"],
-                value="foobar",
+            PyprojectTOMLManager().set_value(
+                keys=["tool", "usethis", "sonarqube", "project-key"], value="foobar"
             )
-            set_pyproject_value(
-                id_keys=["tool", "coverage", "xml", "output"],
-                value="coverage.xml",
+            PyprojectTOMLManager().set_value(
+                keys=["tool", "coverage", "xml", "output"], value="coverage.xml"
             )
 
             # Act
@@ -251,20 +237,18 @@ sonar.verbose=false
             # Arrange
             python_pin("3.12")
             ensure_pyproject_toml()
-            set_pyproject_value(
-                id_keys=["tool", "usethis", "sonarqube", "project-key"],
-                value="foobar",
+            PyprojectTOMLManager().set_value(
+                keys=["tool", "usethis", "sonarqube", "project-key"], value="foobar"
             )
-            set_pyproject_value(
-                id_keys=["tool", "usethis", "sonarqube", "exclusions"],
+            PyprojectTOMLManager().set_value(
+                keys=["tool", "usethis", "sonarqube", "exclusions"],
                 value=[
                     "**/Dockerfile",
                     "src/notebooks/**/*",
                 ],
             )
-            set_pyproject_value(
-                id_keys=["tool", "coverage", "xml", "output"],
-                value="coverage.xml",
+            PyprojectTOMLManager().set_value(
+                keys=["tool", "coverage", "xml", "output"], value="coverage.xml"
             )
 
             # Act
@@ -290,12 +274,11 @@ sonar.exclusions=**/Dockerfile, src/notebooks/**/*
             # Arrange
             python_pin("3.12")
             ensure_pyproject_toml()
-            set_pyproject_value(
-                id_keys=["tool", "usethis", "sonarqube", "project-key"],
-                value="foobar",
+            PyprojectTOMLManager().set_value(
+                keys=["tool", "usethis", "sonarqube", "project-key"], value="foobar"
             )
-            set_pyproject_value(
-                id_keys=["tool", "coverage", "xml", "output"],
+            PyprojectTOMLManager().set_value(
+                keys=["tool", "coverage", "xml", "output"],
                 value="./test-reports/cov.xml",
             )
 
@@ -321,9 +304,8 @@ sonar.verbose=false
             # Arrange
             python_pin("3.12")
             ensure_pyproject_toml()
-            set_pyproject_value(
-                id_keys=["tool", "usethis", "sonarqube", "project-key"],
-                value="foobar",
+            PyprojectTOMLManager().set_value(
+                keys=["tool", "usethis", "sonarqube", "project-key"], value="foobar"
             )
 
             # Act, Assert
