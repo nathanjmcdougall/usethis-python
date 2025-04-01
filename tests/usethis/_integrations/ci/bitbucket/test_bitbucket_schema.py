@@ -38,6 +38,10 @@ class TestSchemaJSON:
         # TIP: go into debug mode to copy-and-paste into updated schema.json
         assert local_schema_json == online_schema_json
 
+    @pytest.mark.skipif(
+        bool(os.getenv("CI")),
+        reason=".python-version re-pinned in CI for test matrix",
+    )
     def test_target_python_version(self):
         # If this test fails, we should bump the version in the command in schema.py
         assert Path(".python-version").read_text().startswith("3.10")
