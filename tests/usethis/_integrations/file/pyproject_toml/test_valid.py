@@ -199,7 +199,7 @@ version = "0.1.0"
             (path / "pyproject.toml").read_text()
             == """\
 [project]
-name = "my_project"
+name = "hello_world"
 version = "0.1.0"
 """
         )

@@ -17,7 +17,10 @@ from usethis._tool import (
     ConfigItem,
     ConfigSpec,
     DeptryTool,
+    ImportLinterTool,
+    PyprojectFmtTool,
     PyprojectTOMLTool,
+    RequirementsTxtTool,
     RuffTool,
     Tool,
 )
@@ -766,6 +769,7 @@ key = "value"
             self, tmp_path: Path, capfd: pytest.CaptureFixture[str]
         ):
             # https://github.com/nathanjmcdougall/usethis-python/issues/184
+            # But needs the force=True argument.
 
             # Arrange
             class ThisTool(Tool):
@@ -792,7 +796,8 @@ key = "value"
                                             "root_packages": ["example"],
                                         },
                                     )
-                                }
+                                },
+                                force=True,
                             )
                         ],
                     )
@@ -1101,6 +1106,85 @@ ignore = ["DEP003"]
                 assert result == ["DEP003"]
 
 
+class TestImportLinterTool:
+    class TestPrintHowToUse:
+        def test_pre_commit_and_uv(
+            self, tmp_path: Path, capfd: pytest.CaptureFixture[str]
+        ):
+            # Arrange
+            (tmp_path / "uv.lock").touch()
+            (tmp_path / ".pre-commit-config.yaml").touch()
+
+            # Act
+            with change_cwd(tmp_path), files_manager():
+                ImportLinterTool().print_how_to_use()
+
+            # Assert
+            out, err = capfd.readouterr()
+            assert not err
+            assert out == (
+                "☐ Run 'uv run pre-commit run lint-imports --all-files' to run Import Linter.\n"
+            )
+
+        def test_pre_commit_no_uv(
+            self, tmp_path: Path, capfd: pytest.CaptureFixture[str]
+        ):
+            # Arrange
+            (tmp_path / ".pre-commit-config.yaml").touch()
+
+            # Act
+            with change_cwd(tmp_path), files_manager():
+                ImportLinterTool().print_how_to_use()
+
+            # Assert
+            out, err = capfd.readouterr()
+            assert not err
+            assert out == (
+                "☐ Run 'pre-commit run lint-imports --all-files' to run Import Linter.\n"
+            )
+
+        def test_uv_only(self, tmp_path: Path, capfd: pytest.CaptureFixture[str]):
+            # Arrange
+            (tmp_path / "uv.lock").touch()
+
+            # Act
+            with change_cwd(tmp_path), files_manager():
+                ImportLinterTool().print_how_to_use()
+
+            # Assert
+            out, err = capfd.readouterr()
+            assert not err
+            assert out == ("☐ Run 'uv run lint-imports' to run Import Linter.\n")
+
+        def test_basic(self, tmp_path: Path, capfd: pytest.CaptureFixture[str]):
+            # Act
+            with change_cwd(tmp_path), files_manager():
+                ImportLinterTool().print_how_to_use()
+
+            # Assert
+            out, err = capfd.readouterr()
+            assert not err
+            assert out == ("☐ Run 'lint-imports' to run Import Linter.\n")
+
+
+class TestPyprojectFmtTool:
+    class TestPrintHowToUse:
+        def test_uv_only(self, tmp_path: Path, capfd: pytest.CaptureFixture[str]):
+            # Arrange
+            (tmp_path / "uv.lock").touch()
+
+            # Act
+            with change_cwd(tmp_path), files_manager():
+                PyprojectFmtTool().print_how_to_use()
+
+            # Assert
+            out, err = capfd.readouterr()
+            assert not err
+            assert out == (
+                "☐ Run 'uv run pyproject-fmt pyproject.toml' to run pyproject-fmt.\n"
+            )
+
+
 class TestPyprojectTOMLTool:
     class TestPrintHowToUse:
         @pytest.mark.usefixtures("_vary_network_conn")
@@ -1152,6 +1236,26 @@ class TestPyprojectTOMLTool:
 
             # Assert
             assert result == []
+
+
+class TestRequirementsTxtTool:
+    class TestPrintHowToUse:
+        def test_pre_commit_and_not_uv(
+            self, tmp_path: Path, capfd: pytest.CaptureFixture[str]
+        ):
+            # Arrange
+            (tmp_path / ".pre-commit-config.yaml").touch()
+
+            # Act
+            with change_cwd(tmp_path), files_manager():
+                RequirementsTxtTool().print_how_to_use()
+
+            # Assert
+            out, err = capfd.readouterr()
+            assert not err
+            assert out == (
+                "☐ Run 'pre-commit run uv-export' to write 'requirements.txt'.\n"
+            )
 
 
 class TestRuffTool:

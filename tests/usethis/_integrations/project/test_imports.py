@@ -16,6 +16,35 @@ from usethis._test import change_cwd
 from usethis.errors import UsethisError
 
 
+class TestLayeredArchitecture:
+    class TestModuleCount:
+        def test_mix(self):
+            # Arrange
+            arch = LayeredArchitecture(
+                layers=[{"a"}, {"b", "c"}],
+                excluded={"d", "e"},
+            )
+
+            # Act
+            count = arch.module_count()
+
+            # Assert
+            assert count == 3
+
+        def test_excluded(self):
+            # Arrange
+            arch = LayeredArchitecture(
+                layers=[{"a"}, {"b", "c"}],
+                excluded={"d", "e"},
+            )
+
+            # Act
+            count = arch.module_count(include_excluded=True)
+
+            # Assert
+            assert count == 5
+
+
 class TestGetLayeredArchitectures:
     def test_five(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         # Arrange
@@ -49,7 +78,7 @@ import salut.d.f
         assert isinstance(arch_by_module, dict)
         for arch in arch_by_module.values():
             assert isinstance(arch, LayeredArchitecture)
-        assert len(arch_by_module) == 2
+        assert len(arch_by_module) == 7
         assert arch_by_module["salut"].layers == [{"c", "d"}, {"b"}, {"a"}]
         assert arch_by_module["salut"].excluded == set()
         assert arch_by_module["salut.d"].layers == [{"e"}, {"f"}]

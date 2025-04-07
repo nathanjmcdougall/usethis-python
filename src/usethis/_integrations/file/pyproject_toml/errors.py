@@ -34,16 +34,16 @@ class UnexpectedPyprojectTOMLIOError(PyprojectTOMLError, UnexpectedTOMLIOError):
     """Raised when an unexpected attempt is made to read or write the pyproject.toml file."""
 
 
-class PyprojectTOMLProjectNameError(PyprojectTOMLError):
+class PyprojectTOMLProjectSectionError(PyprojectTOMLError):
+    """Raised when the 'project' section is missing or invalid in 'pyproject.toml'."""
+
+
+class PyprojectTOMLProjectNameError(PyprojectTOMLProjectSectionError):
     """Raised when the 'project.name' key is missing or invalid in 'pyproject.toml'."""
 
 
-class PyprojectTOMLProjectDescriptionError(PyprojectTOMLError):
+class PyprojectTOMLProjectDescriptionError(PyprojectTOMLProjectSectionError):
     """Raised when the 'project.description' key is missing or invalid in 'pyproject.toml'."""
-
-
-class PyprojectTOMLProjectSectionError(PyprojectTOMLError):
-    """Raised when the 'project' section is missing or invalid in 'pyproject.toml'."""
 
 
 class PyprojectTOMLValueAlreadySetError(PyprojectTOMLError, TOMLValueAlreadySetError):

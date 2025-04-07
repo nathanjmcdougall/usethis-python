@@ -9,8 +9,7 @@ from pydantic import BaseModel
 
 from usethis._console import tick_print, warn_print
 from usethis._core.readme import add_readme, get_readme_path
-from usethis._integrations.file.pyproject_toml.errors import PyprojectTOMLError
-from usethis._integrations.file.pyproject_toml.name import get_name
+from usethis._integrations.project.name import get_project_name
 
 if TYPE_CHECKING:
     from typing_extensions import Self
@@ -40,15 +39,7 @@ def get_pre_commit_badge() -> Badge:
 
 
 def get_pypi_badge() -> Badge:
-    try:
-        name = get_name()
-    except PyprojectTOMLError:
-        # Note; we don't want to create pyproject.toml because if it doesn't exist,
-        # the package is unlikely to be on PyPI. They could be using setup.py etc.
-        # So a second-best heuristic is the name of the current directory.
-        # Note that we need to filter out invalid characters
-        # https://packaging.python.org/en/latest/specifications/name-normalization/#name-format
-        name = re.sub(r"[^a-zA-Z0-9._-]", "", Path.cwd().stem)
+    name = get_project_name()
     return Badge(
         markdown=f"[![PyPI Version](https://img.shields.io/pypi/v/{name}.svg)](<https://pypi.python.org/pypi/{name})"
     )

@@ -4,7 +4,8 @@ from pathlib import Path
 
 from usethis._console import box_print, tick_print
 from usethis._integrations.file.pyproject_toml.errors import PyprojectTOMLError
-from usethis._integrations.file.pyproject_toml.name import get_description, get_name
+from usethis._integrations.file.pyproject_toml.name import get_description
+from usethis._integrations.project.name import get_project_name
 from usethis._integrations.uv.init import ensure_pyproject_toml
 
 
@@ -21,10 +22,7 @@ def add_readme() -> None:
 
     ensure_pyproject_toml()
 
-    try:
-        project_name = get_name()
-    except PyprojectTOMLError:
-        project_name = None
+    project_name = get_project_name()
 
     try:
         project_description = get_description()

@@ -155,7 +155,7 @@ default-groups = [ "test", "dev", "doc" ]
 root_packages = [ "usethis" ]
 
 [[tool.importlinter.contracts]]
-name = "Modular Design"
+name = "usethis"
 type = "layers"
 layers = [
   "_test | __main__",
@@ -173,7 +173,7 @@ exhaustive = true
 exhaustive_ignores = [ "_version" ]
 
 [[tool.importlinter.contracts]]
-name = "Interface Independence"
+name = "usethis._interface"
 type = "layers"
 layers = [
   # Note; if you're adding an interface, make sure it's in the README too.
@@ -183,7 +183,7 @@ containers = [ "usethis._interface" ]
 exhaustive = true
 
 [[tool.importlinter.contracts]]
-name = "Core Modular Design"
+name = "usethis._core"
 type = "layers"
 layers = [
   # docstyle uses (Ruff) tool, badge uses readme
@@ -194,28 +194,37 @@ containers = [ "usethis._core" ]
 exhaustive = true
 
 [[tool.importlinter.contracts]]
-name = "Integrations Modular Design"
+name = "usethis._integrations"
 type = "layers"
 layers = [
   "ci | pre_commit",
   "uv | pytest | pydantic | sonarqube",
-  "project | file | python",
+  "project | python",
+  "file",
 ]
 containers = [ "usethis._integrations" ]
 exhaustive = true
 
 [[tool.importlinter.contracts]]
-name = "File Integrations Modular Design"
+name = "usethis._integrations.file"
 type = "layers"
 layers = [
   "pyproject_toml | setup_cfg",
   "ini | toml | yaml",
+  "dir",
 ]
 containers = [ "usethis._integrations.file" ]
 exhaustive = true
 
 [[tool.importlinter.contracts]]
-name = "CI Integrations Modular Design"
+name = "usethis._pipeweld"
+type = "layers"
+layers = [ "func", "result", "containers | ops" ]
+containers = [ "usethis._pipeweld" ]
+exhaustive = true
+
+[[tool.importlinter.contracts]]
+name = "usethis._integrations.ci"
 type = "layers"
 layers = [
   "bitbucket | github",

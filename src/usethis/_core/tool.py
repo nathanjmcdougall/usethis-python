@@ -24,6 +24,7 @@ from usethis._tool import (
     CodespellTool,
     CoverageTool,
     DeptryTool,
+    ImportLinterTool,
     PreCommitTool,
     PyprojectFmtTool,
     PyprojectTOMLTool,
@@ -90,6 +91,28 @@ def use_deptry(*, remove: bool = False) -> None:
         tool.remove_pre_commit_repo_configs()
         tool.remove_configs()
         tool.remove_bitbucket_steps()
+        tool.remove_dev_deps()
+        tool.remove_managed_files()
+
+
+def use_import_linter(*, remove: bool = False) -> None:
+    tool = ImportLinterTool()
+
+    ensure_pyproject_toml()
+
+    if not remove:
+        tool.add_dev_deps()
+        tool.add_configs()
+        if PreCommitTool().is_used():
+            tool.add_pre_commit_repo_configs()
+        else:
+            tool.update_bitbucket_steps()
+
+        tool.print_how_to_use()
+    else:
+        tool.remove_pre_commit_repo_configs()
+        tool.remove_bitbucket_steps()
+        tool.remove_configs()
         tool.remove_dev_deps()
         tool.remove_managed_files()
 
@@ -331,8 +354,9 @@ def use_ruff(*, remove: bool = False, minimal: bool = False) -> None:
             "UP",
         ]
         for _tool in ALL_TOOLS:
-            if _tool.is_used():
-                rules += _tool.get_associated_ruff_rules()
+            associated_rules = _tool.get_associated_ruff_rules()
+            if associated_rules and _tool.is_used():
+                rules += associated_rules
         ignored_rules = [
             "PLR2004",  # https://github.com/nathanjmcdougall/usethis-python/issues/105
             "SIM108",  # https://github.com/nathanjmcdougall/usethis-python/issues/118

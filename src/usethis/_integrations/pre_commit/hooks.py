@@ -27,6 +27,7 @@ _HOOK_ORDER = [
     "ruff",  # ruff followed by ruff-format seems to be the recommended way by Astral
     "ruff-format",
     "deptry",
+    "import-linter",
     "codespell",
 ]
 

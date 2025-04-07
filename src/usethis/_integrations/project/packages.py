@@ -14,6 +14,13 @@ def get_importable_packages() -> set[str]:
     These are not necessarily the import packages distributed with the project, since
     that depends on build tool configuration. We are mostly interested in directories
     eligible for import analysis with tools like import-linter.
+
+    This excludes the following directories:
+    - tests
+    - test
+    - doc
+    - docs
+    - Any variation of the above with leading or trailing underscores or dots.
     """
     source_dir_str = get_source_dir_str()
 

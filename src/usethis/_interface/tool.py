@@ -9,6 +9,7 @@ from usethis._core.tool import (
     use_codespell,
     use_coverage,
     use_deptry,
+    use_import_linter,
     use_pre_commit,
     use_pyproject_fmt,
     use_pyproject_toml,
@@ -73,6 +74,23 @@ def deptry(
         files_manager(),
     ):
         _run_tool(use_deptry, remove=remove)
+
+
+@app.command(
+    name="import-linter",
+    help="Use Import Linter: enforce a self-imposed architecture on imports.",
+)
+def import_linter(
+    remove: bool = remove_opt,
+    offline: bool = offline_opt,
+    quiet: bool = quiet_opt,
+    frozen: bool = frozen_opt,
+) -> None:
+    with (
+        usethis_config.set(offline=offline, quiet=quiet, frozen=frozen),
+        files_manager(),
+    ):
+        _run_tool(use_import_linter, remove=remove)
 
 
 @app.command(
@@ -188,6 +206,7 @@ ALL_TOOL_COMMANDS: list[str] = [
     "codespell",
     "coverage",
     "deptry",
+    "import-linter",
     "pre-commit",
     "pyproject.toml",
     "pyproject-fmt",

@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 from tomlkit.items import Array, Table
 
 from usethis._console import tick_print
+from usethis._integrations.file.dir import get_project_name_from_dir
 from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
 
 if TYPE_CHECKING:
@@ -59,15 +60,7 @@ def _ensure_project_name(project: Table) -> None:
     if "name" in project:
         return
 
-    # Use the name of the parent directory
-    # Names must start and end with a letter or digit and may only contain -, _, ., and
-    # alphanumeric characters. Any other characters will be dropped. If there are no
-    # valid characters, the name will be "my_project".
-
-    dir_name = Path.cwd().name
-    name = "".join(c for c in dir_name if c.isalnum() or c in {"-", "_", "."})
-    if not name:
-        name = "my_project"
+    name = get_project_name_from_dir()
 
     tick_print(f"Setting project name to '{name}' in 'pyproject.toml'.")
     if project._value:

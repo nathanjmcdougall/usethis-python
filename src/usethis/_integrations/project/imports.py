@@ -11,6 +11,13 @@ class LayeredArchitecture(BaseModel):
     layers: list[set[str]]
     excluded: set[str] = set()
 
+    def module_count(self, include_excluded: bool = False) -> int:
+        """Count the number of modules in the architecture."""
+        count = sum(len(layer) for layer in self.layers)
+        if include_excluded:
+            count += len(self.excluded)
+        return count
+
 
 def get_layered_architectures(pkg_name: str) -> dict[str, LayeredArchitecture]:
     """Get the suggested layers for a package.
@@ -30,10 +37,9 @@ def get_layered_architectures(pkg_name: str) -> dict[str, LayeredArchitecture]:
 
     arch_by_module = {}
 
-    for module in graph.modules:
+    for module in sorted(graph.modules):
         arch = _get_module_layered_architecture(module, graph=graph)
-        if len(arch.layers) > 1:
-            arch_by_module[module] = arch
+        arch_by_module[module] = arch
 
     return arch_by_module
 

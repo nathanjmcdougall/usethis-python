@@ -258,7 +258,9 @@ def test_several_tools_add_and_remove(tmp_path: Path):
 
 
 def test_tool_matches_command():
-    assert {tool.name.lower() for tool in ALL_TOOLS} == set(ALL_TOOL_COMMANDS)
+    assert {tool.name.lower().replace(" ", "-") for tool in ALL_TOOLS} == set(
+        ALL_TOOL_COMMANDS
+    )
 
 
 def test_app_commands_match_list():

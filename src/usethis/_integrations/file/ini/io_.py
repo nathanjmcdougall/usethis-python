@@ -177,7 +177,7 @@ class INIFileManager(KeyValueFileManager):
         # We don't want to remove existing ones to keep their positions.
         for section_key in root.sections():
             if section_key not in root_dict:
-                root.remove_section(name=section_key)
+                _remove_section(updater=root, section_key=section_key)
 
         TypeAdapter(dict).validate_python(root_dict)
         assert isinstance(root_dict, dict)
@@ -191,7 +191,9 @@ class INIFileManager(KeyValueFileManager):
                     # We need to remove options that are not in the new dict
                     # We don't want to remove existing ones to keep their positions.
                     if option_key not in section_dict:
-                        root.remove_option(section=section_key, option=option_key)
+                        _remove_option(
+                            updater=root, section_key=section_key, option_key=option_key
+                        )
             else:
                 root.add_section(section_key)
 
@@ -225,7 +227,9 @@ class INIFileManager(KeyValueFileManager):
                 # We need to remove options that are not in the new dict
                 # We don't want to remove existing ones to keep their positions.
                 if option_key not in section_dict:
-                    root.remove_option(section=section_key, option=option_key)
+                    _remove_option(
+                        updater=root, section_key=section_key, option_key=option_key
+                    )
 
         for option_key, option in section_dict.items():
             INIFileManager._validated_set(
@@ -301,17 +305,19 @@ class INIFileManager(KeyValueFileManager):
         if len(keys) == 0:
             removed = False
             for section_key in root.sections():
-                removed |= root.remove_section(name=section_key)
+                removed |= _remove_section(updater=root, section_key=section_key)
         elif len(keys) == 1:
             (section_key,) = keys
-            removed = root.remove_section(name=section_key)
+            removed = _remove_section(updater=root, section_key=section_key)
         elif len(keys) == 2:
             section_key, option_key = keys
-            removed = root.remove_option(section=section_key, option=option_key)
+            removed = _remove_option(
+                updater=root, section_key=section_key, option_key=option_key
+            )
 
             # Cleanup section if empty
             if not root[section_key].options():
-                removed = root.remove_section(name=section_key)
+                _remove_section(updater=root, section_key=section_key)
         else:
             msg = (
                 f"INI files do not support nested config, whereas access to "
@@ -383,11 +389,11 @@ class INIFileManager(KeyValueFileManager):
 
         if len(new_values) == 0:
             # Remove the option if empty
-            root.remove_option(section=section_key, option=option_key)
+            _remove_option(updater=root, section_key=section_key, option_key=option_key)
 
             # Remove the section if empty
             if not root[section_key].options():
-                root.remove_section(name=section_key)
+                _remove_section(updater=root, section_key=section_key)
 
         elif len(new_values) == 1:
             # If only one value left, set it directly
@@ -444,3 +450,14 @@ def _(value: INIDocument) -> dict[str, dict[str, Any]]:
 @_as_dict.register(Section)
 def _(value: Section) -> dict[str, Any]:
     return {option.key: option.value for option in value.iter_options()}
+
+
+def _remove_option(updater: INIDocument, section_key: str, option_key: str) -> bool:
+    try:
+        return updater.remove_option(section=section_key, option=option_key)
+    except configparser.NoSectionError as err:
+        raise INIValueMissingError(err) from None
+
+
+def _remove_section(updater: INIDocument, section_key: str) -> bool:
+    return updater.remove_section(name=section_key)
