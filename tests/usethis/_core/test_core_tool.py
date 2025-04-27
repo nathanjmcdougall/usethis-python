@@ -2694,6 +2694,24 @@ ignore = [ "EM", "T20", "TRY003", "S603" ]
                 # Assert
                 assert RuffTOMLManager()[["line-length"]] == 100
 
+        def test_only_add_linter(
+            self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
+        ):
+            # Act
+            with change_cwd(uv_init_dir), files_manager():
+                use_ruff(linter=True)
+
+            # Assert
+            out, _ = capfd.readouterr()
+            assert out == (
+                "✔ Adding dependency 'ruff' to the 'dev' group in 'pyproject.toml'.\n"
+                "☐ Install the dependency 'ruff'.\n"
+                "✔ Adding Ruff config to 'pyproject.toml'.\n"
+                "✔ Selecting Ruff rules 'A', 'C4', 'E4', 'E7', 'E9', 'F', 'FLY', 'FURB', 'I', \n'PLE', 'PLR', 'RUF', 'SIM', 'UP' in 'pyproject.toml'.\n"
+                "✔ Ignoring Ruff rules 'PLR2004', 'SIM108' in 'pyproject.toml'.\n"
+                "☐ Run 'ruff check --fix' to run the Ruff linter with autofixes.\n"
+            )
+
     class TestRemove:
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_config_file(self, uv_init_dir: Path):
@@ -2803,8 +2821,8 @@ dev = []
             out, err = capfd.readouterr()
             assert not err
             assert out == (
-                "✔ Removing hook 'ruff-format' from '.pre-commit-config.yaml'.\n"
                 "✔ Removing hook 'ruff' from '.pre-commit-config.yaml'.\n"
+                "✔ Removing hook 'ruff-format' from '.pre-commit-config.yaml'.\n"
                 "✔ Removing Ruff config from 'pyproject.toml'.\n"
                 "✔ Removing dependency 'ruff' from the 'dev' group in 'pyproject.toml'.\n"
             )

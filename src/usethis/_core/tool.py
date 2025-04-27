@@ -311,16 +311,30 @@ def use_requirements_txt(*, remove: bool = False) -> None:
         tool.remove_managed_files()
 
 
-def use_ruff(*, remove: bool = False, minimal: bool = False) -> None:
+def use_ruff(
+    *,
+    remove: bool = False,
+    minimal: bool = False,
+    linter: bool = True,
+    formatter: bool = True,
+) -> None:
     """Add Ruff to the project.
 
-    By default, sensible default rules are selected. If rules are already selected, the
-    defaults are not selected, unless the existing rules are all pydocstyle rules.
+    By default, sensible default rules are selected. The exceptions are when using the
+    `minimal` option, or if rules are already selected, in which case they are left
+    alone. However, if the existing rules are all pydocstyle rules (managed by the
+    `usethis docstyle` interface, then the default rules will still be added).
+
+    Args:
+        remove: Remove Ruff configuration.
+        minimal: Don't add any default rules.
+        linter: Whether to add/remove the Ruff linter.
+        formatter: Whether to add/remove the Ruff formatter.
     """
     # The reason for allowing additions to pydocstyle rules is that the usethis docstyle
     # interface manages those rules.
 
-    tool = RuffTool()
+    tool = RuffTool(linter=linter, formatter=formatter)
 
     ensure_pyproject_toml()
 
@@ -330,8 +344,13 @@ def use_ruff(*, remove: bool = False, minimal: bool = False) -> None:
     if minimal:
         rule_config = RuleConfig()
     elif (
+        # See docstring. Basically, `usethis docstyle` manages the pydocstyle rules,
+        # so we want to allow the user to subsequently call `usethis tool ruff` and
+        # still get non-minimal default rules.
         all(tool._is_pydocstyle_rule(rule) for rule in tool.get_selected_rules())
-        or not RuffTool().get_selected_rules()
+        # Another situation where we add default rules is when there are no rules
+        # selected yet (and we haven't explicitly been requested to add minimal config).
+        or not tool.get_selected_rules()
     ):
         rule_config = _get_basic_rule_config()
     else:

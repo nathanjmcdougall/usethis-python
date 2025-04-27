@@ -11,6 +11,7 @@ from usethis._console import box_print, tick_print
 from usethis._integrations.ci.bitbucket.anchor import (
     ScriptItemAnchor as BitbucketScriptItemAnchor,
 )
+from usethis._integrations.ci.bitbucket.schema import Pipe as BitbucketPipe
 from usethis._integrations.ci.bitbucket.schema import Script as BitbucketScript
 from usethis._integrations.ci.bitbucket.schema import Step as BitbucketStep
 from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
@@ -41,19 +42,34 @@ if TYPE_CHECKING:
 
 class RuffTool(Tool):
     # https://github.com/astral-sh/ruff
+
+    def __init__(self, linter: bool = True, formatter: bool = True):
+        self.using_linter = linter
+        self.using_formatter = formatter
+
+        if not linter and not formatter:
+            msg = f"{self.name} must be used as either a linter, a formatter, or both."
+            raise NotImplementedError(msg)
+
     @property
     def name(self) -> str:
         return "Ruff"
 
     def print_how_to_use(self) -> None:
         if is_uv_used():
-            box_print(
-                "Run 'uv run ruff check --fix' to run the Ruff linter with autofixes."
-            )
-            box_print("Run 'uv run ruff format' to run the Ruff formatter.")
+            if self.using_linter:
+                box_print(
+                    "Run 'uv run ruff check --fix' to run the Ruff linter with autofixes."
+                )
+            if self.using_formatter:
+                box_print("Run 'uv run ruff format' to run the Ruff formatter.")
         else:
-            box_print("Run 'ruff check --fix' to run the Ruff linter with autofixes.")
-            box_print("Run 'ruff format' to run the Ruff formatter.")
+            if self.using_linter:
+                box_print(
+                    "Run 'ruff check --fix' to run the Ruff linter with autofixes."
+                )
+            if self.using_formatter:
+                box_print("Run 'ruff format' to run the Ruff formatter.")
 
     def get_dev_deps(self, *, unconditional: bool = False) -> list[Dependency]:
         return [Dependency(name="ruff")]
@@ -101,53 +117,70 @@ class RuffTool(Tool):
         return [Path(".ruff.toml"), Path("ruff.toml")]
 
     def get_pre_commit_repos(self) -> list[LocalRepo | UriRepo]:
-        return [
-            LocalRepo(
-                repo="local",
-                hooks=[
-                    HookDefinition(
-                        id="ruff-format",
-                        name="ruff-format",
-                        entry="uv run --frozen --offline ruff format --force-exclude",
-                        language=Language("system"),
-                        types_or=FileTypes(
-                            [FileType("python"), FileType("pyi"), FileType("jupyter")]
+        repos = []
+        if self.using_linter:
+            repos.append(
+                LocalRepo(
+                    repo="local",
+                    hooks=[
+                        HookDefinition(
+                            id="ruff",
+                            name="ruff",
+                            entry="uv run --frozen --offline ruff check --fix --force-exclude",
+                            language=Language("system"),
+                            types_or=FileTypes(
+                                [
+                                    FileType("python"),
+                                    FileType("pyi"),
+                                    FileType("jupyter"),
+                                ]
+                            ),
+                            always_run=True,
+                            require_serial=True,
                         ),
-                        always_run=True,
-                        require_serial=True,
-                    ),
-                ],
-            ),
-            LocalRepo(
-                repo="local",
-                hooks=[
-                    HookDefinition(
-                        id="ruff",
-                        name="ruff",
-                        entry="uv run --frozen --offline ruff check --fix --force-exclude",
-                        language=Language("system"),
-                        types_or=FileTypes(
-                            [FileType("python"), FileType("pyi"), FileType("jupyter")]
+                    ],
+                )
+            )
+        if self.using_formatter:
+            repos.append(
+                LocalRepo(
+                    repo="local",
+                    hooks=[
+                        HookDefinition(
+                            id="ruff-format",
+                            name="ruff-format",
+                            entry="uv run --frozen --offline ruff format --force-exclude",
+                            language=Language("system"),
+                            types_or=FileTypes(
+                                [
+                                    FileType("python"),
+                                    FileType("pyi"),
+                                    FileType("jupyter"),
+                                ]
+                            ),
+                            always_run=True,
+                            require_serial=True,
                         ),
-                        always_run=True,
-                        require_serial=True,
-                    ),
-                ],
-            ),
-        ]
+                    ],
+                )
+            )
+        return repos
 
     def get_bitbucket_steps(self) -> list[BitbucketStep]:
+        lines: list[str | BitbucketPipe | BitbucketScriptItemAnchor] = [
+            BitbucketScriptItemAnchor(name="install-uv")
+        ]
+
+        if self.using_linter:
+            lines.append("uv run ruff check --fix")
+        if self.using_formatter:
+            lines.append("uv run ruff format")
+
         return [
             BitbucketStep(
                 name=f"Run {self.name}",
                 caches=["uv"],
-                script=BitbucketScript(
-                    [
-                        BitbucketScriptItemAnchor(name="install-uv"),
-                        "uv run ruff check --fix",
-                        "uv run ruff format",
-                    ]
-                ),
+                script=BitbucketScript(lines),
             )
         ]
 
