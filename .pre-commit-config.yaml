@@ -35,6 +35,15 @@ repos:
       - id: uv-export
         name: uv-export
         files: ^uv\.lock$
+        entry: uv export --frozen --offline --quiet -o=requirements.txt
+        language: system
+        pass_filenames: false
+        require_serial: true
+  - repo: local
+    hooks:
+      - id: uv-export-docs
+        name: uv-export-docs
+        files: ^uv\.lock$
         entry: uv export --frozen --offline --quiet --only-group doc -o='docs/requirements.txt'
         language: system
         pass_filenames: false
