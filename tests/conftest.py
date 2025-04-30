@@ -19,6 +19,8 @@ def _uv_init_dir(tmp_path_factory: pytest.TempPathFactory) -> Path:
                 "init",
                 "--lib",
                 "--python",
+                # Deliberately kept at at a version other than the latest version to
+                # check range checks e.g. for Bitbucket pipelines matrixes.
                 "3.12",
                 "--vcs",
                 "none",

@@ -456,17 +456,27 @@ def test_several_tools_add_and_remove(tmp_path: Path):
     (tmp_path / "src" / "benchmark").mkdir(exist_ok=True)
     (tmp_path / "src" / "benchmark" / "__init__.py").touch(exist_ok=True)
 
-    # Act
     runner = CliRunner()
     with change_cwd(tmp_path):
-        runner.invoke(app, ["pytest"])
-        runner.invoke(app, ["coverage"])
-        runner.invoke(app, ["ruff"])
-        runner.invoke(app, ["deptry"])
-        runner.invoke(app, ["pre-commit"])
-        runner.invoke(app, ["ruff", "--remove"])
-        runner.invoke(app, ["pyproject-fmt"])
-        runner.invoke(app, ["pytest", "--remove"])
+        call_subprocess(["git", "init"])
+
+        # Act
+        result = runner.invoke(app, ["pytest"])
+        assert not result.exit_code, result.stdout
+        result = runner.invoke(app, ["coverage"])
+        assert not result.exit_code, result.stdout
+        result = runner.invoke(app, ["ruff"])
+        assert not result.exit_code, result.stdout
+        result = runner.invoke(app, ["deptry"])
+        assert not result.exit_code, result.stdout
+        result = runner.invoke(app, ["pre-commit"])
+        assert not result.exit_code, result.stdout
+        result = runner.invoke(app, ["ruff", "--remove"])
+        assert not result.exit_code, result.stdout
+        result = runner.invoke(app, ["pyproject-fmt"])
+        assert not result.exit_code, result.stdout
+        result = runner.invoke(app, ["pytest", "--remove"])
+        assert not result.exit_code, result.stdout
 
 
 def test_tool_matches_command():

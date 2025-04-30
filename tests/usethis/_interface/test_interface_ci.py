@@ -41,30 +41,34 @@ class TestBitbucket:
         assert not (tmp_path / "bitbucket-pipelines.yml").exists()
 
     @pytest.mark.usefixtures("_vary_network_conn")
-    def test_maximal_config(self, tmp_path: Path):
+    def test_maximal_config(self, uv_init_repo_dir: Path):
+        # N.B. uv_init_repo_dir is used since we need git if we want to add pre-commit
         runner = CliRunner()
-        with change_cwd(tmp_path):
-            # Pin the Python version
-            (tmp_path / ".python-version").write_text(
-                "3.13"  # Bump to latest version of Python
-            )
-
+        with change_cwd(uv_init_repo_dir):
             # Arrange
             for tool_command in ALL_TOOL_COMMANDS:
                 if not usethis_config.offline:
-                    runner.invoke(main_app, ["tool", tool_command])
+                    result = runner.invoke(main_app, ["tool", tool_command])
                 else:
-                    runner.invoke(main_app, ["tool", tool_command, "--offline"])
+                    result = runner.invoke(
+                        main_app, ["tool", tool_command, "--offline"]
+                    )
+                assert not result.exit_code, f"{tool_command=}: {result.stdout}"
 
             # Act
-            runner.invoke(app)  # The CI menu only has 1 command (bitbucket
+            result = runner.invoke(app)  # The CI menu only has 1 command (bitbucket
             # pipelines) so we skip the subcommand here
+            assert not result.exit_code, result.stdout
 
         # Assert
         expected_yml = (
+            # N.B. when updating this file, check it against the validator:
+            # https://bitbucket.org/product/pipelines/validator
             Path(__file__).parent / "maximal_bitbucket_pipelines.yml"
         ).read_text()
-        assert (tmp_path / "bitbucket-pipelines.yml").read_text() == expected_yml
+        assert (
+            uv_init_repo_dir / "bitbucket-pipelines.yml"
+        ).read_text() == expected_yml
 
     def test_invalid_pyproject_toml(self, tmp_path: Path):
         # Arrange

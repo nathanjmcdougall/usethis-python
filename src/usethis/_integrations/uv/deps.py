@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pydantic
 from packaging.requirements import Requirement
 from pydantic import BaseModel, TypeAdapter
 
@@ -38,9 +39,17 @@ def get_dep_groups() -> dict[str, list[Dependency]]:
         # will be deprecated.
         return {}
 
-    req_strs_by_group = TypeAdapter(dict[str, list[str]]).validate_python(
-        dep_groups_section
-    )
+    try:
+        req_strs_by_group = TypeAdapter(dict[str, list[str]]).validate_python(
+            dep_groups_section
+        )
+    except pydantic.ValidationError as err:
+        msg = (
+            "Failed to parse the 'dependency-groups' section in 'pyproject.toml':\n"
+            f"{err}\n\n"
+            "Please check the section and try again."
+        )
+        raise UVDepGroupError(msg) from None
     reqs_by_group = {
         group: [Requirement(req_str) for req_str in req_strs]
         for group, req_strs in req_strs_by_group.items()
