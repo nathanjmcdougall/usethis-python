@@ -22,6 +22,8 @@ from usethis._core.tool import (
 from usethis.errors import UsethisError
 
 if TYPE_CHECKING:
+    from typing import Any
+
     from usethis._core.tool import (
         UseToolFunc,
     )
@@ -220,23 +222,33 @@ def requirements_txt(
     help="Use Ruff: an extremely fast Python linter and code formatter.",
     rich_help_panel="Code Quality Tools",
 )
-def ruff(
+def ruff(  # noqa: PLR0913
     remove: bool = remove_opt,
     how: bool = how_opt,
     offline: bool = offline_opt,
     quiet: bool = quiet_opt,
     frozen: bool = frozen_opt,
+    linter: bool = typer.Option(
+        False, "--linter", help="Add or remove specifically the Ruff linter."
+    ),
+    formatter: bool = typer.Option(
+        False, "--formatter", help="Add or remove specifically the Ruff formatter."
+    ),
 ) -> None:
+    if not linter and not formatter:
+        linter = True
+        formatter = True
+
     with (
         usethis_config.set(offline=offline, quiet=quiet, frozen=frozen),
         files_manager(),
     ):
-        _run_tool(use_ruff, remove=remove, how=how)
+        _run_tool(use_ruff, remove=remove, how=how, linter=linter, formatter=formatter)
 
 
-def _run_tool(caller: UseToolFunc, *, remove: bool, how: bool):
+def _run_tool(caller: UseToolFunc, *, remove: bool, how: bool, **kwargs: Any):
     try:
-        caller(remove=remove, how=how)
+        caller(remove=remove, how=how, **kwargs)
     except UsethisError as err:
         err_print(err)
         raise typer.Exit(code=1) from None

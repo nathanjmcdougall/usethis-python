@@ -346,15 +346,17 @@ class Tool(Protocol):
         Note, this does not require knowledge of the config file resolution methodology,
         since all files' configs are removed regardless of whether they are in use.
         """
+        config_spec = self.get_config_spec()
+
         first_removal = True
-        for config_item in self.get_config_spec().config_items:
+        for config_item in config_spec.config_items:
             if not config_item.managed:
                 continue
 
             for (
                 relative_path,
                 file_manager,
-            ) in self.get_config_spec().file_manager_by_relative_path.items():
+            ) in config_spec.file_manager_by_relative_path.items():
                 if file_manager.path in config_item.paths:
                     if not (file_manager.path.exists() and file_manager.path.is_file()):
                         # This is mostly for the sake of the first_removal message

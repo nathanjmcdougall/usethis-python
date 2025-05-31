@@ -362,7 +362,14 @@ def use_requirements_txt(*, remove: bool = False, how: bool = False) -> None:
         tool.remove_managed_files()
 
 
-def use_ruff(*, remove: bool = False, how: bool = False, minimal: bool = False) -> None:
+def use_ruff(
+    *,
+    remove: bool = False,
+    how: bool = False,
+    minimal: bool = False,
+    linter: bool = True,
+    formatter: bool = True,
+) -> None:
     """Add Ruff to the project.
 
     By default, sensible default rules are selected. The exceptions are when using the
@@ -374,6 +381,8 @@ def use_ruff(*, remove: bool = False, how: bool = False, minimal: bool = False) 
         remove: Remove Ruff configuration.
         how: Print how to use Ruff.
         minimal: Don't add any default rules.
+        linter: Whether to add/remove the Ruff linter.
+        formatter: Whether to add/remove the Ruff formatter.
     """
     tool = RuffTool()
 
@@ -400,12 +409,19 @@ def use_ruff(*, remove: bool = False, how: bool = False, minimal: bool = False) 
         rule_config = RuleConfig()
 
     if not remove:
+        tool = RuffTool(
+            linter_detection="always" if linter else "auto",
+            formatter_detection="always" if formatter else "auto",
+        )
+
         ensure_pyproject_toml()
 
         tool.add_dev_deps()
         tool.add_configs()
-        tool.select_rules(rule_config.get_all_selected())
-        tool.ignore_rules(rule_config.get_all_ignored())
+
+        if linter:
+            tool.select_rules(rule_config.get_all_selected())
+            tool.ignore_rules(rule_config.get_all_ignored())
         if PreCommitTool().is_used():
             tool.add_pre_commit_repo_configs()
         else:
@@ -413,6 +429,11 @@ def use_ruff(*, remove: bool = False, how: bool = False, minimal: bool = False) 
 
         tool.print_how_to_use()
     else:
+        tool = RuffTool(
+            linter_detection="never" if not linter else "always",
+            formatter_detection="never" if not formatter else "always",
+        )
+
         tool.remove_pre_commit_repo_configs()
         tool.remove_bitbucket_steps()
         tool.remove_configs()

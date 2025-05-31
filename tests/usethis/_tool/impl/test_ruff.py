@@ -227,9 +227,21 @@ ignore = ["A"]
                 assert RuffTool().get_ignored_rules() == ["A"]
 
     class TestIsLinterUsed:
-        def test_no_pyproject_toml(self, tmp_path: Path):
+        def test_neither_subtool_has_config_assume_both_used(self, tmp_path: Path):
             # Act
             with change_cwd(tmp_path), files_manager():
+                assert RuffTool().is_linter_used()
+
+        def test_formatter_used(self, tmp_path: Path):
+            # Arrange
+            (tmp_path / "pyproject.toml").write_text(
+                """\
+[tool.ruff.format]
+select = ["A"]
+"""
+            )
+            # Act
+            with change_cwd(tmp_path), PyprojectTOMLManager():
                 assert not RuffTool().is_linter_used()
 
         def test_pyproject_toml(self, tmp_path: Path):
@@ -259,9 +271,22 @@ select = ["A"]
                 assert RuffTool().is_linter_used()
 
     class TestIsFormatterUsed:
-        def test_no_pyproject_toml(self, tmp_path: Path):
+        def test_neither_subtool_has_config_assume_both_used(self, tmp_path: Path):
             # Act
             with change_cwd(tmp_path), files_manager():
+                assert RuffTool().is_formatter_used()
+
+        def test_linter_used(self, tmp_path: Path):
+            # Arrange
+            (tmp_path / "pyproject.toml").write_text(
+                """\
+[tool.ruff.lint]
+select = ["A"]
+"""
+            )
+
+            # Act
+            with change_cwd(tmp_path), PyprojectTOMLManager():
                 assert not RuffTool().is_formatter_used()
 
         def test_pyproject_toml(self, tmp_path: Path):

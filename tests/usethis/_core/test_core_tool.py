@@ -42,18 +42,19 @@ from usethis._tool.impl.ruff import RuffTool
 
 
 class TestAllHooksList:
-    def test_subset_hook_names(self):
-        for tool in ALL_TOOLS:
-            try:
-                hook_names = [
-                    hook.id
-                    for repo_config in tool.get_pre_commit_repos()
-                    for hook in repo_config.hooks or []
-                ]
-            except NotImplementedError:
-                continue
-            for hook_name in hook_names:
-                assert hook_name in _HOOK_ORDER
+    def test_subset_hook_names(self, tmp_path: Path):
+        with change_cwd(tmp_path):
+            for tool in ALL_TOOLS:
+                try:
+                    hook_names = [
+                        hook.id
+                        for repo_config in tool.get_pre_commit_repos()
+                        for hook in repo_config.hooks or []
+                    ]
+                except NotImplementedError:
+                    continue
+                for hook_name in hook_names:
+                    assert hook_name in _HOOK_ORDER
 
 
 class TestCodespell:
@@ -2714,6 +2715,46 @@ docstring-code-format = true
                 # Assert
                 assert RuffTOMLManager()[["line-length"]] == 100
 
+        def test_only_add_linter(
+            self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
+        ):
+            # Act
+            with change_cwd(uv_init_dir), files_manager():
+                use_ruff(linter=True, formatter=False)
+
+                # Assert
+                assert not PyprojectTOMLManager().__contains__(
+                    ["tool", "ruff", "format"]
+                )
+
+            out, _ = capfd.readouterr()
+            assert out == (
+                "✔ Adding dependency 'ruff' to the 'dev' group in 'pyproject.toml'.\n"
+                "☐ Install the dependency 'ruff'.\n"
+                "✔ Adding Ruff config to 'pyproject.toml'.\n"
+                "✔ Selecting Ruff rules 'A', 'C4', 'E4', 'E7', 'E9', 'F', 'FLY', 'FURB', 'I', \n'PLE', 'PLR', 'RUF', 'SIM', 'UP' in 'pyproject.toml'.\n"
+                "✔ Ignoring Ruff rules 'PLR2004', 'SIM108' in 'pyproject.toml'.\n"
+                "☐ Run 'ruff check --fix' to run the Ruff linter with autofixes.\n"
+            )
+
+        def test_only_add_formatter(
+            self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
+        ):
+            # Act
+            with change_cwd(uv_init_dir), files_manager():
+                use_ruff(linter=False, formatter=True)
+
+                # Assert
+                assert not PyprojectTOMLManager().__contains__(["tool", "ruff", "lint"])
+
+            out, _ = capfd.readouterr()
+            assert out == (
+                "✔ Adding dependency 'ruff' to the 'dev' group in 'pyproject.toml'.\n"
+                "☐ Install the dependency 'ruff'.\n"
+                "✔ Adding Ruff config to 'pyproject.toml'.\n"
+                "☐ Run 'ruff format' to run the Ruff formatter.\n"
+            )
+
     class TestRemove:
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_config_file(self, uv_init_dir: Path):
@@ -2780,6 +2821,72 @@ dev = []
             # Assert
             assert not (tmp_path / "pyproject.toml").exists()
 
+        def test_only_formatter(self, tmp_path: Path):
+            # Arrange
+            (tmp_path / "pyproject.toml").write_text(
+                """\
+[tool.ruff.lint]
+select = ["E", "PT"]
+
+[tool.ruff.format]
+select = ["F"]
+"""
+            )
+
+            # Act
+            with change_cwd(tmp_path), files_manager():
+                use_ruff(linter=False, formatter=True, remove=True)
+
+            # Assert
+            assert (tmp_path / "pyproject.toml").read_text() == (
+                """\
+[tool.ruff.lint]
+select = ["E", "PT"]
+
+"""
+            )
+
+        # TODO test removing linter
+
+        # TODO for both adding and removing we need to check th integration with other things like pre-commit etc.
+        # Especially concerned with setting ="always" for removing. Presumably removing
+        # doesn't tend to check whether the thing actually exists - it just removes
+        # but we should check that... and test it
+
+        # TODO test adding integration with pre-commit for linter-only
+        # TODO test adding integration with pre-commit for formatter-only
+        # TODO test adding integration with pre-commit for neither
+        # TODO test removing integration with pre-commit for linter-only
+        # TODO test removing integration with pre-commit for formatter-only
+        # TODO test removing integration with pre-commit for neither
+
+        # TODO test adding integration with Bitbucket for linter-only
+        # TODO test adding integration with Bitbucket for formatter-only
+        # TODO test adding integration with Bitbucket for neither
+        # TODO test removing integration with Bitbucket for linter-only
+        # TODO test removing integration with Bitbucket for formatter-only
+        # TODO test removing integration with Bitbucket for neither
+
+        # TODO conceptual challenge - removing _part_ of a Bitbucket script.
+        # Need to split Ruff into two steps - one for linter, one for formatter,
+        # each will have separate names. Then we need similar techniques to the ones
+        # used for config in terms of directly using the attributes associated with
+        # over-rides rather than the is_*_used calls.
+
+        # TODO document implications of current pre-commit approach (separate repos
+        # for the same tool, i.e. ruff) which suits this well - but there is a ticket
+        # about combining them. Think about how this would work. Presumably it could be
+        # handled automatically by pipeweld but I haven't thought about it.
+        # TODO also there are implications to us moving to a standard URL-based pre-commit
+        # because that would also tend to involve shared repo. There's a ticket for that
+        # too and this is related.
+
+        # TODO it's worth trying the MultiTool design. It might be more elegant by
+        # providing a dedicated interface for removing _part_ of something. I get the
+        # impression that this won't be as difficult as it seems. I think it makes sense
+        # to do after the tests have been written though, and possible in a separate PR
+        # or branch off of this branch
+
     class TestPrecommitIntegration:
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_use_first(self, uv_init_repo_dir: Path):
@@ -2834,8 +2941,8 @@ dev = []
             out, err = capfd.readouterr()
             assert not err
             assert out == (
-                "✔ Removing hook 'ruff-format' from '.pre-commit-config.yaml'.\n"
                 "✔ Removing hook 'ruff' from '.pre-commit-config.yaml'.\n"
+                "✔ Removing hook 'ruff-format' from '.pre-commit-config.yaml'.\n"
                 "✔ Removing Ruff config from 'pyproject.toml'.\n"
                 "✔ Removing dependency 'ruff' from the 'dev' group in 'pyproject.toml'.\n"
             )
