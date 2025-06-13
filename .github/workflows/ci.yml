@@ -18,7 +18,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   tests:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.codspeed && 'codspeed-macro' || matrix.os }}
     env:
       PYTHONIOENCODING: utf-8
     steps:
