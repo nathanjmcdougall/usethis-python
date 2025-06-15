@@ -1,11 +1,11 @@
 # Contributing
 
 Thank you for your interest in contributing to usethis! There are issues labeled
-[Good First Issue](https://github.com/nathanjmcdougall/usethis-python/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22)
+[Good First Issue](https://github.com/usethis-python/usethis-python/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22)
 which are good opportunities for new contributors.
 
 Since `usethis` is at early stages of development, please
-[ensure a GitHub Issue is opened](https://github.com/nathanjmcdougall/usethis-python/issues)
+[ensure a GitHub Issue is opened](https://github.com/usethis-python/usethis-python/issues)
 before starting work on a new feature or bug fix. This helps to ensure that the
 feature is aligned with the project's goals and that there is no duplication of effort. Sometimes these Issues don't have enough guidance in them, so consider asking for some more guidance from the ticket creator before getting started.
 

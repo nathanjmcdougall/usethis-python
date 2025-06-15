@@ -334,7 +334,7 @@ def _set_value_in_existing(
         assert isinstance(toml_document, TOMLDocument)
     else:
         # Note that this alternative logic is just to avoid a bug:
-        # https://github.com/nathanjmcdougall/usethis-python/issues/507
+        # https://github.com/usethis-python/usethis-python/issues/507
         TypeAdapter(dict).validate_python(current_container)
         assert isinstance(current_container, dict)
 
@@ -342,7 +342,7 @@ def _set_value_in_existing(
 
         if len(current_keys) == 1:
             # In this case, we need to "seed" the section to avoid another bug:
-            # https://github.com/nathanjmcdougall/usethis-python/issues/558
+            # https://github.com/usethis-python/usethis-python/issues/558
 
             placeholder = {keys[0]: {keys[1]: {}}}
             toml_document = mergedeep.merge(toml_document, placeholder)  # type: ignore[reportArgumentType]

@@ -77,10 +77,10 @@ doc = [
 source = "vcs"
 
 [tool.hatch.metadata.hooks.vcs.urls]
-"Source Code" = "https://github.com/nathanjmcdougall/usethis-python"
-"Bug Tracker" = "https://github.com/nathanjmcdougall/usethis-python/issues"
-"Releases" = "https://github.com/nathanjmcdougall/usethis-python/releases"
-"Source Archive" = "https://github.com/nathanjmcdougall/usethis-python/archive/{commit_hash}.zip"
+"Source Code" = "https://github.com/usethis-python/usethis-python"
+"Bug Tracker" = "https://github.com/usethis-python/usethis-python/issues"
+"Releases" = "https://github.com/usethis-python/usethis-python/releases"
+"Source Archive" = "https://github.com/usethis-python/usethis-python/archive/{commit_hash}.zip"
 
 [tool.hatch.build.hooks.vcs]
 version-file = "src/usethis/_version.py"
@@ -130,7 +130,7 @@ lint.pydocstyle.convention = "google"
 ignore-words-list = [ "edn" ]
 
 [tool.deptry.per_rule_ignores]
-DEP002 = [ "click" ] # https://github.com/nathanjmcdougall/usethis-python/issues/623
+DEP002 = [ "click" ] # https://github.com/usethis-python/usethis-python/issues/623
 
 [tool.pyproject-fmt]
 keep_full_version = true

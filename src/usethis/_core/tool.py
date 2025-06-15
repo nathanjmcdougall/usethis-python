@@ -460,7 +460,7 @@ def _get_basic_rule_config() -> RuleConfig:
         if additional_selected and _tool.is_used():
             selected += additional_selected
     ignored = [
-        "PLR2004",  # https://github.com/nathanjmcdougall/usethis-python/issues/105
-        "SIM108",  # https://github.com/nathanjmcdougall/usethis-python/issues/118
+        "PLR2004",  # https://github.com/usethis-python/usethis-python/issues/105
+        "SIM108",  # https://github.com/usethis-python/usethis-python/issues/118
     ]
     return RuleConfig(selected=selected, ignored=ignored)

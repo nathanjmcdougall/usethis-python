@@ -49,7 +49,7 @@ class TestCallUVSubprocess:
     def test_handle_missing_version(
         self, tmp_path: Path, capfd: pytest.CaptureFixture[str]
     ):
-        # https://github.com/nathanjmcdougall/usethis-python/issues/299
+        # https://github.com/usethis-python/usethis-python/issues/299
 
         # Arrange
         (tmp_path / "pyproject.toml").write_text(

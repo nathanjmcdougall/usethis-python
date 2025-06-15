@@ -318,7 +318,7 @@ class TestTool:
         def test_syntax_errors_in_pyproject_toml(
             self, uv_init_dir: Path, capsys: pytest.CaptureFixture[str]
         ):
-            # https://github.com/nathanjmcdougall/usethis-python/issues/483
+            # https://github.com/usethis-python/usethis-python/issues/483
             # Should warn that parsing pyproject.toml failed, and print the error.
             # But should continue, with the assumption that the pyproject.toml file
             # does not contain any tool-specific configuration.
@@ -866,7 +866,7 @@ key = "value"
         def test_differing_sections(
             self, tmp_path: Path, capfd: pytest.CaptureFixture[str]
         ):
-            # https://github.com/nathanjmcdougall/usethis-python/issues/184
+            # https://github.com/usethis-python/usethis-python/issues/184
             # But needs the force=True argument.
 
             # Arrange

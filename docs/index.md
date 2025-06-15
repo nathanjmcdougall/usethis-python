@@ -16,4 +16,4 @@ usethis gives detailed messages about what it is doing (and what you need to do 
 Inspired by an [**R** package of the same name](https://usethis.r-lib.org/index.html),
 this package brings a similar experience to the Python ecosystem as a CLI tool.
 
-See the [README.md file](https://github.com/nathanjmcdougall/usethis-python/blob/main/README.md) for more information.
+See the [README.md file](https://github.com/usethis-python/usethis-python/blob/main/README.md) for more information.

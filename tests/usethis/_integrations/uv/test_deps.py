@@ -217,7 +217,7 @@ class TestAddDepsToGroup:
 
     @pytest.mark.usefixtures("_vary_network_conn")
     def test_extra_when_nonextra_already_present(self, uv_init_dir: Path):
-        # https://github.com/nathanjmcdougall/usethis-python/issues/227
+        # https://github.com/usethis-python/usethis-python/issues/227
         with change_cwd(uv_init_dir), PyprojectTOMLManager():
             # Arrange
             add_deps_to_group([Dependency(name="coverage")], "test")

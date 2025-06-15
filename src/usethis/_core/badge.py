@@ -61,7 +61,7 @@ def get_uv_badge() -> Badge:
 
 def get_usethis_badge() -> Badge:
     return Badge(
-        markdown="[![usethis](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/nathanjmcdougall/usethis-python/main/assets/badge/v1.json)](https://github.com/nathanjmcdougall/usethis-python)"
+        markdown="[![usethis](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/usethis-python/usethis-python/main/assets/badge/v1.json)](https://github.com/usethis-python/usethis-python)"
     )
 
 

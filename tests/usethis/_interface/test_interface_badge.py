@@ -158,7 +158,7 @@ class TestUsethis:
         assert result.exit_code == 0, result.output
         assert (
             result.output
-            == "[![usethis](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/nathanjmcdougall/usethis-python/main/assets/badge/v1.json)](https://github.com/nathanjmcdougall/usethis-python)\n"
+            == "[![usethis](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/usethis-python/usethis-python/main/assets/badge/v1.json)](https://github.com/usethis-python/usethis-python)\n"
         )
 
 

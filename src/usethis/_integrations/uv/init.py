@@ -42,7 +42,7 @@ def ensure_pyproject_toml(*, author: bool = True) -> None:
                 "--bare",
                 "--vcs=none",
                 f"--author-from={author_from}",
-                "--build-backend",  # https://github.com/nathanjmcdougall/usethis-python/issues/347
+                "--build-backend",  # https://github.com/usethis-python/usethis-python/issues/347
                 "hatch",  # until https://github.com/astral-sh/uv/issues/3957
                 usethis_config.cpd().as_posix(),
             ],

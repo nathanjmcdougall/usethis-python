@@ -55,7 +55,7 @@ class TestCoverage:
     @pytest.mark.usefixtures("_vary_network_conn")
     def test_runs(self, tmp_path: Path):
         # To check the config is valid
-        # https://github.com/nathanjmcdougall/usethis-python/issues/426
+        # https://github.com/usethis-python/usethis-python/issues/426
 
         # Arrange
         (tmp_path / "__main__.py").touch()
@@ -75,7 +75,7 @@ class TestCoverage:
     @pytest.mark.usefixtures("_vary_network_conn")
     def test_after_codespell(self, tmp_path: Path):
         # To check the config is valid
-        # https://github.com/nathanjmcdougall/usethis-python/issues/558
+        # https://github.com/usethis-python/usethis-python/issues/558
 
         # Arrange
         (tmp_path / "pyproject.toml").write_text("""\

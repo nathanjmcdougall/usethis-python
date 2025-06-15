@@ -270,7 +270,7 @@ key = "value1"
                 )
 
         def test_coverage_to_codespell(self, tmp_path: Path):
-            # https://github.com/nathanjmcdougall/usethis-python/issues/558
+            # https://github.com/usethis-python/usethis-python/issues/558
 
             # Arrange
             (tmp_path / "pyproject.toml").write_text("""\

@@ -10,4 +10,4 @@ These are not considered vulnerabilities in usethis.
 
 ## Reporting a vulnerability
 
-Please use the [GitHub vulnerability reporting form](https://github.com/nathanjmcdougall/usethis-python/security/advisories/new) to report a vulnerability.
+Please use the [GitHub vulnerability reporting form](https://github.com/usethis-python/usethis-python/security/advisories/new) to report a vulnerability.

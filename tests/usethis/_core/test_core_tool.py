@@ -180,7 +180,7 @@ ignore-regex = [A-Za-z0-9+/]{100,}
         def test_adding_twice(
             self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
-            # https://github.com/nathanjmcdougall/usethis-python/issues/509
+            # https://github.com/usethis-python/usethis-python/issues/509
 
             with change_cwd(uv_init_dir), files_manager():
                 # Arrange
@@ -196,7 +196,7 @@ ignore-regex = [A-Za-z0-9+/]{100,}
             assert out == ("☐ Run 'codespell' to run the Codespell spellchecker.\n")
 
         def test_setup_cfg_nonempty(self, uv_init_dir: Path):
-            # https://github.com/nathanjmcdougall/usethis-python/issues/542
+            # https://github.com/usethis-python/usethis-python/issues/542
             # Basically we want to make sure the "first_content" resolution strategy
             # works correctly.
 
@@ -218,7 +218,7 @@ foo = bar
             )
 
         def test_setup_cfg_empty(self, uv_init_dir: Path):
-            # https://github.com/nathanjmcdougall/usethis-python/issues/542
+            # https://github.com/usethis-python/usethis-python/issues/542
             # Basically we want to make sure the "first_content" resolution strategy
             # works correctly.
 
@@ -402,7 +402,7 @@ omit =
     @pytest.mark.usefixtures("_vary_network_conn")
     def test_after_codespell(self, tmp_path: Path):
         # To check the config is valid
-        # https://github.com/nathanjmcdougall/usethis-python/issues/558
+        # https://github.com/usethis-python/usethis-python/issues/558
 
         # Arrange
         (tmp_path / "pyproject.toml").write_text("""\
@@ -933,7 +933,7 @@ exhaustive = true
 """)
 
         @pytest.mark.xfail(
-            reason="https://github.com/nathanjmcdougall/usethis-python/issues/502"
+            reason="https://github.com/usethis-python/usethis-python/issues/502"
         )
         def test_pre_commit_used_not_uv(
             self, tmp_path: Path, capfd: pytest.CaptureFixture[str]
@@ -1252,7 +1252,7 @@ exhaustive = True
             self, tmp_path: Path, capfd: pytest.CaptureFixture[str]
         ):
             # Having an issue where the message is being repeated multiple times
-            # https://github.com/nathanjmcdougall/usethis-python/pull/501#issuecomment-2784482750
+            # https://github.com/usethis-python/usethis-python/pull/501#issuecomment-2784482750
 
             # Act
             with change_cwd(tmp_path), files_manager(), usethis_config.set(frozen=True):
@@ -2244,7 +2244,7 @@ foo = "bar"
             assert (uv_init_repo_dir / "setup.cfg").read_text()
 
         def test_pythonpath_needed(self, tmp_path: Path):
-            # https://github.com/nathanjmcdougall/usethis-python/issues/347
+            # https://github.com/usethis-python/usethis-python/issues/347
 
             # Arrange
             # No build backend, so finding './src' for imports won't work unless we
@@ -2675,7 +2675,7 @@ class TestRuff:
         def test_existing_ruff_toml(
             self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
-            # https://github.com/nathanjmcdougall/usethis-python/issues/420
+            # https://github.com/usethis-python/usethis-python/issues/420
 
             # Arrange
             (uv_init_dir / "ruff.toml").write_text("""\
@@ -2803,7 +2803,7 @@ select = ["A", "B", "C"]
 
         @pytest.mark.skipif(
             not os.getenv("CI"),
-            reason="https://github.com/nathanjmcdougall/usethis-python/issues/45",
+            reason="https://github.com/usethis-python/usethis-python/issues/45",
         )
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_roundtrip(self, uv_init_dir: Path):
@@ -2958,7 +2958,7 @@ select = ["F"]
 
         @pytest.mark.skipif(
             not os.getenv("CI"),
-            reason="https://github.com/nathanjmcdougall/usethis-python/issues/45",
+            reason="https://github.com/usethis-python/usethis-python/issues/45",
         )
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_remove(

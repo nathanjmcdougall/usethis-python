@@ -73,7 +73,7 @@ class PytestTool(Tool):
             "addopts": [
                 "--import-mode=importlib",  # Now recommended https://docs.pytest.org/en/7.1.x/explanation/goodpractices.html#which-import-mode
                 "-ra",  # summary report of all results (sp-repo-review)
-                # Not --showlocals", because it's too verbose in some cases (https://github.com/nathanjmcdougall/usethis-python/issues/527)
+                # Not --showlocals", because it's too verbose in some cases (https://github.com/usethis-python/usethis-python/issues/527)
                 "--strict-markers",  # fail on unknown markers (sp-repo-review)
                 "--strict-config",  # fail on unknown config (sp-repo-review)
             ],

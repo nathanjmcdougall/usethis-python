@@ -155,7 +155,7 @@ def _add_step_in_default_via_doc(
 
     # N.B. Currently, we are not accounting for parallelism, whereas all these steps
     # could be parallel potentially.
-    # See https://github.com/nathanjmcdougall/usethis-python/issues/149
+    # See https://github.com/usethis-python/usethis-python/issues/149
     maj_versions = get_supported_major_python_versions()
     step_order = [
         "Run pre-commit",

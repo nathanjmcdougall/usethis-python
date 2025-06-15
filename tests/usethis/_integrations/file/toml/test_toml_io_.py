@@ -120,7 +120,7 @@ convention = "pep257"
             )
 
         def test_set_high_levels_of_nesting_in_existing(self, tmp_path: Path) -> None:
-            # https://github.com/nathanjmcdougall/usethis-python/issues/507
+            # https://github.com/usethis-python/usethis-python/issues/507
             # Arrange
             class MyTOMLFileManager(TOMLFileManager):
                 @property
@@ -161,7 +161,7 @@ lint.pydocstyle.convention = "pep257"
             )
 
         def test_tomlkit_high_levels_of_nesting_in_existing(self) -> None:
-            # To help debug https://github.com/nathanjmcdougall/usethis-python/issues/507
+            # To help debug https://github.com/usethis-python/usethis-python/issues/507
             # This proves that dottedkey works.
 
             # Arrange

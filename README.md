@@ -1,17 +1,17 @@
 <h1 align="center">
-  <img src="https://raw.githubusercontent.com/nathanjmcdougall/usethis-python/refs/heads/main/docs/logo.svg"><br>
+  <img src="https://raw.githubusercontent.com/usethis-python/usethis-python/refs/heads/main/docs/logo.svg"><br>
 </h1>
 
 # usethis
 
-[![usethis](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/nathanjmcdougall/usethis-python/main/assets/badge/v1.json)](https://github.com/nathanjmcdougall/usethis-python)
+[![usethis](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/usethis-python/usethis-python/main/assets/badge/v1.json)](https://github.com/usethis-python/usethis-python)
 [![PyPI Version](https://img.shields.io/pypi/v/usethis.svg)](https://pypi.python.org/pypi/usethis)
 ![PyPI License](https://img.shields.io/pypi/l/usethis.svg)
 [![PyPI Supported Versions](https://img.shields.io/pypi/pyversions/usethis.svg)](https://pypi.python.org/pypi/usethis)
 [![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 [![CodSpeed](https://img.shields.io/endpoint?url=https://codspeed.io/badge.json)](https://codspeed.io/nathanjmcdougall/usethis-python)
 [![codecov](https://codecov.io/gh/nathanjmcdougall/usethis-python/graph/badge.svg?token=MU1AZS0KHV)](https://codecov.io/gh/nathanjmcdougall/usethis-python)
-[![GitHub Actions Status](https://github.com/nathanjmcdougall/usethis-python/workflows/CI/badge.svg)](https://github.com/nathanjmcdougall/usethis-python/actions)
+[![GitHub Actions Status](https://github.com/usethis-python/usethis-python/workflows/CI/badge.svg)](https://github.com/usethis-python/usethis-python/actions)
 
 Automate Python project setup and development tasks that are otherwise performed manually.
 
@@ -26,7 +26,7 @@ usethis gives detailed messages about what it is doing (and what you need to do 
 Inspired by an [**R** package of the same name](https://usethis.r-lib.org/index.html), this package brings a similar experience to the Python ecosystem as a CLI tool.
 
 > [!TIP]
-> usethis is great for fresh projects using [uv](https://docs.astral.sh/uv), but also supports updating existing projects. However, this should be considered experimental. If you encounter problems or have feedback, please [open an issue](https://github.com/nathanjmcdougall/usethis-python/issues/new?template=idea.md).
+> usethis is great for fresh projects using [uv](https://docs.astral.sh/uv), but also supports updating existing projects. However, this should be considered experimental. If you encounter problems or have feedback, please [open an issue](https://github.com/usethis-python/usethis-python/issues/new?template=idea.md).
 
 ## Highlights
 
@@ -337,7 +337,7 @@ Currently supported badges:
 - `usethis badge pre-commit` - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
 - `usethis badge pypi` - [![PyPI Version](https://img.shields.io/pypi/v/usethis.svg)](https://pypi.python.org/pypi/usethis)
 - `usethis badge ruff` - [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
-- `usethis badge usethis` - [![usethis](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/nathanjmcdougall/usethis-python/main/assets/badge/v1.json)](https://github.com/nathanjmcdougall/usethis-python)
+- `usethis badge usethis` - [![usethis](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/usethis-python/usethis-python/main/assets/badge/v1.json)](https://github.com/usethis-python/usethis-python)
 - `usethis badge uv` - [![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 
 Supported options:
@@ -453,27 +453,27 @@ If you're using Cookiecutter, then you can update to a latest version of a templ
 
 ## 🚀 Development
 
-[![Commits since latest release](https://img.shields.io/github/commits-since/nathanjmcdougall/usethis-python/latest.svg)](https://github.com/nathanjmcdougall/usethis-python/releases)
+[![Commits since latest release](https://img.shields.io/github/commits-since/nathanjmcdougall/usethis-python/latest.svg)](https://github.com/usethis-python/usethis-python/releases)
 
 ### Roadmap
 
 Major features planned for later in 2025 are:
 
 - Support for users who aren't using uv, e.g. poetry users,
-- Support for automated GitHub Actions workflows ([#57](https://github.com/nathanjmcdougall/usethis-python/issues/57)),
-- Support for a typechecker (likely Pyright, [#121](https://github.com/nathanjmcdougall/usethis-python/issues/121)), and
-- Support for documentation pages (likely using mkdocs, [#188](https://github.com/nathanjmcdougall/usethis-python/issues/188)).
+- Support for automated GitHub Actions workflows ([#57](https://github.com/usethis-python/usethis-python/issues/57)),
+- Support for a typechecker (likely Pyright, [#121](https://github.com/usethis-python/usethis-python/issues/121)), and
+- Support for documentation pages (likely using mkdocs, [#188](https://github.com/usethis-python/usethis-python/issues/188)).
 
-Other features are tracked in the [GitHub Issues](https://github.com/nathanjmcdougall/usethis-python/issues) page.
+Other features are tracked in the [GitHub Issues](https://github.com/usethis-python/usethis-python/issues) page.
 
 ### Contributing
 
 See the
-[CONTRIBUTING.md](https://github.com/nathanjmcdougall/usethis-python/blob/main/CONTRIBUTING.md)
+[CONTRIBUTING.md](https://github.com/usethis-python/usethis-python/blob/main/CONTRIBUTING.md)
 file.
 
 ## License
 
-usethis is licensed under the MIT license ([LICENSE](https://github.com/nathanjmcdougall/usethis-python/blob/main/LICENSE) or <https://opensource.org/licenses/MIT>)
+usethis is licensed under the MIT license ([LICENSE](https://github.com/usethis-python/usethis-python/blob/main/LICENSE) or <https://opensource.org/licenses/MIT>)
 
 Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in usethis by you, as defined in the Apache License, Version 2.0, (<https://www.apache.org/licenses/LICENSE-2.0>), shall be licensed under the MIT license, without any additional terms or conditions.

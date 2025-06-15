@@ -10,7 +10,7 @@ class TestCoveragePyTool:
     class TestAddConfigs:
         def test_after_codespell(self, tmp_path: Path):
             # To check the config is valid
-            # https://github.com/nathanjmcdougall/usethis-python/issues/558
+            # https://github.com/usethis-python/usethis-python/issues/558
 
             # Arrange
             (tmp_path / "pyproject.toml").write_text("""\
