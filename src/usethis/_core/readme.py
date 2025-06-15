@@ -1,10 +1,16 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from usethis._config import usethis_config
-from usethis._console import box_print, tick_print
+from usethis._console import box_print, tick_print, warn_print
 from usethis._integrations.file.pyproject_toml.errors import PyprojectTOMLError
 from usethis._integrations.file.pyproject_toml.name import get_description
 from usethis._integrations.project.name import get_project_name
+from usethis.errors import UsethisError
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 def add_readme() -> None:
@@ -12,11 +18,14 @@ def add_readme() -> None:
     # Any file extension is fine, but we'll use '.md' for consistency.
 
     try:
-        get_readme_path()
+        path = get_readme_path()
     except FileNotFoundError:
         pass
     else:
-        return
+        # Check if the file is non-empty; if so, we will exit early
+        existing_content = path.read_text().strip()
+        if existing_content:
+            return
 
     project_name = get_project_name()
 
@@ -62,6 +71,24 @@ def get_readme_path():
 
     msg = "No README file found."
     raise FileNotFoundError(msg)
+
+
+class NonMarkdownREADMEError(UsethisError):
+    """Raised when the README file is not Markdown based on its extension."""
+
+
+def get_markdown_readme_path() -> Path:
+    path = get_readme_path()
+
+    if path.name == "README.md":
+        pass
+    elif path.name == "README":
+        warn_print("Assuming 'README' file is Markdown.")
+    else:
+        msg = f"README file '{path.name}' is not Markdown based on its extension."
+        raise NonMarkdownREADMEError(msg)
+
+    return path
 
 
 def is_readme_used():

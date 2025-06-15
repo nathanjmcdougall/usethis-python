@@ -8,12 +8,14 @@ from pydantic import BaseModel
 
 from usethis._config import usethis_config
 from usethis._console import plain_print, tick_print, warn_print
-from usethis._core.readme import add_readme, get_readme_path
+from usethis._core.readme import (
+    NonMarkdownREADMEError,
+    add_readme,
+    get_markdown_readme_path,
+)
 from usethis._integrations.project.name import get_project_name
 
 if TYPE_CHECKING:
-    from pathlib import Path
-
     from typing_extensions import Self
 
 
@@ -106,9 +108,11 @@ def add_badge(badge: Badge) -> None:
     add_readme()
 
     try:
-        path = _get_markdown_readme_path()
-    except FileNotFoundError:
-        warn_print("README file not found, printing badge markdown instead...")
+        path = get_markdown_readme_path()
+    except NonMarkdownREADMEError:
+        warn_print(
+            "No Markdown-based README file found, printing badge markdown instead..."
+        )
         plain_print(badge.markdown)
         return
 
@@ -196,20 +200,6 @@ def _get_prerequisites(badge: Badge) -> list[Badge]:
     return prerequisites
 
 
-def _get_markdown_readme_path() -> Path:
-    path = get_readme_path()
-
-    if path.name == "README.md":
-        pass
-    elif path.name == "README":
-        warn_print("Assuming 'README' file is Markdown.")
-    else:
-        msg = f"README file '{path.name}' is not Markdown based on its extension."
-        raise FileNotFoundError(msg)
-
-    return path
-
-
 def _ensure_final_newline(content: str) -> str:
     if not content or content[-1] != "\n":
         content += "\n"
@@ -236,7 +226,7 @@ def remove_badge(badge: Badge) -> None:
     path = usethis_config.cpd() / "README.md"
 
     try:
-        path = _get_markdown_readme_path()
+        path = get_markdown_readme_path()
     except FileNotFoundError:
         # If there's no README.md, there's nothing to remove
         return

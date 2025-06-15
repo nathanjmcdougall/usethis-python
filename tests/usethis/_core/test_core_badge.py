@@ -50,10 +50,28 @@ class TestIsBadge:
 
 
 class TestAddBadge:
+    def test_no_readme(self, bare_dir: Path, capfd: pytest.CaptureFixture[str]):
+        # Act
+        with change_cwd(bare_dir), PyprojectTOMLManager():
+            add_badge(
+                Badge(
+                    markdown="![Licence](https://img.shields.io/badge/licence-mit-green)",
+                )
+            )
+
+        # Assert (that the badge markdown is printed)
+        out, err = capfd.readouterr()
+        assert not err
+        assert out == (
+            "✔ Writing 'README.md'.\n"
+            "☐ Populate 'README.md' to help users understand the project.\n"
+            "✔ Adding Licence badge to 'README.md'.\n"
+        )
+
     def test_not_markdown(self, bare_dir: Path, capfd: pytest.CaptureFixture[str]):
         # Arrange
         path = bare_dir / "README.foo"
-        path.touch()
+        path.write_text("# Header\n")
 
         # Act
         with change_cwd(bare_dir), PyprojectTOMLManager():
@@ -67,15 +85,14 @@ class TestAddBadge:
         out, err = capfd.readouterr()
         assert not err
         assert out == (
-            "⚠ README file not found, printing badge markdown instead...\n"
+            "⚠ No Markdown-based README file found, printing badge markdown instead...\n"
             "![Licence](https://img.shields.io/badge/licence-mit-green)\n"
         )
 
     def test_empty(self, bare_dir: Path, capfd: pytest.CaptureFixture[str]):
         # Arrange
         path = bare_dir / "README.md"
-        path.write_text("""\
-""")
+        path.write_text("")
 
         # Act
         with change_cwd(bare_dir), PyprojectTOMLManager():
@@ -89,12 +106,18 @@ class TestAddBadge:
         assert (
             (bare_dir / "README.md").read_text()
             == """\
+# test_empty0
+
 ![Licence](https://img.shields.io/badge/licence-mit-green)
 """
         )
         out, err = capfd.readouterr()
         assert not err
-        assert out == "✔ Adding Licence badge to 'README.md'.\n"
+        assert out == (
+            "✔ Writing 'README.md'.\n"
+            "☐ Populate 'README.md' to help users understand the project.\n"
+            "✔ Adding Licence badge to 'README.md'.\n"
+        )
 
     def test_only_newline(self, bare_dir: Path):
         # Arrange
@@ -115,6 +138,8 @@ class TestAddBadge:
         assert (
             (bare_dir / "README.md").read_text()
             == """\
+# test_only_newline0
+
 ![Licence](https://img.shields.io/badge/licence-mit-green)
 """
         )

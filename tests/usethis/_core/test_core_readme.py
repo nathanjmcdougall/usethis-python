@@ -139,3 +139,21 @@ description = "A description"
         # Assert
         assert (tmp_path / "README.md").exists()
         assert (tmp_path / "README.md").read_text() == "# A name\n\nA description\n"
+
+    def test_start_from_readme_empty(self, tmp_path: Path):
+        # Arrange
+        (tmp_path / "pyproject.toml").write_text(
+            """\
+[project]
+name = "A name"
+description = "A description"
+"""
+        )
+        (tmp_path / "README.md").touch()
+
+        # Act
+        with change_cwd(tmp_path), PyprojectTOMLManager():
+            add_readme()
+
+        # Assert
+        assert (tmp_path / "README.md").read_text() == "# A name\n\nA description\n"
