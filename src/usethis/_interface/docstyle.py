@@ -11,7 +11,7 @@ from usethis.errors import UsethisError
 
 def docstyle(
     style: DocStyleEnum = typer.Argument(
-        default=..., help="Docstring style to enforce."
+        default="google", help="Docstring style to enforce."
     ),
     quiet: bool = quiet_opt,
 ) -> None:

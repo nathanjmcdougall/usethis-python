@@ -80,3 +80,23 @@ lint.select = [ "A" ]
         assert result.exit_code == 0, result.output
         content = existing_pyproject_toml.read_text()
         assert "[lint.pydocstyle]" not in content  # Wrong section name
+
+    def test_default(self, tmp_path: Path):
+        # Arrange
+        default_pyproject_toml = tmp_path / "pyproject.toml"
+        default_pyproject_toml.touch()
+
+        # Act
+        with change_cwd(tmp_path):
+            runner = CliRunner()
+            result = runner.invoke(app, ["docstyle"])
+
+        # Assert
+        assert result.exit_code == 0, result.output
+        assert (
+            "✔ Setting docstring style to 'google' in 'pyproject.toml'."
+            in result.output
+        )
+
+        content = default_pyproject_toml.read_text()
+        assert "google" in content
