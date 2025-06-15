@@ -850,6 +850,8 @@ class TestImportLinter:
                 "✔ Adding dependency 'import-linter' to the 'dev' group in 'pyproject.toml'.\n"
                 "☐ Install the dependency 'import-linter'.\n"
                 "✔ Adding Import Linter config to 'pyproject.toml'.\n"
+                "ℹ Ensure '__init__.py' files are used in your packages.\n"  # noqa: RUF001
+                "ℹ For more info see <https://docs.python.org/3/tutorial/modules.html#packages>\n"  # noqa: RUF001
                 "☐ Run 'lint-imports' to run Import Linter.\n"
             )
 
@@ -1268,6 +1270,8 @@ exhaustive = True
                 "⚠ Could not find any importable packages.\n"
                 "⚠ Assuming the package name is test-stdout-when-cant-find-pac0.\n"
                 "✔ Adding Import Linter config to 'pyproject.toml'.\n"
+                "ℹ Ensure '__init__.py' files are used in your packages.\n"  # noqa: RUF001
+                "ℹ For more info see <https://docs.python.org/3/tutorial/modules.html#packages>\n"  # noqa: RUF001
                 "☐ Run 'lint-imports' to run Import Linter.\n"
             )
 
@@ -1400,6 +1404,8 @@ repos:
                 "☐ Install the dependency 'import-linter'.\n"
                 "✔ Adding Import Linter config to 'pyproject.toml'.\n"
                 "✔ Adding hook 'import-linter' to '.pre-commit-config.yaml'.\n"
+                "ℹ Ensure '__init__.py' files are used in your packages.\n"  # noqa: RUF001
+                "ℹ For more info see <https://docs.python.org/3/tutorial/modules.html#packages>\n"  # noqa: RUF001
                 "☐ Run 'pre-commit run import-linter --all-files' to run Import Linter.\n"
             )
 

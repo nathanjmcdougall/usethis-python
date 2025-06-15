@@ -187,8 +187,10 @@ class TestImportLinter:
         assert (
             result.output
             == """\
+ℹ Ensure '__init__.py' files are used in your packages.
+ℹ For more info see <https://docs.python.org/3/tutorial/modules.html#packages>
 ☐ Run 'lint-imports' to run Import Linter.
-"""
+"""  # noqa: RUF001
         )
 
 

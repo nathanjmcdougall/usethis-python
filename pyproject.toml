@@ -230,7 +230,8 @@ name = "usethis._tool.impl"
 type = "layers"
 layers = [
   "pyproject_toml",
-  "codespell | deptry | import_linter | pyproject_fmt | requirements_txt | ruff",
+  "codespell | deptry | import_linter | pyproject_fmt | requirements_txt",
+  "ruff",
   "pytest : coverage_py",
   "pre_commit",
 ]

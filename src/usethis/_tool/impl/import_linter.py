@@ -9,7 +9,7 @@ from usethis._config import usethis_config
 from usethis._config_file import (
     DotImportLinterManager,
 )
-from usethis._console import box_print, warn_print
+from usethis._console import box_print, info_print, warn_print
 from usethis._integrations.ci.bitbucket.anchor import (
     ScriptItemAnchor as BitbucketScriptItemAnchor,
 )
@@ -42,6 +42,7 @@ from usethis._tool.config import (
     NoConfigValue,
 )
 from usethis._tool.impl.pre_commit import PreCommitTool
+from usethis._tool.impl.ruff import RuffTool
 from usethis._tool.pre_commit import PreCommitConfig
 from usethis._tool.rule import RuleConfig
 
@@ -70,6 +71,12 @@ class ImportLinterTool(Tool):
             return super().is_used()
 
     def print_how_to_use(self) -> None:
+        if not RuffTool().is_used():
+            # If Ruff is used, we enable the INP rules instead.
+            info_print("Ensure '__init__.py' files are used in your packages.")
+            info_print(
+                "For more info see <https://docs.python.org/3/tutorial/modules.html#packages>"
+            )
         if PreCommitTool().is_used():
             if is_uv_used():
                 box_print(
