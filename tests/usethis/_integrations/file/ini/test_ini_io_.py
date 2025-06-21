@@ -4,25 +4,15 @@ from pathlib import Path
 import pytest
 from configupdater import ConfigUpdater
 
-from usethis._integrations.file.ini.errors import (
-    INIDecodeError,
-    ININestingError,
-    ININotFoundError,
-    INIStructureError,
-    INIValueAlreadySetError,
-    INIValueMissingError,
-    InvalidINITypeError,
-    UnexpectedINIIOError,
-    UnexpectedINIOpenError,
-)
-from usethis._integrations.file.ini.io_ import INIFileManager
-from usethis._test import change_cwd
-
 
 class TestINIFileManager:
     class TestEnter:
         def test_nested_context_manager(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.errors import UnexpectedINIOpenError
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -43,6 +33,10 @@ class TestINIFileManager:
     class TestReadFile:
         def test_invalid_file(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.errors import INIDecodeError
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -61,6 +55,10 @@ class TestINIFileManager:
 
         def test_file_not_found(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.errors import ININotFoundError
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -76,6 +74,10 @@ class TestINIFileManager:
 
         def test_manager_not_used(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.errors import UnexpectedINIIOError
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -90,6 +92,10 @@ class TestINIFileManager:
 
         def test_content_unexpectedly_not_none(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.errors import UnexpectedINIIOError
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -110,6 +116,9 @@ class TestINIFileManager:
     class TestDumpContent:
         def test_no_content_to_dump(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -129,6 +138,8 @@ class TestINIFileManager:
     class TestParseContent:
         def test_type(self):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -142,6 +153,8 @@ class TestINIFileManager:
 
         def test_content(self):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -156,6 +169,9 @@ class TestINIFileManager:
     class TestContains:
         def test_option_key_exists(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -173,6 +189,9 @@ class TestINIFileManager:
 
         def test_section_key_exists(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -190,6 +209,9 @@ class TestINIFileManager:
 
         def test_option_key_doesnt_exist(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -207,6 +229,9 @@ class TestINIFileManager:
 
         def test_section_key_doesnt_exist(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -224,6 +249,9 @@ class TestINIFileManager:
 
         def test_colon_in_section_name(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -241,6 +269,9 @@ class TestINIFileManager:
 
         def test_root_level_and_file_exists(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -258,6 +289,9 @@ class TestINIFileManager:
 
         def test_root_level_and_file_doesnt_exist(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -272,6 +306,9 @@ class TestINIFileManager:
 
         def test_multiple_sections(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -289,6 +326,9 @@ class TestINIFileManager:
 
         def test_multiple_options(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -306,6 +346,9 @@ class TestINIFileManager:
 
         def test_nested_keys_raises(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -323,6 +366,9 @@ class TestINIFileManager:
 
         def test_regex(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -345,6 +391,10 @@ key_that = value2
     class TestGetItem:
         def test_file_doesnt_exist_raises(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.errors import ININotFoundError
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -360,6 +410,9 @@ key_that = value2
 
         def test_no_keys_gives_root(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -377,6 +430,9 @@ key_that = value2
 
         def test_section_key_exists(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -394,6 +450,9 @@ key_that = value2
 
         def test_section_key_doesnt_exist(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -412,6 +471,9 @@ key_that = value2
 
         def test_option_key_exists(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -431,6 +493,9 @@ key_that = value2
             # i.e. more than 2
 
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -450,6 +515,9 @@ key_that = value2
             "We always return strings as values for INI files!"
 
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -467,6 +535,9 @@ key_that = value2
 
         def test_int(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -484,6 +555,9 @@ key_that = value2
 
         def test_multiple_sections(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -501,6 +575,9 @@ key_that = value2
 
         def test_multiple_options(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -519,6 +596,9 @@ key_that = value2
     class TestSetValue:
         def test_add_root_no_change(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -546,6 +626,9 @@ key = value
 
         def test_multiple_sections(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -577,6 +660,9 @@ key = other
 
         def test_int(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -594,6 +680,9 @@ key = other
 
         def test_no_spacing_roundtrip(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -623,6 +712,9 @@ other_key=other_value
 
         def test_empty(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -647,6 +739,9 @@ key = new_value
 
         def test_overwrite_section(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -678,6 +773,9 @@ key = other
 
         def test_overwrite_root(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -709,6 +807,10 @@ new_key = new_value
 
         def test_exists_ok_false_root(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.errors import INIValueAlreadySetError
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -736,6 +838,9 @@ key = other
 
         def test_sections_keep_positions_setting_root(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -774,6 +879,9 @@ key = new_value
 
         def test_options_keep_positions_setting_root(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -808,6 +916,9 @@ key2 = new_value
 
         def test_too_many_keys(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -832,6 +943,10 @@ key2 = new_value
 
         def test_already_set_in_section_not_exists_ok(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.errors import INIValueAlreadySetError
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -855,6 +970,10 @@ key = value
 
         def test_already_set_in_option_not_exists_ok(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.errors import INIValueAlreadySetError
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -878,6 +997,9 @@ key = value
 
         def test_section_does_not_exist_yet(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -902,6 +1024,9 @@ key = new_value
 
         def test_empty_section(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -926,6 +1051,9 @@ key = value
 
         def test_new_list_root(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -949,6 +1077,9 @@ key =
 
         def test_new_list_section(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -974,6 +1105,9 @@ key =
 
         def test_new_list_option(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -999,6 +1133,9 @@ key =
 
         def test_new_list_option_with_existing(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1027,6 +1164,9 @@ key =
 
         def test_existing_file_no_newline(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1054,6 +1194,9 @@ new_key = new_value
     class TestDelItem:
         def test_delete_root(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1076,6 +1219,9 @@ key2 = value2
 
         def test_delete_section(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1104,6 +1250,9 @@ key2 = value2
 
         def test_delete_option(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1131,6 +1280,10 @@ key2 = value2
 
         def test_delete_non_existent_section(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.errors import INIValueMissingError
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1154,6 +1307,10 @@ key1 = value1
 
         def test_delete_non_existent_option(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.errors import INIValueMissingError
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1177,6 +1334,9 @@ key1 = value1
 
         def test_delete_root_when_not_empty(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1199,6 +1359,9 @@ key2 = value2
 
         def test_cleanup_section_with_no_options(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1229,6 +1392,10 @@ key1 = value1
 
         def test_too_many_keys(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.errors import ININestingError
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1247,6 +1414,9 @@ key1 = value1
 
         def test_delete_section_with_multiple_options(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1277,6 +1447,9 @@ key3 = value3
 
         def test_regex_option(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1298,6 +1471,9 @@ key_that = value2
 
         def test_regex_section(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1328,6 +1504,9 @@ key = value
 
         def test_regex_section_with_option(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1358,6 +1537,9 @@ other = value3
     class TestExtendList:
         def test_inplace_modifications(self, tmp_path: Path) -> None:
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1387,6 +1569,10 @@ key2 = value2
 
         def test_no_keys_raises(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.errors import INIStructureError
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1408,6 +1594,10 @@ key2 = value2
 
         def test_one_key_raises(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.errors import INIStructureError
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1429,6 +1619,9 @@ key2 = value2
 
         def test_four_keys_raises(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1451,6 +1644,9 @@ key2 = value2
 
         def test_doesnt_exist_yet(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1473,6 +1669,10 @@ key = new_value
 
         def test_wrong_list_type_raises(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.errors import InvalidINITypeError
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1494,6 +1694,9 @@ key = new_value
     class TestRemoveFromList:
         def test_singleton_list_collapsed(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1523,6 +1726,9 @@ key2 = value2
 
         def test_multiple_values(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1558,6 +1764,10 @@ key2 = value2
 
         def test_no_keys_raises(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.errors import INIStructureError
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1579,6 +1789,10 @@ key2 = value2
 
         def test_one_key_raises(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.errors import INIStructureError
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1600,6 +1814,9 @@ key2 = value2
 
         def test_three_keys_raises(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1622,6 +1839,9 @@ key2 = value2
 
         def test_section_doesnt_exist_yet(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1639,6 +1859,9 @@ key2 = value2
 
         def test_option_doesnt_exist_yet(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1659,6 +1882,9 @@ key2 = value2
 
         def test_nothing_left(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -1683,6 +1909,9 @@ key1 =
 
         def test_no_options_left(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.ini.io_ import INIFileManager
+            from usethis._test import change_cwd
+
             class MyINIFileManager(INIFileManager):
                 @property
                 def relative_path(self) -> Path:

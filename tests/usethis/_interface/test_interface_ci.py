@@ -1,17 +1,16 @@
 from pathlib import Path
 
 import pytest
-from typer.testing import CliRunner
-
-from usethis._app import app as main_app
-from usethis._config import usethis_config
-from usethis._interface.ci import app
-from usethis._interface.tool import ALL_TOOL_COMMANDS
-from usethis._test import change_cwd
 
 
 class TestBitbucket:
     def test_add(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.ci import app
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):
@@ -26,6 +25,11 @@ class TestBitbucket:
 
     def test_remove(self, tmp_path: Path):
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.ci import app
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").write_text("")
 
         # Act
@@ -42,6 +46,15 @@ class TestBitbucket:
 
     @pytest.mark.usefixtures("_vary_network_conn")
     def test_maximal_config(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._app import app as main_app
+        from usethis._config import usethis_config
+        from usethis._interface.ci import app
+        from usethis._interface.tool import ALL_TOOL_COMMANDS
+        from usethis._test import change_cwd
+
         runner = CliRunner()
         with change_cwd(tmp_path):
             # Pin the Python version
@@ -49,7 +62,6 @@ class TestBitbucket:
                 "3.13"  # Bump to latest version of Python
             )
 
-            # Arrange
             for tool_command in ALL_TOOL_COMMANDS:
                 if not usethis_config.offline:
                     runner.invoke(main_app, ["tool", tool_command])
@@ -68,6 +80,11 @@ class TestBitbucket:
 
     def test_invalid_pyproject_toml(self, tmp_path: Path):
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.ci import app
+        from usethis._test import change_cwd
+
         (tmp_path / "pyproject.toml").write_text("(")
 
         # Act

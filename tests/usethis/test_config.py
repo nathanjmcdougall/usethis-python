@@ -2,16 +2,14 @@ from pathlib import Path
 
 import pytest
 
-from usethis._config import UsethisConfig, usethis_config
-from usethis._integrations.uv.call import call_uv_subprocess
-from usethis._integrations.uv.errors import UVSubprocessFailedError
-from usethis._test import change_cwd
-
 
 class TestUsethisConfig:
     class TestCPD:
         def test_matches_path_cwd(self, tmp_path: Path):
             # Arrange
+            from usethis._config import UsethisConfig
+            from usethis._test import change_cwd
+
             config = UsethisConfig()
 
             # Act
@@ -23,6 +21,9 @@ class TestUsethisConfig:
 
         def test_set_overrides_cwd(self, tmp_path: Path):
             # Arrange
+            from usethis._config import UsethisConfig
+            from usethis._test import change_cwd
+
             config = UsethisConfig()
 
             # Act
@@ -37,6 +38,12 @@ class TestUsethisConfig:
 
     class TestDisableUVSubprocess:
         def test_raises_error_when_disabled(self):
+            # Arrange
+            from usethis._config import usethis_config
+            from usethis._integrations.uv.call import call_uv_subprocess
+            from usethis._integrations.uv.errors import UVSubprocessFailedError
+            from usethis._test import change_cwd
+
             # Act & Assert
             with (
                 change_cwd(Path.cwd()),
@@ -46,6 +53,11 @@ class TestUsethisConfig:
                 call_uv_subprocess(["python", "list"], change_toml=False)
 
         def test_does_not_raise_error_when_enabled(self):
+            # Arrange
+            from usethis._config import usethis_config
+            from usethis._integrations.uv.call import call_uv_subprocess
+            from usethis._test import change_cwd
+
             # Act & Assert
             with (
                 change_cwd(Path.cwd()),

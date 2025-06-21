@@ -2,15 +2,13 @@ from pathlib import Path
 
 import pytest
 
-from usethis._integrations.ci.bitbucket.io_ import (
-    BitbucketPipelinesYAMLConfigError,
-    edit_bitbucket_pipelines_yaml,
-)
-from usethis._test import change_cwd
-
 
 class TestEditBitbucketPipelinesYAML:
     def test_does_not_exist(self, tmp_path: Path, capfd: pytest.CaptureFixture[str]):
+        # Arrange
+        from usethis._integrations.ci.bitbucket.io_ import edit_bitbucket_pipelines_yaml
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(tmp_path), edit_bitbucket_pipelines_yaml() as _:
             pass
@@ -29,6 +27,9 @@ image: atlassian/default-image:3
 
     def test_do_nothing(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.io_ import edit_bitbucket_pipelines_yaml
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").write_text(
             """\
 image: atlassian/default-image:3
@@ -50,6 +51,9 @@ image: atlassian/default-image:3
 
     def test_change_image(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.io_ import edit_bitbucket_pipelines_yaml
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").write_text(
             """\
 image: atlassian/default-image:3
@@ -72,6 +76,9 @@ image: atlassian/default-image:2
 
     def test_change_default(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.io_ import edit_bitbucket_pipelines_yaml
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").write_text(
             """\
 pipelines:
@@ -107,6 +114,9 @@ pipelines:
 
     def test_roundtrip_indentation(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.io_ import edit_bitbucket_pipelines_yaml
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").write_text(
             """\
 pipelines:
@@ -136,6 +146,12 @@ pipelines:
 
     def test_invalid_contents(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.io_ import (
+            BitbucketPipelinesYAMLConfigError,
+            edit_bitbucket_pipelines_yaml,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").write_text("""\
 awfpah28yqh2an ran  2rqa0-2 }[
 """)

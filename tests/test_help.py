@@ -1,13 +1,13 @@
-import pytest
-from typer.testing import CliRunner
-
-from usethis._interface.tool import app
+from pytest_codspeed import BenchmarkFixture
 
 
-@pytest.mark.benchmark
-def test_help_flag():
+def test_help_flag(benchmark: BenchmarkFixture):
     # Arrange
+    from typer.testing import CliRunner
+
+    from usethis._interface.tool import app
+
     runner = CliRunner()
 
     # Act
-    runner.invoke(app, ["--help"])
+    benchmark(runner.invoke, app, ["--help"])

@@ -2,23 +2,15 @@ import re
 from pathlib import Path
 
 import pytest
-from tomlkit import TOMLDocument
-
-from usethis._integrations.file.pyproject_toml.errors import (
-    PyprojectTOMLDecodeError,
-    PyprojectTOMLNotFoundError,
-    PyprojectTOMLValueAlreadySetError,
-    PyprojectTOMLValueMissingError,
-    UnexpectedPyprojectTOMLIOError,
-    UnexpectedPyprojectTOMLOpenError,
-)
-from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._test import change_cwd
 
 
 class TestPyprojectTOMLManager:
     def test_context_manager_locking(self, tmp_path: Path):
         # Arrange
+
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path):
             manager = PyprojectTOMLManager()
 
@@ -30,6 +22,13 @@ class TestPyprojectTOMLManager:
 
     def test_unexpected_open_error(self, tmp_path: Path):
         # Arrange
+
+        from usethis._integrations.file.pyproject_toml.errors import (
+            UnexpectedPyprojectTOMLOpenError,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path):
             manager1 = PyprojectTOMLManager()
             manager2 = PyprojectTOMLManager()
@@ -40,6 +39,13 @@ class TestPyprojectTOMLManager:
 
     def test_get_without_opening(self, tmp_path: Path):
         # Arrange
+
+        from usethis._integrations.file.pyproject_toml.errors import (
+            UnexpectedPyprojectTOMLIOError,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path):
             manager = PyprojectTOMLManager()
 
@@ -49,6 +55,14 @@ class TestPyprojectTOMLManager:
 
     def test_commit_without_opening(self, tmp_path: Path):
         # Arrange
+        from tomlkit import TOMLDocument
+
+        from usethis._integrations.file.pyproject_toml.errors import (
+            UnexpectedPyprojectTOMLIOError,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path):
             manager = PyprojectTOMLManager()
 
@@ -57,8 +71,15 @@ class TestPyprojectTOMLManager:
             manager.commit(TOMLDocument())
 
     def test_read_file_not_found(self, tmp_path: Path):
+        # Arrange
+
+        from usethis._integrations.file.pyproject_toml.errors import (
+            PyprojectTOMLNotFoundError,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path):
-            # Arrange
             manager = PyprojectTOMLManager()
 
             # Act & Assert
@@ -67,6 +88,13 @@ class TestPyprojectTOMLManager:
 
     def test_read_file_invalid_toml(self, tmp_path: Path):
         # Arrange
+
+        from usethis._integrations.file.pyproject_toml.errors import (
+            PyprojectTOMLDecodeError,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path):
             (tmp_path / "pyproject.toml").write_text("invalid_toml")
 
@@ -77,8 +105,13 @@ class TestPyprojectTOMLManager:
             manager.read_file()
 
     def test_commit_and_get(self, tmp_path: Path):
+        # Arrange
+        from tomlkit import TOMLDocument
+
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path):
-            # Arrange
             manager = PyprojectTOMLManager()
             toml_data = TOMLDocument()
             toml_data["tool"] = {"test": "value"}
@@ -93,6 +126,11 @@ class TestPyprojectTOMLManager:
 
     def test_write_file(self, tmp_path: Path):
         # Arrange
+        from tomlkit import TOMLDocument
+
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path):
             manager = PyprojectTOMLManager()
             toml_data = TOMLDocument()
@@ -105,6 +143,13 @@ class TestPyprojectTOMLManager:
 
     def test_double_read_fails(self, tmp_path: Path):
         # Arrange
+
+        from usethis._integrations.file.pyproject_toml.errors import (
+            UnexpectedPyprojectTOMLIOError,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path):
             (tmp_path / "pyproject.toml").write_text("tool = { test = 'value' }")
             manager = PyprojectTOMLManager()
@@ -117,6 +162,10 @@ class TestPyprojectTOMLManager:
 
     def test_exit_without_lock(self, tmp_path: Path):
         # Arrange
+
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path):
             manager = PyprojectTOMLManager()
         manager.unlock()
@@ -126,6 +175,10 @@ class TestPyprojectTOMLManager:
 
     def test_get_entails_read(self, tmp_path: Path):
         # Arrange
+
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path):
             (tmp_path / "pyproject.toml").write_text("tool = { test = 'value' }")
             manager = PyprojectTOMLManager()
@@ -139,6 +192,14 @@ class TestPyprojectTOMLManager:
 
     class TestSetItem:
         def test_pyproject_does_not_exist(self, tmp_path: Path):
+            from usethis._integrations.file.pyproject_toml.errors import (
+                PyprojectTOMLNotFoundError,
+            )
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             with (
                 change_cwd(tmp_path),
                 PyprojectTOMLManager(),
@@ -148,6 +209,12 @@ class TestPyprojectTOMLManager:
 
         def test_key_does_not_exist(self, tmp_path: Path):
             # Arrange
+
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             (tmp_path / "pyproject.toml").write_text(
                 """\
     [tool.usethis]
@@ -165,6 +232,12 @@ class TestPyprojectTOMLManager:
 
         def test_single_key(self, tmp_path: Path):
             # Arrange
+
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             (tmp_path / "pyproject.toml").write_text(
                 """\
     [tool.usethis]
@@ -181,6 +254,12 @@ class TestPyprojectTOMLManager:
 
         def test_update_exists_ok(self, tmp_path: Path):
             # Arrange
+
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             (tmp_path / "pyproject.toml").write_text(
                 """\
     [tool.usethis]
@@ -203,6 +282,12 @@ class TestPyprojectTOMLManager:
 
         def test_update_mixed_nested(self, tmp_path: Path):
             # Arrange
+
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             (tmp_path / "pyproject.toml").write_text(
                 """\
     [tool.usethis]
@@ -228,6 +313,12 @@ class TestPyprojectTOMLManager:
     class TestSetValue:
         def test_empty(self, tmp_path: Path):
             # Arrange
+
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             (tmp_path / "pyproject.toml").touch()
 
             # Act
@@ -247,6 +338,15 @@ key = "value"
 
         def test_update_not_exists_ok(self, tmp_path: Path):
             # Arrange
+
+            from usethis._integrations.file.pyproject_toml.errors import (
+                PyprojectTOMLValueAlreadySetError,
+            )
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             (tmp_path / "pyproject.toml").write_text(
                 """\
 [tool.usethis]
@@ -273,6 +373,12 @@ key = "value1"
             # https://github.com/usethis-python/usethis-python/issues/558
 
             # Arrange
+
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             (tmp_path / "pyproject.toml").write_text("""\
 [tool.codespell]
 ignore-regex = ["[A-Za-z0-9+/]{100,}"]
@@ -293,6 +399,15 @@ ignore-regex = ["[A-Za-z0-9+/]{100,}"]
     class TestDel:
         def test_already_missing(self, tmp_path: Path):
             # Arrange
+
+            from usethis._integrations.file.pyproject_toml.errors import (
+                PyprojectTOMLValueMissingError,
+            )
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             (tmp_path / "pyproject.toml").touch()
 
             # Act, Assert
@@ -304,6 +419,13 @@ ignore-regex = ["[A-Za-z0-9+/]{100,}"]
                 del PyprojectTOMLManager()[["tool", "usethis", "key"]]
 
         def test_missing_pyproject(self, tmp_path: Path):
+            # Arrange
+
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             # Act
             with change_cwd(tmp_path), PyprojectTOMLManager():
                 del PyprojectTOMLManager()[["tool", "usethis", "key"]]
@@ -313,6 +435,12 @@ ignore-regex = ["[A-Za-z0-9+/]{100,}"]
         def test_single_key(self, tmp_path: Path):
             """This checks the empty section cleanup."""
             # Arrange
+
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             (tmp_path / "pyproject.toml").write_text(
                 """\
     [tool.usethis]
@@ -330,6 +458,12 @@ ignore-regex = ["[A-Za-z0-9+/]{100,}"]
         def test_multi_key(self, tmp_path: Path):
             """This checks the empty section cleanup."""
             # Arrange
+
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             (tmp_path / "pyproject.toml").write_text(
                 """\
     [tool.usethis]
@@ -354,6 +488,12 @@ ignore-regex = ["[A-Za-z0-9+/]{100,}"]
     class TestExtendList:
         def test_empty(self, tmp_path: Path):
             # Arrange
+
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             (tmp_path / "pyproject.toml").touch()
 
             # Act
@@ -373,6 +513,12 @@ key = ["value"]
 
         def test_add_one(self, tmp_path: Path):
             # Arrange
+
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             (tmp_path / "pyproject.toml").write_text(
                 """\
 [tool.usethis]

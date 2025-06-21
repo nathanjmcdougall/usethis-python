@@ -2,27 +2,13 @@ from pathlib import Path
 
 import pytest
 
-from usethis._integrations.pre_commit.hooks import (
-    _get_placeholder_repo_config,
-    _hooks_are_equivalent,
-    add_placeholder_hook,
-    add_repo,
-    get_hook_ids,
-    insert_repo,
-    remove_hook,
-)
-from usethis._integrations.pre_commit.io_ import edit_pre_commit_config_yaml
-from usethis._integrations.pre_commit.schema import (
-    HookDefinition,
-    Language,
-    LocalRepo,
-    UriRepo,
-)
-from usethis._test import change_cwd
-
 
 class TestAddRepo:
     def test_unregistered_id(self, tmp_path: Path):
+        from usethis._integrations.pre_commit.hooks import add_repo
+        from usethis._integrations.pre_commit.schema import HookDefinition, UriRepo
+        from usethis._test import change_cwd
+
         (tmp_path / ".pre-commit-config.yaml").write_text("""\
 repos:
   - repo: foo
@@ -43,6 +29,14 @@ repos:
         self, tmp_path: Path, capfd: pytest.CaptureFixture[str]
     ):
         # Arrange
+        from usethis._integrations.pre_commit.hooks import add_repo
+        from usethis._integrations.pre_commit.schema import (
+            HookDefinition,
+            Language,
+            LocalRepo,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / ".pre-commit-config.yaml").write_text("""\
 repos:
   - repo: foo
@@ -89,6 +83,13 @@ repos:
         assert out == "✔ Adding hook 'deptry' to '.pre-commit-config.yaml'.\n"
 
     def test_placeholder(self, tmp_path: Path, capfd: pytest.CaptureFixture[str]):
+        # Arrange
+        from usethis._integrations.pre_commit.hooks import (
+            _get_placeholder_repo_config,
+            add_repo,
+        )
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(tmp_path):
             add_repo(_get_placeholder_repo_config())
@@ -114,8 +115,17 @@ repos:
         )
 
     def test_hook_order_constant_is_respected(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.pre_commit.hooks import add_repo, get_hook_ids
+        from usethis._integrations.pre_commit.schema import (
+            HookDefinition,
+            Language,
+            LocalRepo,
+        )
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path):
-            # Arrange: Add 'codespell' first (later in _HOOK_ORDER)
+            # Add 'codespell' first (later in _HOOK_ORDER)
             add_repo(
                 LocalRepo(
                     repo="local",
@@ -152,8 +162,16 @@ repos:
             ]
 
     def test_hooks_added_in_standard_order(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.pre_commit.hooks import add_repo, get_hook_ids
+        from usethis._integrations.pre_commit.schema import (
+            HookDefinition,
+            Language,
+            LocalRepo,
+        )
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path):
-            # Arrange
             add_repo(
                 LocalRepo(
                     repo="local",
@@ -189,6 +207,15 @@ repos:
             ]
 
     def test_hook_order_constant_is_respected_multi(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.pre_commit.hooks import add_repo, get_hook_ids
+        from usethis._integrations.pre_commit.schema import (
+            HookDefinition,
+            Language,
+            LocalRepo,
+        )
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path):
             # Act
             add_repo(
@@ -244,6 +271,15 @@ class TestInsertRepo:
         self, tmp_path: Path, capfd: pytest.CaptureFixture[str]
     ):
         # Arrange
+        from usethis._integrations.pre_commit.hooks import insert_repo
+        from usethis._integrations.pre_commit.io_ import edit_pre_commit_config_yaml
+        from usethis._integrations.pre_commit.schema import (
+            HookDefinition,
+            Language,
+            LocalRepo,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / ".pre-commit-config.yaml").write_text("""\
 repos:
     - repo: codespell
@@ -279,6 +315,13 @@ repos:
 
     def test_existing_repo_has_none_hooks(self):
         # Arrange
+        from usethis._integrations.pre_commit.hooks import insert_repo
+        from usethis._integrations.pre_commit.schema import (
+            HookDefinition,
+            Language,
+            LocalRepo,
+        )
+
         existing_repos = [LocalRepo(repo="local", hooks=None)]
         new_hook = HookDefinition(
             id="new-hook",
@@ -312,6 +355,15 @@ repos:
         # What if the predecessor ID is repeated multiple times? Will we end up
         # inserting the new repo multiple times? No.
         # Arrange
+        from usethis._integrations.pre_commit.hooks import insert_repo
+        from usethis._integrations.pre_commit.io_ import edit_pre_commit_config_yaml
+        from usethis._integrations.pre_commit.schema import (
+            HookDefinition,
+            Language,
+            LocalRepo,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / ".pre-commit-config.yaml").write_text("""\
 repos:
   - repo: foo
@@ -350,6 +402,9 @@ repos:
 
 class TestRemoveHook:
     def test_empty(self, tmp_path: Path):
+        from usethis._integrations.pre_commit.hooks import remove_hook
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path):
             remove_hook("foo")
         assert (
@@ -366,6 +421,9 @@ repos:
         )
 
     def test_single(self, tmp_path: Path):
+        from usethis._integrations.pre_commit.hooks import remove_hook
+        from usethis._test import change_cwd
+
         (tmp_path / ".pre-commit-config.yaml").write_text(
             """\
 repos:
@@ -390,6 +448,9 @@ repos:
         )
 
     def test_multihooks(self, tmp_path: Path):
+        from usethis._integrations.pre_commit.hooks import remove_hook
+        from usethis._test import change_cwd
+
         (tmp_path / ".pre-commit-config.yaml").write_text(
             """\
 repos:
@@ -422,6 +483,9 @@ repos:
         )
 
     def test_dont_delete_no_hook_repo(self, tmp_path: Path):
+        from usethis._integrations.pre_commit.hooks import remove_hook
+        from usethis._test import change_cwd
+
         (tmp_path / ".pre-commit-config.yaml").write_text(
             """\
 repos:
@@ -442,12 +506,18 @@ repos:
 
 class TestGetHookNames:
     def test_empty(self, tmp_path: Path):
+        from usethis._integrations.pre_commit.hooks import get_hook_ids
+        from usethis._test import change_cwd
+
         (tmp_path / ".pre-commit-config.yaml").write_text("repos: []\n")
 
         with change_cwd(tmp_path):
             assert get_hook_ids() == []
 
     def test_single(self, tmp_path: Path):
+        from usethis._integrations.pre_commit.hooks import get_hook_ids
+        from usethis._test import change_cwd
+
         (tmp_path / ".pre-commit-config.yaml").write_text(
             """
 repos:
@@ -460,6 +530,9 @@ repos:
             assert get_hook_ids() == ["bar"]
 
     def test_multihooks(self, tmp_path: Path):
+        from usethis._integrations.pre_commit.hooks import get_hook_ids
+        from usethis._test import change_cwd
+
         (tmp_path / ".pre-commit-config.yaml").write_text(
             """
 repos:
@@ -473,6 +546,9 @@ repos:
             assert get_hook_ids() == ["bar", "baz"]
 
     def test_multirepo(self, tmp_path: Path):
+        from usethis._integrations.pre_commit.hooks import get_hook_ids
+        from usethis._test import change_cwd
+
         (tmp_path / ".pre-commit-config.yaml").write_text(
             """
 repos:
@@ -489,6 +565,9 @@ repos:
 
     def test_duplicated_ok(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.pre_commit.hooks import get_hook_ids
+        from usethis._test import change_cwd
+
         (tmp_path / ".pre-commit-config.yaml").write_text(
             """
 repos:
@@ -511,6 +590,10 @@ repos:
 
 class TestAddPlaceholderHook:
     def test_contents(self, tmp_path: Path, capfd: pytest.CaptureFixture[str]):
+        # Arrange
+        from usethis._integrations.pre_commit.hooks import add_placeholder_hook
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(tmp_path):
             add_placeholder_hook()
@@ -544,6 +627,9 @@ repos:
 class TestHooksAreEquivalent:
     def test_identical(self):
         # Arrange
+        from usethis._integrations.pre_commit.hooks import _hooks_are_equivalent
+        from usethis._integrations.pre_commit.schema import HookDefinition, Language
+
         hook = HookDefinition(
             id="foo",
             name="Foo",
@@ -565,6 +651,9 @@ class TestHooksAreEquivalent:
 
     def test_different_id(self):
         # Arrange
+        from usethis._integrations.pre_commit.hooks import _hooks_are_equivalent
+        from usethis._integrations.pre_commit.schema import HookDefinition, Language
+
         hook = HookDefinition(
             id="foo",
             name="Foo",
@@ -586,6 +675,9 @@ class TestHooksAreEquivalent:
 
     def test_different_name(self):
         # Arrange
+        from usethis._integrations.pre_commit.hooks import _hooks_are_equivalent
+        from usethis._integrations.pre_commit.schema import HookDefinition, Language
+
         hook = HookDefinition(
             id="foo",
             name="Foo",
@@ -607,6 +699,9 @@ class TestHooksAreEquivalent:
 
     def test_case_sensitive_id_difference(self):
         # Arrange
+        from usethis._integrations.pre_commit.hooks import _hooks_are_equivalent
+        from usethis._integrations.pre_commit.schema import HookDefinition
+
         hook = HookDefinition(
             id="foo",
             name="Foo",
@@ -626,6 +721,9 @@ class TestHooksAreEquivalent:
 
     def test_no_id(self):
         # Arrange
+        from usethis._integrations.pre_commit.hooks import _hooks_are_equivalent
+        from usethis._integrations.pre_commit.schema import HookDefinition, Language
+
         hook = HookDefinition(
             id=None,
             name="Foo",

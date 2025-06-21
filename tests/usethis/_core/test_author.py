@@ -1,13 +1,13 @@
 from pathlib import Path
 
-from usethis._core.author import add_author
-from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._test import change_cwd
-
 
 class TestAddAuthor:
     def test_no_authors_yet(self, tmp_path: Path):
         # Arrange
+        from usethis._core.author import add_author
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         (tmp_path / "pyproject.toml").touch()
 
         # Act
@@ -29,6 +29,10 @@ email = "jc@example.com"
 
     def test_append(self, tmp_path: Path):
         # Arrange
+        from usethis._core.author import add_author
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         (tmp_path / "pyproject.toml").write_text(
             """\
 [project]
@@ -60,6 +64,10 @@ email = "jc@example.com"
 
     def test_email_not_provided(self, tmp_path: Path):
         # Arrange
+        from usethis._core.author import add_author
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         (tmp_path / "pyproject.toml").touch()
 
         # Act
@@ -77,6 +85,10 @@ name = "John Cleese"
 
     def test_overwrite(self, tmp_path: Path):
         # Arrange
+        from usethis._core.author import add_author
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         (tmp_path / "pyproject.toml").write_text(
             """\
 [project]
@@ -107,6 +119,11 @@ name = "Python Dev Team"
         )
 
     def test_no_pyproject_yet(self, tmp_path: Path):
+        # Arrange
+        from usethis._core.author import add_author
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(tmp_path), PyprojectTOMLManager():
             add_author(name="John Cleese")
@@ -119,6 +136,10 @@ name = "Python Dev Team"
         # Suspected to be similar to this https://github.com/python-poetry/tomlkit/issues/381
 
         # Arrange
+        from usethis._core.author import add_author
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         (tmp_path / "pyproject.toml").write_text(
             """\
 [project]

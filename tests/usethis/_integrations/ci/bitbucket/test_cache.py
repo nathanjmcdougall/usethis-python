@@ -2,20 +2,21 @@ from pathlib import Path
 
 import pytest
 
-from usethis._integrations.ci.bitbucket.cache import (
-    add_caches,
-    get_cache_by_name,
-    remove_cache,
-)
-from usethis._integrations.ci.bitbucket.config import add_bitbucket_pipeline_config
-from usethis._integrations.ci.bitbucket.schema import Cache, CachePath
-from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._test import change_cwd
-
 
 class TestAddCaches:
     def test_in_caches(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
         # Arrange
+        from usethis._integrations.ci.bitbucket.cache import (
+            add_caches,
+            get_cache_by_name,
+        )
+        from usethis._integrations.ci.bitbucket.config import (
+            add_bitbucket_pipeline_config,
+        )
+        from usethis._integrations.ci.bitbucket.schema import Cache, CachePath
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         cache_by_name = {"example": Cache(CachePath("~/.cache/example"))}
 
         with change_cwd(uv_init_dir), PyprojectTOMLManager():
@@ -36,6 +37,17 @@ class TestAddCaches:
 
     def test_already_exists(self, uv_init_dir: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.cache import (
+            add_caches,
+            get_cache_by_name,
+        )
+        from usethis._integrations.ci.bitbucket.config import (
+            add_bitbucket_pipeline_config,
+        )
+        from usethis._integrations.ci.bitbucket.schema import Cache, CachePath
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         cache_by_name = {
             "uv": Cache(CachePath("~/.cache/uv"))  # uv cache is in the default config
         }
@@ -51,6 +63,10 @@ class TestAddCaches:
     def test_definitions_order(self, tmp_path: Path):
         """Test that the newly-created definitions section is placed after the image."""
         # Arrange
+        from usethis._integrations.ci.bitbucket.cache import add_caches
+        from usethis._integrations.ci.bitbucket.schema import Cache, CachePath
+        from usethis._test import change_cwd
+
         cache_by_name = {"example": Cache(CachePath("~/.cache/example"))}
 
         (tmp_path / "bitbucket-pipelines.yml").write_text(
@@ -87,6 +103,9 @@ pipelines:
 class TestRemoveCache:
     def test_removal_succeeds(self, tmp_path: Path, capfd: pytest.CaptureFixture[str]):
         # Arrange
+        from usethis._integrations.ci.bitbucket.cache import remove_cache
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").write_text(
             """\
 image: atlassian/default-image:3
@@ -123,8 +142,20 @@ pipelines:
         )
 
     def test_roundtrip(self, uv_init_dir: Path):
+        # Arrange
+        from usethis._integrations.ci.bitbucket.cache import (
+            add_caches,
+            get_cache_by_name,
+            remove_cache,
+        )
+        from usethis._integrations.ci.bitbucket.config import (
+            add_bitbucket_pipeline_config,
+        )
+        from usethis._integrations.ci.bitbucket.schema import Cache, CachePath
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         with change_cwd(uv_init_dir), PyprojectTOMLManager():
-            # Arrange
             add_bitbucket_pipeline_config()
             add_caches({"mycache": Cache(CachePath("~/.cache/mytool"))})
 
@@ -136,6 +167,9 @@ pipelines:
 
     def test_empty_section_not_removed_unnecessarily(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.cache import remove_cache
+        from usethis._test import change_cwd
+
         original = """\
 image: atlassian/default-image:3
 definitions:
@@ -157,6 +191,9 @@ pipelines:
 
     def test_no_definitions_section(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.cache import remove_cache
+        from usethis._test import change_cwd
+
         original = """\
 image: atlassian/default-image:3
 pipelines:
@@ -176,6 +213,9 @@ pipelines:
 
     def test_no_cache_definitions_section(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.cache import remove_cache
+        from usethis._test import change_cwd
+
         original = """\
 image: atlassian/default-image:3
 definitions:

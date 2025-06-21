@@ -2,24 +2,16 @@ from pathlib import Path
 
 import pytest
 
-from usethis._config_file import files_manager
-from usethis._core.ci import use_ci_bitbucket
-from usethis._core.tool import (
-    use_codespell,
-    use_deptry,
-    use_pre_commit,
-    use_pyproject_fmt,
-    use_ruff,
-)
-from usethis._integrations.ci.bitbucket.steps import get_steps_in_default
-from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._test import change_cwd
-
 
 class TestBitBucket:
     class TestAdd:
         def test_unused_cache_removed(self, uv_init_repo_dir: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit
+            from usethis._integrations.ci.bitbucket.steps import get_steps_in_default
+            from usethis._test import change_cwd
+
             (uv_init_repo_dir / "bitbucket-pipelines.yml").write_text("""\
 image: atlassian/default-image:3
 pipelines:
@@ -44,6 +36,11 @@ pipelines:
 
         class TestConfigFile:
             def test_exists(self, uv_init_dir: Path):
+                # Arrange
+                from usethis._config_file import files_manager
+                from usethis._core.ci import use_ci_bitbucket
+                from usethis._test import change_cwd
+
                 # Act
                 with change_cwd(uv_init_dir), files_manager():
                     use_ci_bitbucket()
@@ -52,6 +49,11 @@ pipelines:
                 assert (uv_init_dir / "bitbucket-pipelines.yml").exists()
 
             def test_contents(self, uv_init_dir: Path):
+                # Arrange
+                from usethis._config_file import files_manager
+                from usethis._core.ci import use_ci_bitbucket
+                from usethis._test import change_cwd
+
                 # Act
                 with change_cwd(uv_init_dir), files_manager():
                     use_ci_bitbucket()
@@ -86,6 +88,10 @@ pipelines:
 
             def test_already_exists(self, uv_init_dir: Path):
                 # Arrange
+                from usethis._config_file import files_manager
+                from usethis._core.ci import use_ci_bitbucket
+                from usethis._test import change_cwd
+
                 (uv_init_dir / "bitbucket-pipelines.yml").touch()
 
                 # Act
@@ -100,6 +106,10 @@ pipelines:
                 self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
             ):
                 # Arrange
+                from usethis._config_file import files_manager
+                from usethis._core.ci import use_ci_bitbucket
+                from usethis._test import change_cwd
+
                 (uv_init_dir / ".pre-commit-config.yaml").touch()
 
                 # Act
@@ -147,6 +157,11 @@ pipelines:
                 )
 
             def test_not_mentioned_if_not_used(self, uv_init_dir: Path):
+                # Arrange
+                from usethis._config_file import files_manager
+                from usethis._core.ci import use_ci_bitbucket
+                from usethis._test import change_cwd
+
                 # Act
                 with change_cwd(uv_init_dir), files_manager():
                     use_ci_bitbucket()
@@ -157,8 +172,13 @@ pipelines:
 
         class TestPlaceholder:
             def test_placeholder_removed(self, uv_init_repo_dir: Path):
+                # Arrange
+                from usethis._config_file import files_manager
+                from usethis._core.ci import use_ci_bitbucket
+                from usethis._core.tool import use_pre_commit
+                from usethis._test import change_cwd
+
                 with change_cwd(uv_init_repo_dir), files_manager():
-                    # Arrange
                     use_ci_bitbucket()
                     contents = (
                         uv_init_repo_dir / "bitbucket-pipelines.yml"
@@ -173,8 +193,13 @@ pipelines:
                 assert "Placeholder" not in contents
 
             def test_placeholder_restored(self, uv_init_repo_dir: Path):
+                # Arrange
+                from usethis._config_file import files_manager
+                from usethis._core.ci import use_ci_bitbucket
+                from usethis._core.tool import use_pre_commit
+                from usethis._test import change_cwd
+
                 with change_cwd(uv_init_repo_dir), files_manager():
-                    # Arrange
                     use_pre_commit()
                     use_ci_bitbucket()
                     contents = (
@@ -194,6 +219,10 @@ pipelines:
                 self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
             ):
                 # Arrange
+                from usethis._config_file import files_manager
+                from usethis._core.ci import use_ci_bitbucket
+                from usethis._test import change_cwd
+
                 (uv_init_dir / "ruff.toml").touch()
 
                 # Act
@@ -250,8 +279,13 @@ pipelines:
             def test_content(
                 self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
             ):
+                # Arrange
+                from usethis._config_file import files_manager
+                from usethis._core.ci import use_ci_bitbucket
+                from usethis._core.tool import use_deptry
+                from usethis._test import change_cwd
+
                 with change_cwd(uv_init_dir), files_manager():
-                    # Arrange
                     use_deptry()
                     capfd.readouterr()
 
@@ -298,8 +332,13 @@ pipelines:
 
         class TestCodespellIntegration:
             def test_content(self, uv_init_dir: Path):
+                # Arrange
+                from usethis._config_file import files_manager
+                from usethis._core.ci import use_ci_bitbucket
+                from usethis._core.tool import use_codespell
+                from usethis._test import change_cwd
+
                 with change_cwd(uv_init_dir), files_manager():
-                    # Arrange
                     use_codespell()
 
                     # Act
@@ -336,8 +375,13 @@ pipelines:
         def test_lots_of_tools_no_precommit(
             self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.ci import use_ci_bitbucket
+            from usethis._core.tool import use_deptry, use_pyproject_fmt, use_ruff
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_dir), files_manager():
-                # Arrange
                 use_deptry()
                 use_ruff()
                 use_pyproject_fmt()
@@ -417,6 +461,10 @@ pipelines:
                 self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
             ):
                 # Arrange
+                from usethis._config_file import files_manager
+                from usethis._core.ci import use_ci_bitbucket
+                from usethis._test import change_cwd
+
                 (uv_init_dir / "tests").mkdir()
                 (uv_init_dir / "tests" / "conftest.py").touch()
 
@@ -438,6 +486,11 @@ pipelines:
                 )
 
             def test_not_mentioned_if_not_used(self, uv_init_dir: Path):
+                # Arrange
+                from usethis._config_file import files_manager
+                from usethis._core.ci import use_ci_bitbucket
+                from usethis._test import change_cwd
+
                 # Act
                 with change_cwd(uv_init_dir), files_manager():
                     use_ci_bitbucket()
@@ -448,6 +501,10 @@ pipelines:
 
             def test_unsupported_python_version_removed(self, uv_init_dir: Path):
                 # Arrange
+                from usethis._config_file import files_manager
+                from usethis._core.ci import use_ci_bitbucket
+                from usethis._test import change_cwd
+
                 (uv_init_dir / "tests").mkdir()
                 (uv_init_dir / "tests" / "conftest.py").touch()
                 (uv_init_dir / "pyproject.toml").write_text(
@@ -484,6 +541,12 @@ pipelines:
         class TestPyproject:
             def test_removed(self, tmp_path: Path):
                 # Arrange
+                from usethis._core.ci import use_ci_bitbucket
+                from usethis._integrations.file.pyproject_toml.io_ import (
+                    PyprojectTOMLManager,
+                )
+                from usethis._test import change_cwd
+
                 (tmp_path / "bitbucket-pipelines.yml").touch()
 
                 # Act
@@ -497,6 +560,12 @@ pipelines:
                 self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
             ):
                 # Arrange
+                from usethis._core.ci import use_ci_bitbucket
+                from usethis._integrations.file.pyproject_toml.io_ import (
+                    PyprojectTOMLManager,
+                )
+                from usethis._test import change_cwd
+
                 (uv_init_dir / "bitbucket-pipelines.yml").touch()
 
                 # Act
@@ -509,6 +578,11 @@ pipelines:
 
     class TestHow:
         def test_message(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.ci import use_ci_bitbucket
+            from usethis._test import change_cwd
+
             # Act
             with change_cwd(uv_init_dir), files_manager():
                 use_ci_bitbucket(how=True)

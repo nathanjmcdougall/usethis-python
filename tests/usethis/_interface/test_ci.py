@@ -1,10 +1,5 @@
 from pathlib import Path
 
-from typer.testing import CliRunner
-
-from usethis._interface.ci import app
-from usethis._test import change_cwd
-
 
 class TestBitbucket:
     def test_readme_example(self, tmp_path: Path):
@@ -14,6 +9,11 @@ class TestBitbucket:
         updated too.
         """
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.ci import app
+        from usethis._test import change_cwd
+
         # We've already run ruff and pytest...
         (tmp_path / "pytest.ini").touch()
         (tmp_path / "ruff.toml").touch()

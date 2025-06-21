@@ -1,22 +1,14 @@
 from pathlib import Path
 
-from usethis._integrations.ci.bitbucket.anchor import ScriptItemAnchor
-from usethis._integrations.ci.bitbucket.config import (
-    add_bitbucket_pipeline_config,
-    remove_bitbucket_pipeline_config,
-)
-from usethis._integrations.ci.bitbucket.schema import Model, Script
-from usethis._integrations.ci.bitbucket.steps import (
-    Step,
-    add_bitbucket_step_in_default,
-)
-from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._integrations.file.yaml.io_ import edit_yaml
-from usethis._test import change_cwd
-
 
 class TestAddBitbucketPipelineConfig:
     def test_blank_slate(self, uv_init_dir: Path):
+        from usethis._integrations.ci.bitbucket.config import (
+            add_bitbucket_pipeline_config,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         with change_cwd(uv_init_dir), PyprojectTOMLManager():
             add_bitbucket_pipeline_config()
 
@@ -47,6 +39,11 @@ pipelines:
         )
 
     def test_existing_file(self, tmp_path: Path):
+        from usethis._integrations.ci.bitbucket.config import (
+            add_bitbucket_pipeline_config,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").write_text("existing content")
 
         with change_cwd(tmp_path):
@@ -57,6 +54,20 @@ pipelines:
         assert content == "existing content"
 
     def test_satisfies_schema(self, uv_init_dir: Path):
+        # Arrange
+        from usethis._integrations.ci.bitbucket.anchor import ScriptItemAnchor
+        from usethis._integrations.ci.bitbucket.config import (
+            add_bitbucket_pipeline_config,
+        )
+        from usethis._integrations.ci.bitbucket.schema import Model, Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            add_bitbucket_step_in_default,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.file.yaml.io_ import edit_yaml
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(uv_init_dir), PyprojectTOMLManager():
             add_bitbucket_pipeline_config()
@@ -76,12 +87,22 @@ pipelines:
 
 class TestRemoveBitbucketPipelineConfig:
     def test_blank_slate(self, tmp_path: Path):
+        from usethis._integrations.ci.bitbucket.config import (
+            remove_bitbucket_pipeline_config,
+        )
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path):
             remove_bitbucket_pipeline_config()
 
         assert not (tmp_path / "bitbucket-pipelines.yml").exists()
 
     def test_existing_file(self, tmp_path: Path):
+        from usethis._integrations.ci.bitbucket.config import (
+            remove_bitbucket_pipeline_config,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").touch()
 
         with change_cwd(tmp_path):

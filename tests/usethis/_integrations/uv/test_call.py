@@ -2,16 +2,12 @@ from pathlib import Path
 
 import pytest
 
-import usethis._integrations.uv.call
-from usethis._config import usethis_config
-from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._integrations.uv.call import call_uv_subprocess
-from usethis._integrations.uv.errors import UVSubprocessFailedError
-from usethis._test import change_cwd
-
 
 class TestCallUVSubprocess:
     def test_help_output_suppressed(self, capfd: pytest.CaptureFixture[str]):
+        # Arrange
+        from usethis._integrations.uv.call import call_uv_subprocess
+
         # Act
         call_uv_subprocess(["help"], change_toml=False)
 
@@ -20,6 +16,10 @@ class TestCallUVSubprocess:
         assert capfd.readouterr().err == ""
 
     def test_nonexistent_command(self):
+        # Arrange
+        from usethis._integrations.uv.call import call_uv_subprocess
+        from usethis._integrations.uv.errors import UVSubprocessFailedError
+
         # Act and Assert
         match = ".*error: unrecognized subcommand 'does-not-exist'.*"
         with pytest.raises(UVSubprocessFailedError, match=match):
@@ -29,6 +29,10 @@ class TestCallUVSubprocess:
         # Mock the usethis._subprocess.call_subprocess function to check args passed
 
         # Arrange
+        import usethis._integrations.uv.call
+        from usethis._config import usethis_config
+        from usethis._integrations.uv.call import call_uv_subprocess
+
         # Mock the call_subprocess function to check the args passed
         def mock_call_subprocess(args: list[str], *, cwd: Path | None = None) -> str:
             _ = cwd
@@ -53,6 +57,10 @@ class TestCallUVSubprocess:
         # https://github.com/usethis-python/usethis-python/issues/299
 
         # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.uv.call import call_uv_subprocess
+        from usethis._test import change_cwd
+
         (tmp_path / "pyproject.toml").write_text(
             """\
 [project]

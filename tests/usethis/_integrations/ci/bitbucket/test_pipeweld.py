@@ -3,40 +3,17 @@ from uuid import UUID
 
 import pytest
 
-from usethis._integrations.ci.bitbucket.errors import UnexpectedImportPipelineError
-from usethis._integrations.ci.bitbucket.pipeweld import (
-    apply_pipeweld_instruction,
-    get_pipeweld_pipeline_from_default,
-    get_pipeweld_step,
-)
-from usethis._integrations.ci.bitbucket.schema import (
-    Image,
-    ImageName,
-    ImportPipeline,
-    Items,
-    Parallel,
-    ParallelExpanded,
-    ParallelItem,
-    ParallelSteps,
-    Pipeline,
-    Pipelines,
-    PipelinesConfiguration,
-    Script,
-    Stage,
-    StageItem,
-    Step,
-    Step1,
-    Step2,
-    StepItem,
-)
-from usethis._pipeweld.containers import DepGroup, depgroup, parallel, series
-from usethis._pipeweld.func import _get_instructions_for_insertion
-from usethis._pipeweld.ops import InsertParallel, InsertSuccessor
-from usethis._test import change_cwd
-
 
 class TestApplyPipeweldInstruction:
     def test_add_to_brand_new_pipeline(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.ci.bitbucket.pipeweld import (
+            apply_pipeweld_instruction,
+        )
+        from usethis._integrations.ci.bitbucket.schema import Script, Step
+        from usethis._pipeweld.ops import InsertSuccessor
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(tmp_path):
             apply_pipeweld_instruction(
@@ -61,6 +38,16 @@ pipelines:
 
     def test_import_pipeline_fails(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.errors import (
+            UnexpectedImportPipelineError,
+        )
+        from usethis._integrations.ci.bitbucket.pipeweld import (
+            apply_pipeweld_instruction,
+        )
+        from usethis._integrations.ci.bitbucket.schema import Script, Step
+        from usethis._pipeweld.ops import InsertSuccessor
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").write_text(
             """\
 image: atlassian/default-image:3
@@ -79,6 +66,13 @@ pipelines:
 
     def test_existing_pipeline(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.pipeweld import (
+            apply_pipeweld_instruction,
+        )
+        from usethis._integrations.ci.bitbucket.schema import Script, Step
+        from usethis._pipeweld.ops import InsertSuccessor
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").write_text(
             """\
 image: atlassian/default-image:3
@@ -120,6 +114,13 @@ pipelines:
     class TestInsertAfter:
         def test_step_item(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.ci.bitbucket.pipeweld import (
+                apply_pipeweld_instruction,
+            )
+            from usethis._integrations.ci.bitbucket.schema import Script, Step
+            from usethis._pipeweld.ops import InsertSuccessor
+            from usethis._test import change_cwd
+
             (tmp_path / "bitbucket-pipelines.yml").write_text(
                 """\
 image: atlassian/default-image:3
@@ -160,6 +161,13 @@ pipelines:
 
         def test_parallel_item(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.ci.bitbucket.pipeweld import (
+                apply_pipeweld_instruction,
+            )
+            from usethis._integrations.ci.bitbucket.schema import Script, Step
+            from usethis._pipeweld.ops import InsertSuccessor
+            from usethis._test import change_cwd
+
             (tmp_path / "bitbucket-pipelines.yml").write_text(
                 """\
 image: atlassian/default-image:3
@@ -210,6 +218,13 @@ pipelines:
 
         def test_parallel_expanded(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.ci.bitbucket.pipeweld import (
+                apply_pipeweld_instruction,
+            )
+            from usethis._integrations.ci.bitbucket.schema import Script, Step
+            from usethis._pipeweld.ops import InsertSuccessor
+            from usethis._test import change_cwd
+
             (tmp_path / "bitbucket-pipelines.yml").write_text(
                 """\
 image: atlassian/default-image:3
@@ -262,6 +277,13 @@ pipelines:
 
         def test_stage_item(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.ci.bitbucket.pipeweld import (
+                apply_pipeweld_instruction,
+            )
+            from usethis._integrations.ci.bitbucket.schema import Script, Step
+            from usethis._pipeweld.ops import InsertSuccessor
+            from usethis._test import change_cwd
+
             (tmp_path / "bitbucket-pipelines.yml").write_text(
                 """\
 image: atlassian/default-image:3
@@ -309,6 +331,9 @@ class TestGetInstructionsForInsertion:
     class TestStr:
         def test_after_str(self):
             # Arrange
+            from usethis._pipeweld.func import _get_instructions_for_insertion
+            from usethis._pipeweld.ops import InsertSuccessor
+
             component = "foo"
             after = "bar"
 
@@ -323,6 +348,9 @@ class TestGetInstructionsForInsertion:
 
         def test_after_none(self):
             # Arrange
+            from usethis._pipeweld.func import _get_instructions_for_insertion
+            from usethis._pipeweld.ops import InsertSuccessor
+
             component = "foo"
             after = None
 
@@ -338,6 +366,9 @@ class TestGetInstructionsForInsertion:
     class TestSeries:
         def test_empty(self):
             # Arrange
+            from usethis._pipeweld.containers import series
+            from usethis._pipeweld.func import _get_instructions_for_insertion
+
             component = series()
             after = None
 
@@ -352,6 +383,10 @@ class TestGetInstructionsForInsertion:
 
         def test_single(self):
             # Arrange
+            from usethis._pipeweld.containers import series
+            from usethis._pipeweld.func import _get_instructions_for_insertion
+            from usethis._pipeweld.ops import InsertSuccessor
+
             component = series("A")
             after = "0"
 
@@ -366,6 +401,10 @@ class TestGetInstructionsForInsertion:
 
         def test_multiple(self):
             # Arrange
+            from usethis._pipeweld.containers import series
+            from usethis._pipeweld.func import _get_instructions_for_insertion
+            from usethis._pipeweld.ops import InsertSuccessor
+
             component = series("A", "B", "C")
             after = "0"
 
@@ -385,6 +424,9 @@ class TestGetInstructionsForInsertion:
     class TestParallel:
         def test_empty(self):
             # Arrange
+            from usethis._pipeweld.containers import parallel
+            from usethis._pipeweld.func import _get_instructions_for_insertion
+
             component = parallel()
             after = None
 
@@ -399,6 +441,10 @@ class TestGetInstructionsForInsertion:
 
         def test_single(self):
             # Arrange
+            from usethis._pipeweld.containers import parallel
+            from usethis._pipeweld.func import _get_instructions_for_insertion
+            from usethis._pipeweld.ops import InsertSuccessor
+
             component = parallel("A")
             after = "0"
 
@@ -413,6 +459,10 @@ class TestGetInstructionsForInsertion:
 
         def test_multiple(self):
             # Arrange
+            from usethis._pipeweld.containers import parallel
+            from usethis._pipeweld.func import _get_instructions_for_insertion
+            from usethis._pipeweld.ops import InsertParallel, InsertSuccessor
+
             component = parallel("A", "B", "C")
             after = "0"
 
@@ -432,6 +482,10 @@ class TestGetInstructionsForInsertion:
     class TestDepGroup:
         def test_basic(self):
             # Arrange
+            from usethis._pipeweld.containers import depgroup, series
+            from usethis._pipeweld.func import _get_instructions_for_insertion
+            from usethis._pipeweld.ops import InsertSuccessor
+
             component = depgroup("A", series("B", "C"), config_group="x")
             after = "0"
 
@@ -453,6 +507,16 @@ class TestGetInstructionsForInsertion:
 class TestGetPipeweldPipelineFromDefault:
     def test_image_only(self):
         # Arrange
+        from usethis._integrations.ci.bitbucket.pipeweld import (
+            get_pipeweld_pipeline_from_default,
+        )
+        from usethis._integrations.ci.bitbucket.schema import (
+            Image,
+            ImageName,
+            PipelinesConfiguration,
+        )
+        from usethis._pipeweld.containers import series
+
         model = PipelinesConfiguration(
             image=Image(ImageName("atlassian/default-image:3"))
         )
@@ -465,6 +529,19 @@ class TestGetPipeweldPipelineFromDefault:
 
     def test_import_pipeline_raises(self):
         # Arrange
+        from usethis._integrations.ci.bitbucket.errors import (
+            UnexpectedImportPipelineError,
+        )
+        from usethis._integrations.ci.bitbucket.pipeweld import (
+            get_pipeweld_pipeline_from_default,
+        )
+        from usethis._integrations.ci.bitbucket.schema import (
+            ImportPipeline,
+            Pipeline,
+            Pipelines,
+            PipelinesConfiguration,
+        )
+
         model = PipelinesConfiguration(
             pipelines=Pipelines(
                 default=Pipeline(
@@ -482,6 +559,20 @@ class TestGetPipeweldPipelineFromDefault:
 
     def test_series(self):
         # Arrange
+        from usethis._integrations.ci.bitbucket.pipeweld import (
+            get_pipeweld_pipeline_from_default,
+        )
+        from usethis._integrations.ci.bitbucket.schema import (
+            Items,
+            Pipeline,
+            Pipelines,
+            PipelinesConfiguration,
+            Script,
+            Step,
+            StepItem,
+        )
+        from usethis._pipeweld.containers import series
+
         model = PipelinesConfiguration(
             pipelines=Pipelines(
                 default=Pipeline(
@@ -507,6 +598,23 @@ class TestGetPipeweldPipelineFromDefault:
 
     def test_parallel(self):
         # Arrange
+        from usethis._integrations.ci.bitbucket.pipeweld import (
+            get_pipeweld_pipeline_from_default,
+        )
+        from usethis._integrations.ci.bitbucket.schema import (
+            Items,
+            Parallel,
+            ParallelItem,
+            ParallelSteps,
+            Pipeline,
+            Pipelines,
+            PipelinesConfiguration,
+            Script,
+            Step,
+            StepItem,
+        )
+        from usethis._pipeweld.containers import parallel, series
+
         model = PipelinesConfiguration(
             pipelines=Pipelines(
                 default=Pipeline(
@@ -548,6 +656,24 @@ class TestGetPipeweldPipelineFromDefault:
 
     def test_parallel_expanded(self):
         # Arrange
+        from usethis._integrations.ci.bitbucket.pipeweld import (
+            get_pipeweld_pipeline_from_default,
+        )
+        from usethis._integrations.ci.bitbucket.schema import (
+            Items,
+            Parallel,
+            ParallelExpanded,
+            ParallelItem,
+            ParallelSteps,
+            Pipeline,
+            Pipelines,
+            PipelinesConfiguration,
+            Script,
+            Step,
+            StepItem,
+        )
+        from usethis._pipeweld.containers import parallel, series
+
         model = PipelinesConfiguration(
             pipelines=Pipelines(
                 default=Pipeline(
@@ -591,6 +717,22 @@ class TestGetPipeweldPipelineFromDefault:
 
     def test_named_stage_item(self):
         # Arrange
+        from usethis._integrations.ci.bitbucket.pipeweld import (
+            get_pipeweld_pipeline_from_default,
+        )
+        from usethis._integrations.ci.bitbucket.schema import (
+            Items,
+            Pipeline,
+            Pipelines,
+            PipelinesConfiguration,
+            Script,
+            Stage,
+            StageItem,
+            Step1,
+            Step2,
+        )
+        from usethis._pipeweld.containers import depgroup, series
+
         model = PipelinesConfiguration(
             pipelines=Pipelines(
                 default=Pipeline(
@@ -628,6 +770,22 @@ class TestGetPipeweldPipelineFromDefault:
 
     def test_unnamed_stage_item(self):
         # Arrange
+        from usethis._integrations.ci.bitbucket.pipeweld import (
+            get_pipeweld_pipeline_from_default,
+        )
+        from usethis._integrations.ci.bitbucket.schema import (
+            Items,
+            Pipeline,
+            Pipelines,
+            PipelinesConfiguration,
+            Script,
+            Stage,
+            StageItem,
+            Step1,
+            Step2,
+        )
+        from usethis._pipeweld.containers import DepGroup, depgroup, series
+
         model = PipelinesConfiguration(
             pipelines=Pipelines(
                 default=Pipeline(
@@ -671,6 +829,9 @@ class TestGetPipeweldPipelineFromDefault:
 class TestGetPipeweldStep:
     def test_no_name(self):
         # Arrange
+        from usethis._integrations.ci.bitbucket.pipeweld import get_pipeweld_step
+        from usethis._integrations.ci.bitbucket.schema import Script, Step
+
         step = Step(
             name=None,
             script=Script(["echo foo"]),
@@ -684,6 +845,9 @@ class TestGetPipeweldStep:
 
     def test_with_name(self):
         # Arrange
+        from usethis._integrations.ci.bitbucket.pipeweld import get_pipeweld_step
+        from usethis._integrations.ci.bitbucket.schema import Script, Step
+
         step = Step(
             name="foo",
             script=Script(["echo foo"]),

@@ -2,15 +2,12 @@ from pathlib import Path
 
 import pytest
 
-from usethis._integrations.pre_commit.io_ import (
-    PreCommitConfigYAMLConfigError,
-    edit_pre_commit_config_yaml,
-)
-from usethis._test import change_cwd
-
 
 class TestEditPreCommitConfigYAML:
     def test_does_not_exist(self, tmp_path: Path):
+        from usethis._integrations.pre_commit.io_ import edit_pre_commit_config_yaml
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path), edit_pre_commit_config_yaml():
             pass
 
@@ -18,6 +15,9 @@ class TestEditPreCommitConfigYAML:
 
     def test_unchanged(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.pre_commit.io_ import edit_pre_commit_config_yaml
+        from usethis._test import change_cwd
+
         content_str = """\
 repos:
   - repo: https://github.com/abravalheri/validate-pyproject
@@ -37,6 +37,12 @@ repos:
 
     def test_empty_is_invalid(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.pre_commit.io_ import (
+            PreCommitConfigYAMLConfigError,
+            edit_pre_commit_config_yaml,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / ".pre-commit-config.yaml").write_text("")
 
         # Act, Assert

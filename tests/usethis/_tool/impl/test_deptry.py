@@ -2,11 +2,6 @@ from pathlib import Path
 
 import pytest
 
-from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._test import change_cwd
-from usethis._tool.config import ConfigEntry, ConfigItem
-from usethis._tool.impl.deptry import DeptryTool
-
 
 class TestDeptryTool:
     """Tests for DeptryTool."""
@@ -14,6 +9,9 @@ class TestDeptryTool:
     def test_get_pyproject_id_keys(self):
         """Test that get_pyproject_id_keys returns the correct keys."""
         # Arrange
+        from usethis._tool.config import ConfigEntry, ConfigItem
+        from usethis._tool.impl.deptry import DeptryTool
+
         tool = DeptryTool()
 
         # Act
@@ -29,6 +27,10 @@ class TestDeptryTool:
     def test_remove_pyproject_configs_removes_deptry_section(self, tmp_path: Path):
         """Test that remove_pyproject_configs removes the deptry section."""
         # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+        from usethis._tool.impl.deptry import DeptryTool
+
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""[tool.deptry]
 ignore_missing = ["pytest"]
@@ -46,6 +48,8 @@ ignore_missing = ["pytest"]
     class TestIsManagedRule:
         def test_dep001(self):
             # Arrange
+            from usethis._tool.impl.deptry import DeptryTool
+
             rule = "DEP001"
 
             # Act
@@ -56,6 +60,8 @@ ignore_missing = ["pytest"]
 
         def test_not_deptry_rule(self):
             # Arrange
+            from usethis._tool.impl.deptry import DeptryTool
+
             rule = "NOT_DEPTRY_RULE"
 
             # Act
@@ -66,6 +72,8 @@ ignore_missing = ["pytest"]
 
         def test_extra_letters(self):
             # Arrange
+            from usethis._tool.impl.deptry import DeptryTool
+
             rule = "DEPA001"
 
             # Act
@@ -76,6 +84,8 @@ ignore_missing = ["pytest"]
 
         def test_leading_numbers(self):
             # Arrange
+            from usethis._tool.impl.deptry import DeptryTool
+
             rule = "001DEP"
 
             # Act
@@ -86,6 +96,8 @@ ignore_missing = ["pytest"]
 
         def test_letters_separated_by_numbers(self):
             # Arrange
+            from usethis._tool.impl.deptry import DeptryTool
+
             rule = "D0E0P1"
 
             # Act
@@ -96,6 +108,8 @@ ignore_missing = ["pytest"]
 
         def test_four_numbers(self):
             # Arrange
+            from usethis._tool.impl.deptry import DeptryTool
+
             rule = "DEP0001"
 
             # Act
@@ -106,6 +120,8 @@ ignore_missing = ["pytest"]
 
         def test_no_numbers(self):
             # Arrange
+            from usethis._tool.impl.deptry import DeptryTool
+
             rule = "DEP"
 
             # Act
@@ -116,6 +132,8 @@ ignore_missing = ["pytest"]
 
         def test_truncated(self):
             # Arrange
+            from usethis._tool.impl.deptry import DeptryTool
+
             rule = "DE"
 
             # Act
@@ -127,6 +145,12 @@ ignore_missing = ["pytest"]
     class TestSelectRules:
         def test_always_empty(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.deptry import DeptryTool
+
             tool = DeptryTool()
 
             # Act
@@ -139,6 +163,12 @@ ignore_missing = ["pytest"]
     class TestGetSelectedRules:
         def test_always_empty(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.deptry import DeptryTool
+
             tool = DeptryTool()
 
             # Act
@@ -151,6 +181,12 @@ ignore_missing = ["pytest"]
     class TestDeselectRules:
         def test_no_effect(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.deptry import DeptryTool
+
             tool = DeptryTool()
 
             # Act
@@ -165,6 +201,12 @@ ignore_missing = ["pytest"]
             self, tmp_path: Path, capfd: pytest.CaptureFixture[str]
         ):
             # Arrange
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.deptry import DeptryTool
+
             tool = DeptryTool()
 
             # Act
@@ -183,6 +225,12 @@ ignore_missing = ["pytest"]
 
         def test_ignore_dep001(self, tmp_path: Path, capfd: pytest.CaptureFixture[str]):
             # Arrange
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.deptry import DeptryTool
+
             tool = DeptryTool()
             (tmp_path / "pyproject.toml").write_text("")
 
@@ -208,6 +256,12 @@ ignore = ["DEP001"]
     class TestGetIgnoredRules:
         def test_no_pyproject_toml(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.deptry import DeptryTool
+
             tool = DeptryTool()
 
             # Act
@@ -219,6 +273,12 @@ ignore = ["DEP001"]
 
         def test_empty(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.deptry import DeptryTool
+
             tool = DeptryTool()
             (tmp_path / "pyproject.toml").write_text("")
 
@@ -231,6 +291,12 @@ ignore = ["DEP001"]
 
         def test_with_rule(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.deptry import DeptryTool
+
             tool = DeptryTool()
             (tmp_path / "pyproject.toml").write_text(
                 """\

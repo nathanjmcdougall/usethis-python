@@ -1,18 +1,14 @@
 from pathlib import Path
 
-from typer.testing import CliRunner
-
-from usethis._app import app
-from usethis._config_file import files_manager
-from usethis._core.rule import ignore_rules
-from usethis._core.tool import use_deptry
-from usethis._subprocess import call_subprocess
-from usethis._test import change_cwd
-
 
 class TestRule:
     def test_add(self, tmp_path: Path):
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._app import app
+        from usethis._test import change_cwd
+
         (tmp_path / "ruff.toml").touch()
 
         # Act
@@ -26,6 +22,11 @@ class TestRule:
 
     def test_deselect(self, tmp_path: Path):
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._app import app
+        from usethis._test import change_cwd
+
         (tmp_path / "ruff.toml").write_text(
             """\
 [lint]
@@ -44,6 +45,11 @@ select = ["RUF001"]
 
     def test_ignore(self, tmp_path: Path):
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._app import app
+        from usethis._test import change_cwd
+
         (tmp_path / "ruff.toml").touch()
 
         # Act
@@ -57,6 +63,11 @@ select = ["RUF001"]
 
     def test_unignore(self, tmp_path: Path):
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._app import app
+        from usethis._test import change_cwd
+
         (tmp_path / "ruff.toml").write_text(
             """\
 [lint]
@@ -77,9 +88,15 @@ ignore = ["RUF001"]
         )
 
     def test_runs_after_ignore(self, tmp_path: Path):
-        # Act
+        # Arrange
+
+        from usethis._config_file import files_manager
+        from usethis._core.rule import ignore_rules
+        from usethis._core.tool import use_deptry
+        from usethis._subprocess import call_subprocess
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path), files_manager():
-            # Arrange
             use_deptry()
 
             # Act

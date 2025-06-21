@@ -3,131 +3,147 @@ from pathlib import Path
 
 import pytest
 
-from usethis._console import box_print
-from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._integrations.file.setup_cfg.io_ import SetupCFGManager
-from usethis._integrations.pre_commit.hooks import _PLACEHOLDER_ID, get_hook_ids
-from usethis._integrations.pre_commit.schema import HookDefinition, UriRepo
-from usethis._integrations.uv.deps import Dependency, add_deps_to_group
-from usethis._io import KeyValueFileManager
-from usethis._test import change_cwd
-from usethis._tool.base import Tool
-from usethis._tool.config import ConfigEntry, ConfigItem, ConfigSpec
-from usethis._tool.pre_commit import PreCommitConfig, PreCommitRepoConfig
-from usethis._tool.rule import RuleConfig
+
+def get_default_tool():
+    from usethis._console import box_print
+    from usethis._tool.base import Tool
+
+    class DefaultTool(Tool):
+        """An example tool for testing purposes.
+
+        This tool has minimal non-default configuration.
+        """
+
+        @property
+        def name(self) -> str:
+            return "default_tool"
+
+        def print_how_to_use(self) -> None:
+            box_print("How to use default_tool")
+
+    return DefaultTool()
 
 
-class DefaultTool(Tool):
-    """An example tool for testing purposes.
+def get_my_tool():
+    from usethis._console import box_print
+    from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+    from usethis._integrations.pre_commit.schema import HookDefinition, UriRepo
+    from usethis._integrations.uv.deps import Dependency
+    from usethis._tool.base import Tool
+    from usethis._tool.config import ConfigEntry, ConfigItem, ConfigSpec
+    from usethis._tool.pre_commit import PreCommitConfig
+    from usethis._tool.rule import RuleConfig
 
-    This tool has minimal non-default configuration.
-    """
+    class MyTool(Tool):
+        """An example tool for testing purposes.
 
-    @property
-    def name(self) -> str:
-        return "default_tool"
+        This tool has maximal non-default configuration.
+        """
 
-    def print_how_to_use(self) -> None:
-        box_print("How to use default_tool")
+        @property
+        def name(self) -> str:
+            return "my_tool"
 
+        def print_how_to_use(self) -> None:
+            box_print("How to use my_tool")
 
-class MyTool(Tool):
-    """An example tool for testing purposes.
+        def get_dev_deps(self, *, unconditional: bool = False) -> list[Dependency]:
+            deps = [
+                Dependency(name=self.name),
+                Dependency(name="black"),
+                Dependency(name="flake8"),
+            ]
+            if unconditional:
+                deps.append(Dependency(name="pytest"))
+            return deps
 
-    This tool has maximal non-default configuration.
-    """
+        def get_pre_commit_config(self) -> PreCommitConfig:
+            return PreCommitConfig.from_single_repo(
+                UriRepo(
+                    repo=f"repo for {self.name}",
+                    hooks=[HookDefinition(id="deptry")],
+                ),
+                requires_venv=False,
+            )
 
-    @property
-    def name(self) -> str:
-        return "my_tool"
-
-    def print_how_to_use(self) -> None:
-        box_print("How to use my_tool")
-
-    def get_dev_deps(self, *, unconditional: bool = False) -> list[Dependency]:
-        deps = [
-            Dependency(name=self.name),
-            Dependency(name="black"),
-            Dependency(name="flake8"),
-        ]
-        if unconditional:
-            deps.append(Dependency(name="pytest"))
-        return deps
-
-    def get_pre_commit_config(self) -> PreCommitConfig:
-        return PreCommitConfig.from_single_repo(
-            UriRepo(
-                repo=f"repo for {self.name}",
-                hooks=[HookDefinition(id="deptry")],
-            ),
-            requires_venv=False,
-        )
-
-    def get_config_spec(self) -> ConfigSpec:
-        return ConfigSpec(
-            file_manager_by_relative_path={
-                Path("pyproject.toml"): PyprojectTOMLManager(),
-            },
-            resolution="first",
-            config_items=[
-                ConfigItem(
-                    root={
-                        Path("pyproject.toml"): ConfigEntry(
-                            keys=["tool", self.name], get_value=lambda: {"key": "value"}
-                        )
-                    }
-                )
-            ],
-        )
-
-    def get_rule_config(self) -> RuleConfig:
-        return RuleConfig(selected=["MYRULE"])
-
-    def get_managed_files(self) -> list[Path]:
-        return [Path("mytool-config.yaml")]
-
-    def get_managed_pyproject_keys(self) -> list[list[str]]:
-        return [["tool", self.name], ["project", "classifiers"]]
-
-
-class TwoHooksTool(Tool):
-    @property
-    def name(self) -> str:
-        return "two_hooks_tool"
-
-    def print_how_to_use(self) -> None:
-        box_print("How to use two_hooks_tool")
-
-    def get_pre_commit_config(self) -> PreCommitConfig:
-        return PreCommitConfig.from_single_repo(
-            UriRepo(
-                repo=f"repo for {self.name}",
-                hooks=[
-                    HookDefinition(id="ruff"),
-                    HookDefinition(id="ruff-format"),
+        def get_config_spec(self) -> ConfigSpec:
+            return ConfigSpec(
+                file_manager_by_relative_path={
+                    Path("pyproject.toml"): PyprojectTOMLManager(),
+                },
+                resolution="first",
+                config_items=[
+                    ConfigItem(
+                        root={
+                            Path("pyproject.toml"): ConfigEntry(
+                                keys=["tool", self.name],
+                                get_value=lambda: {"key": "value"},
+                            )
+                        }
+                    )
                 ],
-            ),
-            requires_venv=False,
-        )
+            )
+
+        def get_rule_config(self) -> RuleConfig:
+            return RuleConfig(selected=["MYRULE"])
+
+        def get_managed_files(self) -> list[Path]:
+            return [Path("mytool-config.yaml")]
+
+        def get_managed_pyproject_keys(self) -> list[list[str]]:
+            return [["tool", self.name], ["project", "classifiers"]]
+
+    return MyTool()
+
+
+def get_two_hooks_tool():
+    from usethis._console import box_print
+    from usethis._integrations.pre_commit.schema import HookDefinition, UriRepo
+    from usethis._tool.base import Tool
+    from usethis._tool.pre_commit import PreCommitConfig
+
+    class TwoHooksTool(Tool):
+        @property
+        def name(self) -> str:
+            return "two_hooks_tool"
+
+        def print_how_to_use(self) -> None:
+            box_print("How to use two_hooks_tool")
+
+        def get_pre_commit_config(self) -> PreCommitConfig:
+            return PreCommitConfig.from_single_repo(
+                UriRepo(
+                    repo=f"repo for {self.name}",
+                    hooks=[
+                        HookDefinition(id="ruff"),
+                        HookDefinition(id="ruff-format"),
+                    ],
+                ),
+                requires_venv=False,
+            )
+
+    return TwoHooksTool()
 
 
 class TestTool:
     class TestName:
         def test_default(self):
-            tool = DefaultTool()
+            tool = get_default_tool()
             assert tool.name == "default_tool"
 
         def test_specific(self):
-            tool = MyTool()
+            tool = get_my_tool()
             assert tool.name == "my_tool"
 
     class TestDevDeps:
         def test_default(self):
-            tool = DefaultTool()
+            tool = get_default_tool()
             assert tool.get_dev_deps() == []
 
         def test_specific(self):
-            tool = MyTool()
+            from usethis._integrations.uv.deps import Dependency
+
+            tool = get_my_tool()
             assert tool.get_dev_deps() == [
                 Dependency(name="my_tool"),
                 Dependency(name="black"),
@@ -136,32 +152,36 @@ class TestTool:
 
     class TestPrintHowToUse:
         def test_default(self, capsys: pytest.CaptureFixture[str]):
-            tool = DefaultTool()
+            tool = get_default_tool()
             tool.print_how_to_use()
             captured = capsys.readouterr()
             assert captured.out == "☐ How to use default_tool\n"
 
         def test_specific(self, capsys: pytest.CaptureFixture[str]):
-            tool = MyTool()
+            tool = get_my_tool()
             tool.print_how_to_use()
             captured = capsys.readouterr()
             assert captured.out == "☐ How to use my_tool\n"
 
     class TestGetPreCommitRepos:
         def test_default(self):
-            tool = DefaultTool()
+            tool = get_default_tool()
             assert tool.get_pre_commit_repos() == []
 
         def test_specific(self):
-            tool = MyTool()
+            from usethis._integrations.pre_commit.schema import HookDefinition, UriRepo
+
+            tool = get_my_tool()
             assert tool.get_pre_commit_repos() == [
                 UriRepo(repo="repo for my_tool", hooks=[HookDefinition(id="deptry")])
             ]
 
     class TestGetConfigSpec:
         def test_default(self):
+            from usethis._tool.config import ConfigSpec
+
             # Arrange
-            tool = DefaultTool()
+            tool = get_default_tool()
 
             # Act
             config_spec = tool.get_config_spec()
@@ -175,20 +195,24 @@ class TestTool:
 
     class TestGetAssociatedRuffRules:
         def test_default(self):
-            tool = DefaultTool()
+            from usethis._tool.rule import RuleConfig
+
+            tool = get_default_tool()
             assert tool.get_rule_config() == RuleConfig()
 
         def test_specific(self):
-            tool = MyTool()
+            from usethis._tool.rule import RuleConfig
+
+            tool = get_my_tool()
             assert tool.get_rule_config() == RuleConfig(selected=["MYRULE"])
 
     class TestGetManagedFiles:
         def test_default(self):
-            tool = DefaultTool()
+            tool = get_default_tool()
             assert tool.get_managed_files() == []
 
         def test_specific(self):
-            tool = MyTool()
+            tool = get_my_tool()
             assert tool.get_managed_files() == [
                 Path("mytool-config.yaml"),
             ]
@@ -197,7 +221,13 @@ class TestTool:
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_some_deps(self, uv_init_dir: Path):
             # Arrange
-            tool = MyTool()
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._integrations.uv.deps import Dependency, add_deps_to_group
+            from usethis._test import change_cwd
+
+            tool = get_my_tool()
             with change_cwd(uv_init_dir), PyprojectTOMLManager():
                 add_deps_to_group(
                     [
@@ -214,7 +244,9 @@ class TestTool:
 
         def test_files(self, uv_init_dir: Path):
             # Arrange
-            tool = MyTool()
+            from usethis._test import change_cwd
+
+            tool = get_my_tool()
             with change_cwd(uv_init_dir):
                 Path("mytool-config.yaml").touch()
 
@@ -226,7 +258,12 @@ class TestTool:
 
         def test_dir(self, uv_init_dir: Path):
             # Arrange
-            tool = MyTool()
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
+            tool = get_my_tool()
             with change_cwd(uv_init_dir), PyprojectTOMLManager():
                 Path("mytool-config.yaml").mkdir()
 
@@ -238,7 +275,12 @@ class TestTool:
 
         def test_pyproject(self, uv_init_dir: Path):
             # Arrange
-            tool = MyTool()
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
+            tool = get_my_tool()
             with change_cwd(uv_init_dir), PyprojectTOMLManager():
                 PyprojectTOMLManager().set_value(
                     keys=["tool", "my_tool", "key"], value="value"
@@ -252,7 +294,12 @@ class TestTool:
 
         def test_empty(self, uv_init_dir: Path):
             # Arrange
-            tool = MyTool()
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
+            tool = get_my_tool()
 
             # Act
             with change_cwd(uv_init_dir), PyprojectTOMLManager():
@@ -263,7 +310,13 @@ class TestTool:
 
         def test_dev_deps(self, uv_init_dir: Path):
             # Arrange
-            tool = MyTool()
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._integrations.uv.deps import Dependency, add_deps_to_group
+            from usethis._test import change_cwd
+
+            tool = get_my_tool()
 
             with change_cwd(uv_init_dir), PyprojectTOMLManager():
                 add_deps_to_group(
@@ -281,7 +334,13 @@ class TestTool:
 
         def test_test_deps(self, uv_init_dir: Path):
             # Arrange
-            tool = MyTool()
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._integrations.uv.deps import Dependency, add_deps_to_group
+            from usethis._test import change_cwd
+
+            tool = get_my_tool()
 
             with change_cwd(uv_init_dir), PyprojectTOMLManager():
                 add_deps_to_group(
@@ -299,7 +358,13 @@ class TestTool:
 
         def test_not_extra_dev_deps(self, uv_init_dir: Path):
             # Arrange
-            tool = MyTool()
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._integrations.uv.deps import Dependency, add_deps_to_group
+            from usethis._test import change_cwd
+
+            tool = get_my_tool()
 
             with change_cwd(uv_init_dir), PyprojectTOMLManager():
                 add_deps_to_group(
@@ -324,7 +389,12 @@ class TestTool:
             # does not contain any tool-specific configuration.
 
             # Arrange
-            tool = MyTool()
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
+            tool = get_my_tool()
             with change_cwd(uv_init_dir), PyprojectTOMLManager():
                 # Create a pyproject.toml with a syntax error
                 (uv_init_dir / "pyproject.toml").write_text(
@@ -351,6 +421,13 @@ class TestTool:
             # A generalization of the associated test for pyproject.toml
 
             # Arrange
+            from usethis._console import box_print
+            from usethis._integrations.file.setup_cfg.io_ import SetupCFGManager
+            from usethis._io import KeyValueFileManager
+            from usethis._test import change_cwd
+            from usethis._tool.base import Tool
+            from usethis._tool.config import ConfigEntry, ConfigItem, ConfigSpec
+
             class ThisTool(Tool):
                 @property
                 def name(self) -> str:
@@ -407,6 +484,11 @@ class TestTool:
     class TestAddPreCommitConfig:
         def test_no_repo_configs(self, uv_init_dir: Path):
             # Arrange
+            from usethis._console import box_print
+            from usethis._test import change_cwd
+            from usethis._tool.base import Tool
+            from usethis._tool.pre_commit import PreCommitConfig
+
             class NoRepoConfigsTool(Tool):
                 @property
                 def name(self) -> str:
@@ -431,6 +513,13 @@ class TestTool:
 
         def test_multiple_repo_configs(self, uv_init_dir: Path):
             # Arrange
+            from usethis._console import box_print
+            from usethis._integrations.pre_commit.hooks import get_hook_ids
+            from usethis._integrations.pre_commit.schema import HookDefinition, UriRepo
+            from usethis._test import change_cwd
+            from usethis._tool.base import Tool
+            from usethis._tool.pre_commit import PreCommitConfig, PreCommitRepoConfig
+
             class MultiRepoTool(Tool):
                 @property
                 def name(self) -> str:
@@ -488,7 +577,9 @@ class TestTool:
 
         def test_file_created(self, tmp_path: Path):
             # Arrange
-            tool = MyTool()
+            from usethis._test import change_cwd
+
+            tool = get_my_tool()
 
             # Act
             with change_cwd(tmp_path):
@@ -499,7 +590,9 @@ class TestTool:
 
         def test_file_not_created(self, tmp_path: Path):
             # Arrange
-            tool = DefaultTool()
+            from usethis._test import change_cwd
+
+            tool = get_default_tool()
 
             # Act
             with change_cwd(tmp_path):
@@ -512,7 +605,10 @@ class TestTool:
             self, tmp_path: Path, capfd: pytest.CaptureFixture[str]
         ):
             # Arrange
-            tool = MyTool()
+            from usethis._integrations.pre_commit.hooks import get_hook_ids
+            from usethis._test import change_cwd
+
+            tool = get_my_tool()
 
             # Act
             with change_cwd(tmp_path):
@@ -533,7 +629,10 @@ class TestTool:
             capfd: pytest.CaptureFixture[str],
         ):
             # Arrange
-            tool = MyTool()
+            from usethis._integrations.pre_commit.hooks import get_hook_ids
+            from usethis._test import change_cwd
+
+            tool = get_my_tool()
 
             # Create a pre-commit config file with one hook
             contents = """\
@@ -562,7 +661,10 @@ repos:
             capfd: pytest.CaptureFixture[str],
         ):
             # Arrange
-            tool = MyTool()
+            from usethis._integrations.pre_commit.hooks import get_hook_ids
+            from usethis._test import change_cwd
+
+            tool = get_my_tool()
 
             # Create a pre-commit config file with one hook
             contents = """\
@@ -591,7 +693,10 @@ repos:
             capfd: pytest.CaptureFixture[str],
         ):
             # Arrange
-            th_tool = TwoHooksTool()
+            from usethis._integrations.pre_commit.hooks import get_hook_ids
+            from usethis._test import change_cwd
+
+            th_tool = get_two_hooks_tool()
 
             # Create a pre-commit config file with one of the two hooks
             (tmp_path / ".pre-commit-config.yaml").write_text("""\
@@ -634,7 +739,9 @@ repos:
 
         def test_two_hooks_one_repo(self, tmp_path: Path):
             # Arrange
-            th_tool = TwoHooksTool()
+            from usethis._test import change_cwd
+
+            th_tool = get_two_hooks_tool()
 
             # Act
             with change_cwd(tmp_path):
@@ -648,7 +755,9 @@ repos:
     class TestRemovePreCommitRepoConfigs:
         def test_no_file_remove_none(self, tmp_path: Path):
             # Arrange
-            nc_tool = DefaultTool()
+            from usethis._test import change_cwd
+
+            nc_tool = get_default_tool()
 
             # Act
             with change_cwd(tmp_path):
@@ -659,7 +768,9 @@ repos:
 
         def test_no_file_remove_one(self, tmp_path: Path):
             # Arrange
-            tool = MyTool()
+            from usethis._test import change_cwd
+
+            tool = get_my_tool()
 
             # Act
             with change_cwd(tmp_path):
@@ -670,7 +781,10 @@ repos:
 
         def test_one_hook_remove_none(self, tmp_path: Path):
             # Arrange
-            tool = DefaultTool()
+            from usethis._integrations.pre_commit.hooks import get_hook_ids
+            from usethis._test import change_cwd
+
+            tool = get_default_tool()
 
             # Create a pre-commit config file with one hook
             contents = """\
@@ -693,7 +807,10 @@ repos:
 
         def test_one_hook_remove_different_one(self, tmp_path: Path):
             # Arrange
-            tool = MyTool()
+            from usethis._integrations.pre_commit.hooks import get_hook_ids
+            from usethis._test import change_cwd
+
+            tool = get_my_tool()
 
             # Create a pre-commit config file with one hook
             contents = """\
@@ -716,7 +833,13 @@ repos:
 
         def test_one_hook_remove_same_hook(self, tmp_path: Path):
             # Arrange
-            tool = MyTool()
+            from usethis._integrations.pre_commit.hooks import (
+                _PLACEHOLDER_ID,
+                get_hook_ids,
+            )
+            from usethis._test import change_cwd
+
+            tool = get_my_tool()
 
             # Create a pre-commit config file with one hook
             contents = """\
@@ -738,6 +861,16 @@ repos:
 
         def test_two_repos_remove_same_two(self, tmp_path: Path):
             # Arrange
+            from usethis._console import box_print
+            from usethis._integrations.pre_commit.hooks import (
+                _PLACEHOLDER_ID,
+                get_hook_ids,
+            )
+            from usethis._integrations.pre_commit.schema import HookDefinition, UriRepo
+            from usethis._test import change_cwd
+            from usethis._tool.base import Tool
+            from usethis._tool.pre_commit import PreCommitConfig, PreCommitRepoConfig
+
             class TwoRepoTool(Tool):
                 @property
                 def name(self) -> str:
@@ -800,6 +933,10 @@ repos:
     class TestAddConfigs:
         def test_no_config(self, tmp_path: Path):
             # Arrange
+            from usethis._console import box_print
+            from usethis._test import change_cwd
+            from usethis._tool.base import Tool
+
             class NoConfigTool(Tool):
                 @property
                 def name(self) -> str:
@@ -819,6 +956,14 @@ repos:
 
         def test_empty(self, tmp_path: Path, capfd: pytest.CaptureFixture[str]):
             # Arrange
+            from usethis._console import box_print
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.base import Tool
+            from usethis._tool.config import ConfigEntry, ConfigItem, ConfigSpec
+
             class ThisTool(Tool):
                 @property
                 def name(self) -> str:
@@ -870,6 +1015,14 @@ key = "value"
             # But needs the force=True argument.
 
             # Arrange
+            from usethis._console import box_print
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.base import Tool
+            from usethis._tool.config import ConfigEntry, ConfigItem, ConfigSpec
+
             class ThisTool(Tool):
                 @property
                 def name(self) -> str:
@@ -926,6 +1079,13 @@ root_packages = ["example"]
 
         def test_regex_config(self, tmp_path: Path):
             # Arrange
+            from usethis._console import box_print
+            from usethis._integrations.file.setup_cfg.io_ import SetupCFGManager
+            from usethis._io import KeyValueFileManager
+            from usethis._test import change_cwd
+            from usethis._tool.base import Tool
+            from usethis._tool.config import ConfigEntry, ConfigItem, ConfigSpec
+
             class ThisTool(Tool):
                 @property
                 def name(self) -> str:
@@ -966,6 +1126,13 @@ root_packages = ["example"]
     class TestRemoveConfigs:
         def test_regex_config(self, tmp_path: Path):
             # Arrange
+            from usethis._console import box_print
+            from usethis._integrations.file.setup_cfg.io_ import SetupCFGManager
+            from usethis._io import KeyValueFileManager
+            from usethis._test import change_cwd
+            from usethis._tool.base import Tool
+            from usethis._tool.config import ConfigEntry, ConfigItem, ConfigSpec
+
             class ThisTool(Tool):
                 @property
                 def name(self) -> str:
@@ -1019,7 +1186,9 @@ key3 = value3
     class TestRemoveManagedFiles:
         def test_no_files(self, tmp_path: Path):
             # Arrange
-            tool = DefaultTool()
+            from usethis._test import change_cwd
+
+            tool = get_default_tool()
 
             # Act
             with change_cwd(tmp_path):
@@ -1030,7 +1199,9 @@ key3 = value3
 
         def test_file(self, tmp_path: Path, capfd: pytest.CaptureFixture[str]):
             # Arrange
-            tool = MyTool()
+            from usethis._test import change_cwd
+
+            tool = get_my_tool()
             (tmp_path / "mytool-config.yaml").write_text("")
 
             # Act
@@ -1046,7 +1217,9 @@ key3 = value3
 
         def test_dir_not_removed(self, tmp_path: Path):
             # Arrange
-            tool = MyTool()
+            from usethis._test import change_cwd
+
+            tool = get_my_tool()
             (tmp_path / "mytool-config.yaml").mkdir()
 
             # Act

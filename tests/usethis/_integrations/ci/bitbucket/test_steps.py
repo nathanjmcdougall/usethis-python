@@ -2,41 +2,17 @@ from pathlib import Path
 
 import pytest
 
-from usethis._config import usethis_config
-from usethis._integrations.ci.bitbucket.anchor import ScriptItemAnchor
-from usethis._integrations.ci.bitbucket.io_ import edit_bitbucket_pipelines_yaml
-from usethis._integrations.ci.bitbucket.schema import (
-    Parallel,
-    ParallelExpanded,
-    ParallelItem,
-    ParallelSteps,
-    Script,
-    Stage,
-    StageItem,
-    Step1,
-    Step2,
-    StepItem,
-)
-from usethis._integrations.ci.bitbucket.steps import (
-    _CACHE_LOOKUP,
-    Step,
-    UnexpectedImportPipelineError,
-    _add_step_caches_via_doc,
-    add_bitbucket_step_in_default,
-    add_placeholder_step_in_default,
-    bitbucket_steps_are_equivalent,
-    get_defined_script_items_via_doc,
-    get_steps_in_default,
-    get_steps_in_pipeline_item,
-    remove_bitbucket_step_from_default,
-)
-from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._test import change_cwd
-
 
 class TestAddBitbucketStepInDefault:
     def test_contents(self, uv_init_dir: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            add_bitbucket_step_in_default,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
 
         (uv_init_dir / "bitbucket-pipelines.yml").write_text(
             """\
@@ -78,6 +54,13 @@ pipelines:
 
     def test_pipeline_doesnt_exist(self, uv_init_dir: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            add_bitbucket_step_in_default,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
 
         (uv_init_dir / "bitbucket-pipelines.yml").write_text(
             """\
@@ -112,6 +95,13 @@ pipelines:
 
     def test_with_caches(self, uv_init_dir: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            add_bitbucket_step_in_default,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
 
         (uv_init_dir / "bitbucket-pipelines.yml").write_text(
             """\
@@ -150,7 +140,17 @@ pipelines:
 """
         )
 
-    def test_add_same_step_twice(self, uv_init_dir: Path):  # Arrange
+    def test_add_same_step_twice(self, uv_init_dir: Path):
+        # Arrange
+        from usethis._integrations.ci.bitbucket.anchor import ScriptItemAnchor
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            add_bitbucket_step_in_default,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         step = Step(
             name="Greeting",
             script=Script(
@@ -175,7 +175,18 @@ pipelines:
     def test_add_different_steps_sharing_same_script_step_anchor(
         self, uv_init_dir: Path
     ):
-        # Assert
+        # Arrange
+        from usethis._integrations.ci.bitbucket.anchor import ScriptItemAnchor
+        from usethis._integrations.ci.bitbucket.io_ import edit_bitbucket_pipelines_yaml
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            add_bitbucket_step_in_default,
+            get_defined_script_items_via_doc,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         step = Step(
             name="Greeting",
             script=Script(
@@ -206,6 +217,15 @@ pipelines:
                 assert len(item_by_name) == 1
 
     def test_order(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
+        # Arrange
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            add_bitbucket_step_in_default,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(uv_init_dir), PyprojectTOMLManager():
             # This step should be listed second
@@ -252,8 +272,18 @@ pipelines:
     def test_placeholder_removed(
         self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
     ):
+        # Arrange
+        from usethis._config import usethis_config
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            add_bitbucket_step_in_default,
+            add_placeholder_step_in_default,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         with change_cwd(uv_init_dir), PyprojectTOMLManager():
-            # Arrange
             with usethis_config.set(quiet=True):
                 add_placeholder_step_in_default()
 
@@ -299,6 +329,15 @@ pipelines:
         self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
     ):
         # Arrange
+        from usethis._integrations.ci.bitbucket.anchor import ScriptItemAnchor
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            add_bitbucket_step_in_default,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         (uv_init_dir / "bitbucket-pipelines.yml").write_text(
             """\
 image: atlassian/default-image:3
@@ -370,6 +409,13 @@ pipelines:
 class TestRemoveBitbucketStepFromDefault:
     def test_remove_remove_one_step(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            remove_bitbucket_step_from_default,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").write_text(
             """\
 image: atlassian/default-image:3
@@ -411,6 +457,14 @@ pipelines:
         )
 
     def test_no_file(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            remove_bitbucket_step_from_default,
+        )
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(tmp_path):
             remove_bitbucket_step_from_default(
@@ -425,6 +479,13 @@ pipelines:
 
     def test_no_default_pipeline(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            remove_bitbucket_step_from_default,
+        )
+        from usethis._test import change_cwd
+
         txt = """\
 image: atlassian/default-image:3
 pipelines: {}
@@ -445,6 +506,13 @@ pipelines: {}
 
     def test_no_pipelines(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            remove_bitbucket_step_from_default,
+        )
+        from usethis._test import change_cwd
+
         txt = """\
 image: atlassian/default-image:3
 """
@@ -464,6 +532,14 @@ image: atlassian/default-image:3
 
     def test_import_pipeline_fails(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            UnexpectedImportPipelineError,
+            remove_bitbucket_step_from_default,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").write_text(
             """\
 image: atlassian/default-image:3
@@ -484,6 +560,13 @@ pipelines:
 
     def test_parallel_item(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            remove_bitbucket_step_from_default,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").write_text(
             """\
 image: atlassian/default-image:3
@@ -527,6 +610,13 @@ pipelines:
 
     def test_remove_single_parallel_step(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            remove_bitbucket_step_from_default,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").write_text(
             """\
 image: atlassian/default-image:3
@@ -570,6 +660,13 @@ pipelines:
 
     def test_remove_leaving_single_parallel_step(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            remove_bitbucket_step_from_default,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").write_text(
             """\
 image: atlassian/default-image:3
@@ -614,6 +711,14 @@ pipelines:
 
     def test_remove_step_leaving_placeholder(self, uv_init_dir: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            remove_bitbucket_step_from_default,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         (uv_init_dir / "bitbucket-pipelines.yml").write_text(
             """\
 image: atlassian/default-image:3
@@ -664,6 +769,13 @@ pipelines:
 
     def test_remove_expanded_parallel_step(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            remove_bitbucket_step_from_default,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").write_text(
             """\
 image: atlassian/default-image:3
@@ -709,6 +821,13 @@ pipelines:
 
     def test_remove_leaving_single_expanded_parallel_step(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            remove_bitbucket_step_from_default,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").write_text(
             """\
 image: atlassian/default-image:3
@@ -757,6 +876,13 @@ pipelines:
 
     def test_stage_item(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            remove_bitbucket_step_from_default,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").write_text(
             """\
 image: atlassian/default-image:3
@@ -813,6 +939,14 @@ pipelines:
 
     def test_remove_stage_item_leaving_placeholder(self, uv_init_dir: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            remove_bitbucket_step_from_default,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         (uv_init_dir / "bitbucket-pipelines.yml").write_text(
             """\
 image: atlassian/default-image:3
@@ -869,6 +1003,12 @@ class TestGetStepsInPipelineItem:
     class TestStepItem:
         def test_step(self):
             # Arrange
+            from usethis._integrations.ci.bitbucket.schema import Script, StepItem
+            from usethis._integrations.ci.bitbucket.steps import (
+                Step,
+                get_steps_in_pipeline_item,
+            )
+
             step = Step(script=Script(["echo 'Hello, world!'"]))
             item = StepItem(step=step)
 
@@ -881,6 +1021,18 @@ class TestGetStepsInPipelineItem:
     class TestParallelItem:
         def test_parallel_steps(self):
             # Arrange
+            from usethis._integrations.ci.bitbucket.schema import (
+                Parallel,
+                ParallelItem,
+                ParallelSteps,
+                Script,
+                StepItem,
+            )
+            from usethis._integrations.ci.bitbucket.steps import (
+                Step,
+                get_steps_in_pipeline_item,
+            )
+
             original_steps = [
                 Step(script=Script(["echo 'Hello, world!'"])),
                 Step(script=Script(["echo 'Why, hello!'"])),
@@ -899,6 +1051,19 @@ class TestGetStepsInPipelineItem:
 
         def test_parallel_expanded(self):
             # Arrange
+            from usethis._integrations.ci.bitbucket.schema import (
+                Parallel,
+                ParallelExpanded,
+                ParallelItem,
+                ParallelSteps,
+                Script,
+                StepItem,
+            )
+            from usethis._integrations.ci.bitbucket.steps import (
+                Step,
+                get_steps_in_pipeline_item,
+            )
+
             original_steps = [
                 Step(script=Script(["echo 'Hello, world!'"])),
                 Step(script=Script(["echo 'Why, hello!'"])),
@@ -922,6 +1087,18 @@ class TestGetStepsInPipelineItem:
     class TestStageItem:
         def test_steps(self):
             # Arrange
+            from usethis._integrations.ci.bitbucket.schema import (
+                Script,
+                Stage,
+                StageItem,
+                Step1,
+                Step2,
+            )
+            from usethis._integrations.ci.bitbucket.steps import (
+                Step,
+                get_steps_in_pipeline_item,
+            )
+
             script = Script(["echo 'Hello, world!'"])
             item = StageItem(
                 stage=Stage(
@@ -967,6 +1144,13 @@ pipelines:
 """
 
     def test_contents(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
+        # Arrange
+        from usethis._integrations.ci.bitbucket.steps import (
+            add_placeholder_step_in_default,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(uv_init_dir), PyprojectTOMLManager():
             add_placeholder_step_in_default()
@@ -990,6 +1174,11 @@ pipelines:
 
     def test_idempotent(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.steps import (
+            add_placeholder_step_in_default,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").write_text(
             self.EXPECTED_YML_SIMPLE_PLACEHOLDER
         )
@@ -1006,6 +1195,13 @@ pipelines:
 
 class TestGetDefinedScriptItemNames:
     def test_empty(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.ci.bitbucket.io_ import edit_bitbucket_pipelines_yaml
+        from usethis._integrations.ci.bitbucket.steps import (
+            get_defined_script_items_via_doc,
+        )
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(tmp_path), edit_bitbucket_pipelines_yaml() as doc:
             item_by_name = get_defined_script_items_via_doc(doc=doc)
@@ -1015,6 +1211,12 @@ class TestGetDefinedScriptItemNames:
 
     def test_no_definitions_section(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.io_ import edit_bitbucket_pipelines_yaml
+        from usethis._integrations.ci.bitbucket.steps import (
+            get_defined_script_items_via_doc,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").write_text(
             """\
 image: atlassian/default-image:3
@@ -1030,6 +1232,12 @@ image: atlassian/default-image:3
 
     def test_no_script_items_definitions_section(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.io_ import edit_bitbucket_pipelines_yaml
+        from usethis._integrations.ci.bitbucket.steps import (
+            get_defined_script_items_via_doc,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").write_text(
             """\
 image: atlassian/default-image:3
@@ -1048,6 +1256,12 @@ definitions:
 
     def test_no_anchor(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.io_ import edit_bitbucket_pipelines_yaml
+        from usethis._integrations.ci.bitbucket.steps import (
+            get_defined_script_items_via_doc,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").write_text(
             """\
 image: atlassian/default-image:3
@@ -1066,6 +1280,12 @@ definitions:
 
     def test_anchor(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.io_ import edit_bitbucket_pipelines_yaml
+        from usethis._integrations.ci.bitbucket.steps import (
+            get_defined_script_items_via_doc,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").write_text(
             """\
 image: atlassian/default-image:3
@@ -1085,6 +1305,12 @@ definitions:
 
     def test_multiline_no_anchor(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.io_ import edit_bitbucket_pipelines_yaml
+        from usethis._integrations.ci.bitbucket.steps import (
+            get_defined_script_items_via_doc,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").write_text(
             """\
 image: atlassian/default-image:3
@@ -1106,6 +1332,15 @@ definitions:
 class TestAddStepCachesViaDoc:
     def test_unrecognized(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.io_ import edit_bitbucket_pipelines_yaml
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            _CACHE_LOOKUP,
+            Step,
+            _add_step_caches_via_doc,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "bitbucket-pipelines.yml").write_text(
             """\
 image: atlassian/default-image:3
@@ -1136,6 +1371,12 @@ image: atlassian/default-image:3
 class TestStepsAreEquivalent:
     def test_identical(self):
         # Arrange
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            bitbucket_steps_are_equivalent,
+        )
+
         step = Step(
             name="Greeting",
             script=Script(["echo 'Hello, world!'"]),
@@ -1153,6 +1394,12 @@ class TestStepsAreEquivalent:
 
     def test_different_name(self):
         # Arrange
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            bitbucket_steps_are_equivalent,
+        )
+
         step = Step(
             name="Greeting",
             script=Script(["echo 'Hello, world!'"]),
@@ -1170,6 +1417,12 @@ class TestStepsAreEquivalent:
 
     def test_different_script(self):
         # Arrange
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            bitbucket_steps_are_equivalent,
+        )
+
         step = Step(
             name="Greeting",
             script=Script(["echo 'Hello, world!'"]),
@@ -1187,6 +1440,12 @@ class TestStepsAreEquivalent:
 
     def test_case_sensitive_name_difference(self):
         # Arrange
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            bitbucket_steps_are_equivalent,
+        )
+
         step = Step(
             name="Greeting",
             script=Script(["echo 'Hello, world!'"]),
@@ -1204,6 +1463,12 @@ class TestStepsAreEquivalent:
 
     def test_none(self):
         # Arrange
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import (
+            Step,
+            bitbucket_steps_are_equivalent,
+        )
+
         step = None
         other = Step(
             name="Greeting",
@@ -1219,6 +1484,10 @@ class TestStepsAreEquivalent:
 
 class TestGetStepsInDefault:
     def test_no_file(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.ci.bitbucket.steps import get_steps_in_default
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(tmp_path):
             steps = get_steps_in_default()
@@ -1228,6 +1497,9 @@ class TestGetStepsInDefault:
 
     def test_no_pipelines(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.steps import get_steps_in_default
+        from usethis._test import change_cwd
+
         content = """\
 image: atlassian/default-image:3
 """
@@ -1242,6 +1514,9 @@ image: atlassian/default-image:3
 
     def test_no_default_pipeline(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.steps import get_steps_in_default
+        from usethis._test import change_cwd
+
         content = """\
 image: atlassian/default-image:3
 pipelines: {}
@@ -1257,6 +1532,9 @@ pipelines: {}
 
     def test_other_pipelines_not_default(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.steps import get_steps_in_default
+        from usethis._test import change_cwd
+
         content = """\
 image: atlassian/default-image:3
 pipelines:
@@ -1278,6 +1556,10 @@ pipelines:
 
     def test_default_pipeline(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.schema import Script
+        from usethis._integrations.ci.bitbucket.steps import Step, get_steps_in_default
+        from usethis._test import change_cwd
+
         content = """\
 image: atlassian/default-image:3
 pipelines:
@@ -1303,6 +1585,12 @@ pipelines:
 
     def test_import_pipeline(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.ci.bitbucket.steps import (
+            UnexpectedImportPipelineError,
+            get_steps_in_default,
+        )
+        from usethis._test import change_cwd
+
         content = """\
 image: atlassian/default-image:3
 pipelines:

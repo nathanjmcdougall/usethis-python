@@ -1,21 +1,15 @@
 import pytest
 
-from usethis._pipeweld.containers import depgroup, parallel, series
-from usethis._pipeweld.func import (
-    Adder,
-    Partition,
-    _flatten_partition,
-    _op_series_merge_partitions,
-    _parallel_merge_partitions,
-)
-from usethis._pipeweld.ops import InsertParallel, InsertSuccessor
-from usethis._pipeweld.result import WeldResult
-
 
 class TestAdder:
     class TestAdd:
         def test_empty_series_start(self):
             # Arrange
+            from usethis._pipeweld.containers import series
+            from usethis._pipeweld.func import Adder
+            from usethis._pipeweld.ops import InsertParallel
+            from usethis._pipeweld.result import WeldResult
+
             step = "A"
             pipeline = series()
 
@@ -32,6 +26,11 @@ class TestAdder:
 
         def test_series_singleton_start(self):
             # Arrange
+            from usethis._pipeweld.containers import parallel, series
+            from usethis._pipeweld.func import Adder
+            from usethis._pipeweld.ops import InsertParallel
+            from usethis._pipeweld.result import WeldResult
+
             adder = Adder(step="B", pipeline=series("A"))
 
             # Act
@@ -47,6 +46,11 @@ class TestAdder:
 
         def test_parallel_singleton_start(self):
             # Arrange
+            from usethis._pipeweld.containers import parallel, series
+            from usethis._pipeweld.func import Adder
+            from usethis._pipeweld.ops import InsertParallel
+            from usethis._pipeweld.result import WeldResult
+
             adder = Adder(
                 step="B",
                 pipeline=series(parallel("A")),
@@ -65,6 +69,11 @@ class TestAdder:
 
         def test_two_element_start(self):
             # Arrange
+            from usethis._pipeweld.containers import parallel, series
+            from usethis._pipeweld.func import Adder
+            from usethis._pipeweld.ops import InsertParallel
+            from usethis._pipeweld.result import WeldResult
+
             adder = Adder(
                 step="C",
                 pipeline=series("A", "B"),
@@ -83,6 +92,11 @@ class TestAdder:
 
         def test_prerequisite(self):
             # Arrange
+            from usethis._pipeweld.containers import parallel, series
+            from usethis._pipeweld.func import Adder
+            from usethis._pipeweld.ops import InsertParallel
+            from usethis._pipeweld.result import WeldResult
+
             prerequisites = {"A"}
             adder = Adder(
                 step="C",
@@ -100,6 +114,11 @@ class TestAdder:
 
         def test_mixed_dependency_parallelism_of_steps(self):
             # Arrange
+            from usethis._pipeweld.containers import parallel, series
+            from usethis._pipeweld.func import Adder
+            from usethis._pipeweld.ops import InsertSuccessor
+            from usethis._pipeweld.result import WeldResult
+
             adder = Adder(
                 step="C",
                 pipeline=series(parallel("A", "B")),
@@ -121,6 +140,11 @@ class TestAdder:
 
         def test_mixed_dependency_parallelism_of_series(self):
             # Arrange
+            from usethis._pipeweld.containers import parallel, series
+            from usethis._pipeweld.func import Adder
+            from usethis._pipeweld.ops import InsertParallel, InsertSuccessor
+            from usethis._pipeweld.result import WeldResult
+
             adder = Adder(
                 step="F",
                 pipeline=series("A", parallel(series("B", "D"), series("C", "E"))),
@@ -144,6 +168,10 @@ class TestAdder:
 
         def test_singleton_series(self):
             # Arrange
+            from usethis._pipeweld.containers import parallel, series
+            from usethis._pipeweld.func import Adder
+            from usethis._pipeweld.result import WeldResult
+
             adder = Adder(
                 step="B",
                 pipeline=series("A"),
@@ -158,6 +186,10 @@ class TestAdder:
 
         def test_nested_series(self):
             # Arrange
+            from usethis._pipeweld.containers import parallel, series
+            from usethis._pipeweld.func import Adder
+            from usethis._pipeweld.result import WeldResult
+
             adder = Adder(
                 step="B",
                 pipeline=series(series("A")),
@@ -175,6 +207,10 @@ class TestAdder:
 
             def test_no_nesting(self):
                 # Arrange
+                from usethis._pipeweld.containers import parallel, series
+                from usethis._pipeweld.func import Adder
+                from usethis._pipeweld.result import WeldResult
+
                 adder = Adder(
                     step="H",
                     pipeline=series("D", "E", "F"),
@@ -191,6 +227,10 @@ class TestAdder:
 
             def test_single_nesting(self):
                 # Arrange
+                from usethis._pipeweld.containers import parallel, series
+                from usethis._pipeweld.func import Adder
+                from usethis._pipeweld.result import WeldResult
+
                 adder = Adder(
                     step="H",
                     pipeline=series(series("D", "E", "F")),
@@ -205,6 +245,10 @@ class TestAdder:
 
             def test_single_nesting_with_dep(self):
                 # Arrange
+                from usethis._pipeweld.containers import parallel, series
+                from usethis._pipeweld.func import Adder
+                from usethis._pipeweld.result import WeldResult
+
                 adder = Adder(
                     step="H",
                     pipeline=series(series("D", "E", "F")),
@@ -221,6 +265,10 @@ class TestAdder:
 
             def test_multiple_nesting(self):
                 # Arrange
+                from usethis._pipeweld.containers import parallel, series
+                from usethis._pipeweld.func import Adder
+                from usethis._pipeweld.result import WeldResult
+
                 adder = Adder(
                     step="H",
                     pipeline=series(series(parallel(series("D", "E", "F")))),
@@ -239,6 +287,10 @@ class TestAdder:
 
             def test_full_complex_case(self):
                 # Arrange
+                from usethis._pipeweld.containers import parallel, series
+                from usethis._pipeweld.func import Adder
+                from usethis._pipeweld.result import WeldResult
+
                 adder = Adder(
                     step="H",
                     pipeline=series(
@@ -261,6 +313,11 @@ class TestAdder:
 
         def test_multi_level_heirarchy(self):
             # Arrange
+            from usethis._pipeweld.containers import parallel, series
+            from usethis._pipeweld.func import Adder
+            from usethis._pipeweld.ops import InsertParallel
+            from usethis._pipeweld.result import WeldResult
+
             adder = Adder(
                 step="E",
                 pipeline=series("A", parallel("B", series("C", "D"))),
@@ -279,6 +336,10 @@ class TestAdder:
 
         def test_mixed_dependency_parallelism_of_series_pure_parallel(self):
             # Arrange
+            from usethis._pipeweld.containers import parallel, series
+            from usethis._pipeweld.func import Adder
+            from usethis._pipeweld.result import WeldResult
+
             adder = Adder(
                 step="E",
                 pipeline=series(parallel(series("A", "B"), series("C", "D"))),
@@ -295,6 +356,10 @@ class TestAdder:
 
         def test_config_groups(self):
             # Arrange
+            from usethis._pipeweld.containers import depgroup, series
+            from usethis._pipeweld.func import Adder
+            from usethis._pipeweld.result import WeldResult
+
             adder = Adder(
                 step="A",
                 pipeline=series(depgroup("B", "C", config_group="x")),
@@ -313,6 +378,10 @@ class TestAdder:
 
         def test_config_groups_in_series(self):
             # Arrange
+            from usethis._pipeweld.containers import depgroup, parallel, series
+            from usethis._pipeweld.func import Adder
+            from usethis._pipeweld.result import WeldResult
+
             adder = Adder(
                 step="E",
                 pipeline=series("A", depgroup("B", "C", config_group="x")),
@@ -333,6 +402,10 @@ class TestAdder:
 
         def test_insert_at_end(self):
             # Arrange
+            from usethis._pipeweld.containers import series
+            from usethis._pipeweld.func import Adder
+            from usethis._pipeweld.result import WeldResult
+
             adder = Adder(
                 step="C",
                 pipeline=series("A", "B"),
@@ -350,6 +423,9 @@ class TestAdder:
 class TestParallelMergePartitions:
     def test_basic(self):
         # Arrange
+        from usethis._pipeweld.func import Partition, _parallel_merge_partitions
+        from usethis._pipeweld.ops import InsertSuccessor
+
         partition1 = Partition(
             prerequisite_component=None,
             nondependent_component="C",
@@ -385,6 +461,9 @@ class TestParallelMergePartitions:
 class TestFlattenPartition:
     def test_basic(self):
         # Arrange
+        from usethis._pipeweld.containers import series
+        from usethis._pipeweld.func import Partition, _flatten_partition
+
         partition = Partition(
             prerequisite_component="A",
             nondependent_component="B",
@@ -400,6 +479,8 @@ class TestFlattenPartition:
 
     def test_no_components(self):
         # Arrange
+        from usethis._pipeweld.func import Partition, _flatten_partition
+
         partition = Partition(
             prerequisite_component=None,
             nondependent_component=None,
@@ -415,6 +496,9 @@ class TestFlattenPartition:
 class TestOpSeriesMergePartitions:
     def test_rhs_prerequisite_lhs_no_prerequisite(self):
         # Arrange
+        from usethis._pipeweld.containers import series
+        from usethis._pipeweld.func import Partition, _op_series_merge_partitions
+
         partition1 = Partition(
             prerequisite_component=None,
             nondependent_component="C",
@@ -441,6 +525,9 @@ class TestOpSeriesMergePartitions:
 
     def test_both_prerequisite(self):
         # Arrange
+        from usethis._pipeweld.containers import series
+        from usethis._pipeweld.func import Partition, _op_series_merge_partitions
+
         partition1 = Partition(
             prerequisite_component="A",
             nondependent_component=None,
@@ -467,6 +554,9 @@ class TestOpSeriesMergePartitions:
 
     def test_no_rhs_prerequsite_rhs_non_dependent_and_lhs_postrequsite(self):
         # Arrange
+        from usethis._pipeweld.containers import series
+        from usethis._pipeweld.func import Partition, _op_series_merge_partitions
+
         partition1 = Partition(
             prerequisite_component="A",
             nondependent_component=None,
@@ -493,6 +583,9 @@ class TestOpSeriesMergePartitions:
 
     def test_both_prerequisite_rhs_non_dependent_and_lhs_postrequsite(self):
         # Arrange
+        from usethis._pipeweld.containers import series
+        from usethis._pipeweld.func import Partition, _op_series_merge_partitions
+
         partition1 = Partition(
             prerequisite_component="A",
             nondependent_component=None,
@@ -519,6 +612,9 @@ class TestOpSeriesMergePartitions:
 
     def test_no_prerequsites_rhs_non_dependent_and_lhs_postrequsite(self):
         # Arrange
+        from usethis._pipeweld.containers import series
+        from usethis._pipeweld.func import Partition, _op_series_merge_partitions
+
         partition1 = Partition(
             prerequisite_component=None,
             nondependent_component=None,
@@ -545,6 +641,9 @@ class TestOpSeriesMergePartitions:
 
     def test_no_prequisites_and_no_nondependents_both_postrequisites(self):
         # Arrange
+        from usethis._pipeweld.containers import series
+        from usethis._pipeweld.func import Partition, _op_series_merge_partitions
+
         partition1 = Partition(
             prerequisite_component=None,
             nondependent_component=None,
@@ -571,6 +670,8 @@ class TestOpSeriesMergePartitions:
 
     def test_no_rhs_prequisite_and_lhs_prerequisite_and_no_nondependents(self):
         # Arrange
+        from usethis._pipeweld.func import Partition, _op_series_merge_partitions
+
         partition1 = Partition(
             prerequisite_component="A",
             nondependent_component=None,
@@ -599,6 +700,9 @@ class TestOpSeriesMergePartitions:
         self,
     ):
         # Arrange
+        from usethis._pipeweld.containers import series
+        from usethis._pipeweld.func import Partition, _op_series_merge_partitions
+
         partition1 = Partition(
             prerequisite_component="A",
             nondependent_component="C",
@@ -627,6 +731,8 @@ class TestOpSeriesMergePartitions:
         self,
     ):
         # Arrange
+        from usethis._pipeweld.func import Partition, _op_series_merge_partitions
+
         partition1 = Partition(
             prerequisite_component="A",
             nondependent_component="C",

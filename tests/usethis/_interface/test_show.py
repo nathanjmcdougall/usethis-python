@@ -1,14 +1,14 @@
 from pathlib import Path
 
-from typer.testing import CliRunner
-
-from usethis._interface.show import app
-from usethis._test import change_cwd
-
 
 class TestName:
     def test_output(self, tmp_path: Path):
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.show import app
+        from usethis._test import change_cwd
+
         path = tmp_path / "fun"
         path.mkdir()
 
@@ -23,6 +23,11 @@ class TestName:
 
     def test_invalid_pyproject(self, tmp_path: Path):
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.show import app
+        from usethis._test import change_cwd
+
         (tmp_path / "pyproject.toml").write_text("[")
 
         # Act
@@ -37,6 +42,11 @@ class TestName:
 class TestSonarqube:
     def test_runs(self, tmp_path: Path):
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.show import app
+        from usethis._test import change_cwd
+
         (tmp_path / "pyproject.toml").write_text(
             """
 [tool.usethis.sonarqube]
@@ -56,6 +66,11 @@ project-key = "fun"
 
     def test_missing_key(self, tmp_path: Path):
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.show import app
+        from usethis._test import change_cwd
+
         (tmp_path / "pyproject.toml").touch()
 
         # Act
@@ -68,6 +83,11 @@ project-key = "fun"
 
     def test_invalid_pyproject(self, tmp_path: Path):
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.show import app
+        from usethis._test import change_cwd
+
         (tmp_path / "pyproject.toml").write_text("[")
 
         # Act

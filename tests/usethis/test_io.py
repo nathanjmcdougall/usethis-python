@@ -1,13 +1,13 @@
 from pathlib import Path
 
-from usethis._io import UsethisFileManager
-from usethis._test import change_cwd
-
 
 class TestUsethisFileManager:
     class TestContent:
         def test_setter(self, tmp_path: Path) -> None:
             # Arrange
+            from usethis._io import UsethisFileManager
+            from usethis._test import change_cwd
+
             class MyUsethisFileManager(UsethisFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -25,6 +25,8 @@ class TestUsethisFileManager:
     class TestEq:
         def test_example(self) -> None:
             # Arrange
+            from usethis._io import UsethisFileManager
+
             class MyUsethisFileManager(UsethisFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -41,6 +43,8 @@ class TestUsethisFileManager:
 
         def test_different_type(self) -> None:
             # Arrange
+            from usethis._io import UsethisFileManager
+
             class MyUsethisFileManager(UsethisFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -58,6 +62,9 @@ class TestUsethisFileManager:
     class TestRepr:
         def test_example(self, tmp_path: Path) -> None:
             # Arrange
+            from usethis._io import UsethisFileManager
+            from usethis._test import change_cwd
+
             class MyUsethisFileManager(UsethisFileManager):
                 @property
                 def relative_path(self) -> Path:

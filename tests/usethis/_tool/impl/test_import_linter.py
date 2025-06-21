@@ -2,10 +2,6 @@ from pathlib import Path
 
 import pytest
 
-from usethis._config_file import files_manager
-from usethis._test import change_cwd
-from usethis._tool.impl.import_linter import ImportLinterTool
-
 
 class TestImportLinterTool:
     class TestPrintHowToUse:
@@ -13,6 +9,10 @@ class TestImportLinterTool:
             self, tmp_path: Path, capfd: pytest.CaptureFixture[str]
         ):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._test import change_cwd
+            from usethis._tool.impl.import_linter import ImportLinterTool
+
             (tmp_path / "uv.lock").touch()
             (tmp_path / ".pre-commit-config.yaml").touch()
             (tmp_path / "ruff.toml").touch()
@@ -32,6 +32,10 @@ class TestImportLinterTool:
             self, tmp_path: Path, capfd: pytest.CaptureFixture[str]
         ):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._test import change_cwd
+            from usethis._tool.impl.import_linter import ImportLinterTool
+
             (tmp_path / ".pre-commit-config.yaml").touch()
             (tmp_path / "ruff.toml").touch()
 
@@ -48,6 +52,10 @@ class TestImportLinterTool:
 
         def test_uv_only(self, tmp_path: Path, capfd: pytest.CaptureFixture[str]):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._test import change_cwd
+            from usethis._tool.impl.import_linter import ImportLinterTool
+
             (tmp_path / "uv.lock").touch()
             (tmp_path / "ruff.toml").touch()
 
@@ -62,6 +70,10 @@ class TestImportLinterTool:
 
         def test_basic(self, tmp_path: Path, capfd: pytest.CaptureFixture[str]):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._test import change_cwd
+            from usethis._tool.impl.import_linter import ImportLinterTool
+
             (tmp_path / "ruff.toml").touch()
 
             # Act
@@ -76,6 +88,11 @@ class TestImportLinterTool:
         def test_ruff_isnt_used(
             self, tmp_path: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._test import change_cwd
+            from usethis._tool.impl.import_linter import ImportLinterTool
+
             # Act
             with change_cwd(tmp_path), files_manager():
                 ImportLinterTool().print_how_to_use()

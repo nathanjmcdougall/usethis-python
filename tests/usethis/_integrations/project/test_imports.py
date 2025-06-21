@@ -1,25 +1,15 @@
 from pathlib import Path
 
-import grimp
 import pytest
-
-from usethis._integrations.project.errors import ImportGraphBuildFailedError
-from usethis._integrations.project.imports import (
-    LayeredArchitecture,
-    _filter_to_submodule,
-    _get_child_dependencies,
-    _get_graph,
-    _get_module_layered_architecture,
-    get_layered_architectures,
-)
-from usethis._test import change_cwd
-from usethis.errors import UsethisError
 
 
 class TestLayeredArchitecture:
     class TestModuleCount:
         def test_mix(self):
             # Arrange
+
+            from usethis._integrations.project.imports import LayeredArchitecture
+
             arch = LayeredArchitecture(
                 layers=[{"a"}, {"b", "c"}],
                 excluded={"d", "e"},
@@ -33,6 +23,9 @@ class TestLayeredArchitecture:
 
         def test_excluded(self):
             # Arrange
+
+            from usethis._integrations.project.imports import LayeredArchitecture
+
             arch = LayeredArchitecture(
                 layers=[{"a"}, {"b", "c"}],
                 excluded={"d", "e"},
@@ -48,6 +41,13 @@ class TestLayeredArchitecture:
 class TestGetLayeredArchitectures:
     def test_five(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         # Arrange
+
+        from usethis._integrations.project.imports import (
+            LayeredArchitecture,
+            get_layered_architectures,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "salut").mkdir()
         (tmp_path / "salut" / "__init__.py").touch()
         (tmp_path / "salut" / "a").mkdir()
@@ -88,6 +88,14 @@ import salut.d.f
 class TestGetModuleLayeredArchitecture:
     def test_three(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         # Arrange
+
+        from usethis._integrations.project.imports import (
+            LayeredArchitecture,
+            _get_graph,
+            _get_module_layered_architecture,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "salut").mkdir()
         (tmp_path / "salut" / "__init__.py").touch()
         (tmp_path / "salut" / "a.py").touch()
@@ -113,6 +121,14 @@ import salut.b
 
     def test_independent(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         # Arrange
+
+        from usethis._integrations.project.imports import (
+            LayeredArchitecture,
+            _get_graph,
+            _get_module_layered_architecture,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "salut").mkdir()
         (tmp_path / "salut" / "__init__.py").touch()
         (tmp_path / "salut" / "a.py").touch()
@@ -132,6 +148,14 @@ import salut.b
 
     def test_cyclic(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         # Arrange
+
+        from usethis._integrations.project.imports import (
+            LayeredArchitecture,
+            _get_graph,
+            _get_module_layered_architecture,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "salut").mkdir()
         (tmp_path / "salut" / "__init__.py").touch()
         (tmp_path / "salut" / "a.py").write_text("""\
@@ -175,6 +199,14 @@ import salut.a
         # > {"F", "G"}, {"D", "E"}, {"A", "B", "C"}
 
         # Arrange
+
+        from usethis._integrations.project.imports import (
+            LayeredArchitecture,
+            _get_graph,
+            _get_module_layered_architecture,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "salut").mkdir()
         (tmp_path / "salut" / "__init__.py").touch()
         (tmp_path / "salut" / "a.py").touch()
@@ -209,6 +241,13 @@ import salut.e
 class TestGetChildDependencies:
     def test_three(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         # Arrange
+
+        from usethis._integrations.project.imports import (
+            _get_child_dependencies,
+            _get_graph,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "salut").mkdir()
         (tmp_path / "salut" / "__init__.py").touch()
         (tmp_path / "salut" / "a.py").touch()
@@ -236,6 +275,13 @@ import salut.b
 
     def test_two(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         # Arrange
+
+        from usethis._integrations.project.imports import (
+            _get_child_dependencies,
+            _get_graph,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "salut").mkdir()
         (tmp_path / "salut" / "__init__.py").touch()
         (tmp_path / "salut" / "a.py").touch()
@@ -258,6 +304,13 @@ import salut.a
 
     def test_none(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         # Arrange
+
+        from usethis._integrations.project.imports import (
+            _get_child_dependencies,
+            _get_graph,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "salut").mkdir()
         (tmp_path / "salut" / "__init__.py").touch()
 
@@ -273,6 +326,13 @@ import salut.a
 
     def test_submodule_file(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         # Arrange
+
+        from usethis._integrations.project.imports import (
+            _get_child_dependencies,
+            _get_graph,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "salut").mkdir()
         (tmp_path / "salut" / "__init__.py").touch()
         (tmp_path / "salut" / "a.py").touch()
@@ -292,6 +352,13 @@ import salut.a
 
     def test_submodule_dir(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         # Arrange
+
+        from usethis._integrations.project.imports import (
+            _get_child_dependencies,
+            _get_graph,
+        )
+        from usethis._test import change_cwd
+
         (tmp_path / "salut").mkdir()
         (tmp_path / "salut" / "__init__.py").touch()
         (tmp_path / "salut" / "a").mkdir()
@@ -312,6 +379,9 @@ import salut.a
 class TestFilterToSubmodule:
     def test_simple_case(self):
         # Arrange
+
+        from usethis._integrations.project.imports import _filter_to_submodule
+
         modules = {"salut", "salut.a", "salut.b", "salut.c"}
 
         # Act
@@ -322,6 +392,9 @@ class TestFilterToSubmodule:
 
     def test_no_submodule(self):
         # Arrange
+
+        from usethis._integrations.project.imports import _filter_to_submodule
+
         modules = {"salut", "salut.a", "salut.b", "salut.c"}
 
         # Act
@@ -332,6 +405,9 @@ class TestFilterToSubmodule:
 
     def test_grandchild(self):
         # Arrange
+
+        from usethis._integrations.project.imports import _filter_to_submodule
+
         modules = {"salut", "salut.a", "salut.b", "salut.c", "salut.a.d"}
 
         # Act
@@ -342,6 +418,9 @@ class TestFilterToSubmodule:
 
     def test_child_with_children(self):
         # Arrange
+
+        from usethis._integrations.project.imports import _filter_to_submodule
+
         modules = {"salut", "salut.a", "salut.b", "salut.c", "salut.a.d"}
 
         # Act
@@ -354,6 +433,11 @@ class TestFilterToSubmodule:
 class TestGetGraph:
     def test_type(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         # Arrange
+        import grimp
+
+        from usethis._integrations.project.imports import _get_graph
+        from usethis._test import change_cwd
+
         (tmp_path / "salut").mkdir()
         (tmp_path / "salut" / "__init__.py").touch()
 
@@ -367,6 +451,11 @@ class TestGetGraph:
         assert isinstance(graph, grimp.ImportGraph)
 
     def test_self(self):
+        # Arrange
+        import grimp
+
+        from usethis._integrations.project.imports import _get_graph
+
         # Act
         graph = _get_graph("usethis")
 
@@ -374,12 +463,22 @@ class TestGetGraph:
         assert isinstance(graph, grimp.ImportGraph)
 
     def test_does_not_exist(self):
+        # Arrange
+
+        from usethis._integrations.project.errors import ImportGraphBuildFailedError
+        from usethis._integrations.project.imports import _get_graph
+
         # Act, Assert
         with pytest.raises(ImportGraphBuildFailedError):
             _get_graph("does_not_exist")
 
     def test_not_top_level(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         # Arrange
+
+        from usethis._integrations.project.errors import ImportGraphBuildFailedError
+        from usethis._integrations.project.imports import _get_graph
+        from usethis._test import change_cwd
+
         (tmp_path / "salut").mkdir()
         (tmp_path / "salut" / "__init__.py").touch()
         (tmp_path / "salut" / "a.py").touch()
@@ -395,6 +494,11 @@ class TestGetGraph:
 
     def test_not_package(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         # Arrange
+
+        from usethis._integrations.project.errors import ImportGraphBuildFailedError
+        from usethis._integrations.project.imports import _get_graph
+        from usethis._test import change_cwd
+
         (tmp_path / "salut.py").touch()
 
         monkeypatch.syspath_prepend(str(tmp_path))
@@ -408,6 +512,11 @@ class TestGetGraph:
 
     def test_exists_not_on_path(self, tmp_path: Path):
         # Arrange
+
+        from usethis._integrations.project.errors import ImportGraphBuildFailedError
+        from usethis._integrations.project.imports import _get_graph
+        from usethis._test import change_cwd
+
         # N.B. we use the name 'different_name' since generating the graph in other
         # tests has the side-effect of importing the module, which persists between
         # tests.
@@ -427,6 +536,11 @@ class TestGetGraph:
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ):
         # Arrange
+
+        from usethis._integrations.project.imports import _get_graph
+        from usethis._test import change_cwd
+        from usethis.errors import UsethisError
+
         (tmp_path / "abientot").mkdir()
         (tmp_path / "abientot" / "a").mkdir()
         (tmp_path / "abientot" / "a" / "__init__.py").touch()
@@ -442,6 +556,11 @@ class TestGetGraph:
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ):
         # Arrange
+        import grimp
+
+        from usethis._integrations.project.imports import _get_graph
+        from usethis._test import change_cwd
+
         (tmp_path / "merci").mkdir()
         (tmp_path / "merci" / "a").mkdir()
         (tmp_path / "merci" / "a" / "__init__.py").touch()

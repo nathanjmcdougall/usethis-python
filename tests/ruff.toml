@@ -1,0 +1,3 @@
+extend = "../pyproject.toml"
+
+lint.flake8-tidy-imports.banned-module-level-imports = [ "grimp", "packaging", "pydantic", "requests", "ruamel", "tomlkit", "typer", "usethis" ]

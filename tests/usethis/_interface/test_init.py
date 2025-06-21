@@ -1,14 +1,15 @@
 from pathlib import Path
 
-from typer.testing import CliRunner
-
-from usethis._app import app
-from usethis._integrations.pre_commit.hooks import get_hook_ids
-from usethis._test import change_cwd
-
 
 class TestInit:
     def test_pre_commit_included(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._app import app
+        from usethis._integrations.pre_commit.hooks import get_hook_ids
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):
@@ -58,6 +59,12 @@ class TestInit:
         Note carefully! If this test is updated, the README.md file must be
         updated too.
         """
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._app import app
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):
@@ -91,6 +98,12 @@ class TestInit:
         )
 
     def test_specify_path(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._app import app
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):
@@ -104,6 +117,11 @@ class TestInit:
 
     def test_no_err_when_pyproject_toml_exists(self, tmp_path: Path):
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._app import app
+        from usethis._test import change_cwd
+
         (tmp_path / "pyproject.toml").touch()
 
         # Act
@@ -115,6 +133,12 @@ class TestInit:
         assert result.exit_code == 0, result.output
 
     def test_bitbucket_docstyle_and_status(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._app import app
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):

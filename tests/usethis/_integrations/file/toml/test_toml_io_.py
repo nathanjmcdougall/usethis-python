@@ -1,22 +1,15 @@
 from pathlib import Path
 
 import pytest
-import tomlkit
-import tomlkit.api
-import tomlkit.items
-
-from usethis._integrations.file.toml.errors import (
-    TOMLValueAlreadySetError,
-    TOMLValueMissingError,
-)
-from usethis._integrations.file.toml.io_ import TOMLFileManager
-from usethis._test import change_cwd
 
 
 class TestTOMLFileManager:
     class TestDumpContent:
         def test_no_content(self, tmp_path: Path) -> None:
             # Arrange
+            from usethis._integrations.file.toml.io_ import TOMLFileManager
+            from usethis._test import change_cwd
+
             class MyTOMLFileManager(TOMLFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -32,6 +25,9 @@ class TestTOMLFileManager:
     class TestContains:
         def test_no_keys(self, tmp_path: Path) -> None:
             # Arrange
+            from usethis._integrations.file.toml.io_ import TOMLFileManager
+            from usethis._test import change_cwd
+
             class MyTOMLFileManager(TOMLFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -46,6 +42,9 @@ class TestTOMLFileManager:
     class TestGetItem:
         def test_no_keys(self, tmp_path: Path) -> None:
             # Arrange
+            from usethis._integrations.file.toml.io_ import TOMLFileManager
+            from usethis._test import change_cwd
+
             class MyTOMLFileManager(TOMLFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -63,6 +62,9 @@ a = "b"
     class TestContent:
         def test_content_setter(self, tmp_path: Path) -> None:
             # Arrange
+            from usethis._integrations.file.toml.io_ import TOMLFileManager
+            from usethis._test import change_cwd
+
             class MyTOMLFileManager(TOMLFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -79,6 +81,9 @@ a = "b"
 
         def test_set_high_levels_of_nesting(self, tmp_path: Path) -> None:
             # Arrange
+            from usethis._integrations.file.toml.io_ import TOMLFileManager
+            from usethis._test import change_cwd
+
             class MyTOMLFileManager(TOMLFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -122,6 +127,9 @@ convention = "pep257"
         def test_set_high_levels_of_nesting_in_existing(self, tmp_path: Path) -> None:
             # https://github.com/usethis-python/usethis-python/issues/507
             # Arrange
+            from usethis._integrations.file.toml.io_ import TOMLFileManager
+            from usethis._test import change_cwd
+
             class MyTOMLFileManager(TOMLFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -165,6 +173,10 @@ lint.pydocstyle.convention = "pep257"
             # This proves that dottedkey works.
 
             # Arrange
+            import tomlkit
+            import tomlkit.api
+            import tomlkit.items
+
             txt = """\
 [tool.ruff]
 lint.select = [ "A" ]
@@ -203,6 +215,9 @@ lint.pydocstyle.convention = "pep257"
     class TestSetValue:
         def test_no_keys(self, tmp_path: Path) -> None:
             # Arrange
+            from usethis._integrations.file.toml.io_ import TOMLFileManager
+            from usethis._test import change_cwd
+
             class MyTOMLFileManager(TOMLFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -219,6 +234,9 @@ lint.pydocstyle.convention = "pep257"
 
         def test_inplace_modifications(self, tmp_path: Path) -> None:
             # Arrange
+            from usethis._integrations.file.toml.io_ import TOMLFileManager
+            from usethis._test import change_cwd
+
             class MyTOMLFileManager(TOMLFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -239,6 +257,10 @@ lint.pydocstyle.convention = "pep257"
 
         def test_root_level_already_set_raise(self, tmp_path: Path) -> None:
             # Arrange
+            from usethis._integrations.file.toml.errors import TOMLValueAlreadySetError
+            from usethis._integrations.file.toml.io_ import TOMLFileManager
+            from usethis._test import change_cwd
+
             class MyTOMLFileManager(TOMLFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -258,6 +280,9 @@ lint.pydocstyle.convention = "pep257"
 
         def test_root_level_already_set_no_raise(self, tmp_path: Path) -> None:
             # Arrange
+            from usethis._integrations.file.toml.io_ import TOMLFileManager
+            from usethis._test import change_cwd
+
             class MyTOMLFileManager(TOMLFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -276,6 +301,9 @@ lint.pydocstyle.convention = "pep257"
 
         def test_set_list(self, tmp_path: Path) -> None:
             # Arrange
+            from usethis._integrations.file.toml.io_ import TOMLFileManager
+            from usethis._test import change_cwd
+
             class MyTOMLFileManager(TOMLFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -292,6 +320,10 @@ lint.pydocstyle.convention = "pep257"
 
         def test_set_list_overwrite(self, tmp_path: Path) -> None:
             # Arrange
+            from usethis._integrations.file.toml.errors import TOMLValueAlreadySetError
+            from usethis._integrations.file.toml.io_ import TOMLFileManager
+            from usethis._test import change_cwd
+
             class MyTOMLFileManager(TOMLFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -312,6 +344,9 @@ lint.pydocstyle.convention = "pep257"
     class TestDelItem:
         def test_no_keys(self, tmp_path: Path) -> None:
             # Arrange
+            from usethis._integrations.file.toml.io_ import TOMLFileManager
+            from usethis._test import change_cwd
+
             class MyTOMLFileManager(TOMLFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -328,6 +363,9 @@ lint.pydocstyle.convention = "pep257"
 
         def test_inplace_modifications(self, tmp_path: Path) -> None:
             # Arrange
+            from usethis._integrations.file.toml.io_ import TOMLFileManager
+            from usethis._test import change_cwd
+
             class MyTOMLFileManager(TOMLFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -347,6 +385,9 @@ lint.pydocstyle.convention = "pep257"
 
         def test_removing_root_level(self, tmp_path: Path) -> None:
             # Arrange
+            from usethis._integrations.file.toml.io_ import TOMLFileManager
+            from usethis._test import change_cwd
+
             class MyTOMLFileManager(TOMLFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -365,6 +406,10 @@ lint.pydocstyle.convention = "pep257"
 
         def test_removing_doesnt_exist(self, tmp_path: Path) -> None:
             # Arrange
+            from usethis._integrations.file.toml.errors import TOMLValueMissingError
+            from usethis._integrations.file.toml.io_ import TOMLFileManager
+            from usethis._test import change_cwd
+
             class MyTOMLFileManager(TOMLFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -382,6 +427,9 @@ lint.pydocstyle.convention = "pep257"
     class TestExtendList:
         def test_inplace_modifications(self, tmp_path: Path) -> None:
             # Arrange
+            from usethis._integrations.file.toml.io_ import TOMLFileManager
+            from usethis._test import change_cwd
+
             class MyTOMLFileManager(TOMLFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -400,6 +448,9 @@ lint.pydocstyle.convention = "pep257"
 
         def test_no_keys_raises(self, tmp_path: Path) -> None:
             # Arrange
+            from usethis._integrations.file.toml.io_ import TOMLFileManager
+            from usethis._test import change_cwd
+
             class MyTOMLFileManager(TOMLFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -416,6 +467,9 @@ lint.pydocstyle.convention = "pep257"
 
         def test_doesnt_exist_yet(self, tmp_path: Path) -> None:
             # Arrange
+            from usethis._integrations.file.toml.io_ import TOMLFileManager
+            from usethis._test import change_cwd
+
             class MyTOMLFileManager(TOMLFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -433,6 +487,9 @@ lint.pydocstyle.convention = "pep257"
     class TestRemoveFromList:
         def test_inplace_modifications(self, tmp_path: Path) -> None:
             # Arrange
+            from usethis._integrations.file.toml.io_ import TOMLFileManager
+            from usethis._test import change_cwd
+
             class MyTOMLFileManager(TOMLFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -451,6 +508,9 @@ lint.pydocstyle.convention = "pep257"
 
         def test_no_keys_raises(self, tmp_path: Path) -> None:
             # Arrange
+            from usethis._integrations.file.toml.io_ import TOMLFileManager
+            from usethis._test import change_cwd
+
             class MyTOMLFileManager(TOMLFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -467,6 +527,9 @@ lint.pydocstyle.convention = "pep257"
 
         def test_already_not_present(self, tmp_path: Path) -> None:
             # Arrange
+            from usethis._integrations.file.toml.io_ import TOMLFileManager
+            from usethis._test import change_cwd
+
             class MyTOMLFileManager(TOMLFileManager):
                 @property
                 def relative_path(self) -> Path:
@@ -487,6 +550,9 @@ lint.pydocstyle.convention = "pep257"
 
         def test_key_not_present(self, tmp_path: Path) -> None:
             # Arrange
+            from usethis._integrations.file.toml.io_ import TOMLFileManager
+            from usethis._test import change_cwd
+
             class MyTOMLFileManager(TOMLFileManager):
                 @property
                 def relative_path(self) -> Path:

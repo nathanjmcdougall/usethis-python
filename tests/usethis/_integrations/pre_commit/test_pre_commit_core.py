@@ -2,21 +2,13 @@ from pathlib import Path
 
 import pytest
 
-from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._integrations.pre_commit.core import (
-    install_pre_commit_hooks,
-    remove_pre_commit_config,
-    uninstall_pre_commit_hooks,
-)
-from usethis._integrations.pre_commit.errors import PreCommitInstallationError
-from usethis._integrations.pre_commit.hooks import add_placeholder_hook
-from usethis._integrations.uv.deps import Dependency, add_deps_to_group
-from usethis._test import change_cwd
-
 
 class TestRemovePreCommitConfig:
     def test_exists(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.pre_commit.core import remove_pre_commit_config
+        from usethis._test import change_cwd
+
         (tmp_path / ".pre-commit-config.yaml").touch()
 
         # Act
@@ -28,6 +20,9 @@ class TestRemovePreCommitConfig:
 
     def test_message(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
         # Arrange
+        from usethis._integrations.pre_commit.core import remove_pre_commit_config
+        from usethis._test import change_cwd
+
         (uv_init_dir / ".pre-commit-config.yaml").touch()
 
         # Act
@@ -39,7 +34,10 @@ class TestRemovePreCommitConfig:
         assert out == "✔ Removing '.pre-commit-config.yaml'.\n"
 
     def test_already_missing(self, tmp_path: Path, capfd: pytest.CaptureFixture[str]):
-        # Act
+        # Arrange
+        from usethis._integrations.pre_commit.core import remove_pre_commit_config
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path):
             remove_pre_commit_config()
 
@@ -49,6 +47,10 @@ class TestRemovePreCommitConfig:
         assert not (tmp_path / ".pre-commit-config.yaml").exists()
 
     def test_does_not_exist(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.pre_commit.core import remove_pre_commit_config
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(tmp_path):
             remove_pre_commit_config()
@@ -63,6 +65,12 @@ class TestInstallPreCommitHooks:
         # This is needed to check the standard (non-frozen) message
 
         # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.pre_commit.core import install_pre_commit_hooks
+        from usethis._integrations.pre_commit.hooks import add_placeholder_hook
+        from usethis._integrations.uv.deps import Dependency, add_deps_to_group
+        from usethis._test import change_cwd
+
         with change_cwd(uv_env_dir), PyprojectTOMLManager():
             add_deps_to_group([Dependency(name="pre-commit")], "dev")
             add_placeholder_hook()
@@ -85,6 +93,12 @@ class TestInstallPreCommitHooks:
         self, uv_init_repo_dir: Path, capfd: pytest.CaptureFixture[str]
     ):
         # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.pre_commit.core import install_pre_commit_hooks
+        from usethis._integrations.pre_commit.hooks import add_placeholder_hook
+        from usethis._integrations.uv.deps import Dependency, add_deps_to_group
+        from usethis._test import change_cwd
+
         with change_cwd(uv_init_repo_dir), PyprojectTOMLManager():
             add_deps_to_group([Dependency(name="pre-commit")], "dev")
             add_placeholder_hook()
@@ -101,6 +115,11 @@ class TestInstallPreCommitHooks:
             )
 
     def test_err(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.pre_commit.core import install_pre_commit_hooks
+        from usethis._integrations.pre_commit.errors import PreCommitInstallationError
+        from usethis._test import change_cwd
+
         # Act, Assert
         with change_cwd(tmp_path), pytest.raises(PreCommitInstallationError):
             # Will fail because pre-commit isn't installed.
@@ -117,6 +136,12 @@ class TestUninstallPreCommitHooks:
         # This is needed to check the standard (non-frozen) message
 
         # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.pre_commit.core import uninstall_pre_commit_hooks
+        from usethis._integrations.pre_commit.hooks import add_placeholder_hook
+        from usethis._integrations.uv.deps import Dependency, add_deps_to_group
+        from usethis._test import change_cwd
+
         with change_cwd(uv_env_dir), PyprojectTOMLManager():
             add_deps_to_group([Dependency(name="pre-commit")], "dev")
             add_placeholder_hook()
@@ -134,6 +159,11 @@ class TestUninstallPreCommitHooks:
         assert (uv_env_dir / ".pre-commit-config.yaml").exists()
 
     def test_err(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.pre_commit.core import uninstall_pre_commit_hooks
+        from usethis._integrations.pre_commit.errors import PreCommitInstallationError
+        from usethis._test import change_cwd
+
         # Act, Assert
         with change_cwd(tmp_path), pytest.raises(PreCommitInstallationError):
             # Will fail because pre-commit isn't installed.

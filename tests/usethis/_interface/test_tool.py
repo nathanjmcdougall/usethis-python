@@ -1,21 +1,19 @@
 from pathlib import Path
 
 import pytest
-from typer.testing import CliRunner
-
-from usethis._config import usethis_config
-from usethis._config_file import files_manager
-from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._integrations.uv.call import call_uv_subprocess
-from usethis._interface.tool import ALL_TOOL_COMMANDS, app
-from usethis._subprocess import SubprocessFailedError, call_subprocess
-from usethis._test import change_cwd
-from usethis._tool.all_ import ALL_TOOLS
+from pytest_codspeed import BenchmarkFixture
 
 
 class TestCodespell:
     @pytest.mark.usefixtures("_vary_network_conn")
     def test_add(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._config import usethis_config
+        from usethis._interface.tool import app
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):
@@ -28,6 +26,12 @@ class TestCodespell:
         assert result.exit_code == 0, result.output
 
     def test_how(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.tool import app
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):
@@ -46,6 +50,10 @@ class TestCodespell:
 class TestCoverage:
     @pytest.mark.usefixtures("_vary_network_conn")
     def test_cli(self, uv_init_dir: Path):
+        from usethis._config import usethis_config
+        from usethis._subprocess import call_subprocess
+        from usethis._test import change_cwd
+
         with change_cwd(uv_init_dir):
             if not usethis_config.offline:
                 call_subprocess(["usethis", "tool", "coverage"])
@@ -58,6 +66,13 @@ class TestCoverage:
         # https://github.com/usethis-python/usethis-python/issues/426
 
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._config import usethis_config
+        from usethis._interface.tool import app
+        from usethis._subprocess import call_subprocess
+        from usethis._test import change_cwd
+
         (tmp_path / "__main__.py").touch()
 
         # Act
@@ -78,6 +93,14 @@ class TestCoverage:
         # https://github.com/usethis-python/usethis-python/issues/558
 
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._config import usethis_config
+        from usethis._config_file import files_manager
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._interface.tool import app
+        from usethis._test import change_cwd
+
         (tmp_path / "pyproject.toml").write_text("""\
 [project]
 name = "example"
@@ -109,6 +132,12 @@ ignore-regex = ["[A-Za-z0-9+/]{100,}"]
         assert "[tool.coverage]" in (tmp_path / "pyproject.toml").read_text()
 
     def test_how(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.tool import app
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):
@@ -127,6 +156,10 @@ ignore-regex = ["[A-Za-z0-9+/]{100,}"]
 class TestDeptry:
     @pytest.mark.usefixtures("_vary_network_conn")
     def test_cli(self, uv_init_dir: Path):
+        from usethis._config import usethis_config
+        from usethis._subprocess import call_subprocess
+        from usethis._test import change_cwd
+
         with change_cwd(uv_init_dir):
             if not usethis_config.offline:
                 call_subprocess(["usethis", "tool", "deptry"])
@@ -135,12 +168,19 @@ class TestDeptry:
 
     @pytest.mark.usefixtures("_vary_network_conn")
     def test_cli_frozen(self, uv_init_dir: Path):
+        from usethis._subprocess import call_subprocess
+        from usethis._test import change_cwd
+
         with change_cwd(uv_init_dir):
             call_subprocess(["usethis", "tool", "deptry", "--frozen"])
             assert not (uv_init_dir / ".venv").exists()
 
     @pytest.mark.usefixtures("_vary_network_conn")
     def test_cli_not_frozen(self, uv_init_dir: Path):
+        from usethis._config import usethis_config
+        from usethis._subprocess import call_subprocess
+        from usethis._test import change_cwd
+
         with change_cwd(uv_init_dir):
             if not usethis_config.offline:
                 call_subprocess(["usethis", "tool", "deptry"])
@@ -150,6 +190,13 @@ class TestDeptry:
 
     @pytest.mark.usefixtures("_vary_network_conn")
     def test_runs(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.tool import app
+        from usethis._subprocess import call_subprocess
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):
@@ -160,6 +207,12 @@ class TestDeptry:
             call_subprocess(["deptry", "."])
 
     def test_how(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.tool import app
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):
@@ -177,6 +230,12 @@ class TestDeptry:
 
 class TestImportLinter:
     def test_how(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.tool import app
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):
@@ -196,6 +255,12 @@ class TestImportLinter:
 
 class TestPyprojectTOML:
     def test_add(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.tool import app
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):
@@ -205,6 +270,12 @@ class TestPyprojectTOML:
         assert result.exit_code == 0, result.output
 
     def test_remove(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.tool import app
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):
@@ -214,6 +285,12 @@ class TestPyprojectTOML:
         assert result.exit_code == 0, result.output
 
     def test_how(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.tool import app
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):
@@ -233,6 +310,12 @@ https://packaging.python.org/en/latest/guides/writing-pyproject-toml/
 
 class TestPyprojectFmt:
     def test_how(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.tool import app
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):
@@ -251,6 +334,11 @@ class TestPyprojectFmt:
 class TestPreCommit:
     @pytest.mark.usefixtures("_vary_network_conn")
     def test_cli_pass(self, uv_init_repo_dir: Path):
+        from usethis._config import usethis_config
+        from usethis._integrations.uv.call import call_uv_subprocess
+        from usethis._subprocess import call_subprocess
+        from usethis._test import change_cwd
+
         with change_cwd(uv_init_repo_dir):
             if not usethis_config.offline:
                 call_subprocess(["usethis", "tool", "pre-commit"])
@@ -263,6 +351,10 @@ class TestPreCommit:
 
     @pytest.mark.usefixtures("_vary_network_conn")
     def test_cli_fail(self, uv_init_repo_dir: Path):
+        from usethis._config import usethis_config
+        from usethis._subprocess import SubprocessFailedError, call_subprocess
+        from usethis._test import change_cwd
+
         with change_cwd(uv_init_repo_dir):
             if not usethis_config.offline:
                 call_subprocess(["usethis", "tool", "pre-commit"])
@@ -279,6 +371,12 @@ class TestPreCommit:
                 pytest.fail("Expected subprocess.CalledProcessError")
 
     def test_how(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.tool import app
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):
@@ -296,6 +394,11 @@ class TestPreCommit:
     def test_adds_okay_without_git(self, tmp_path: Path):
         """Test that pre-commit runs without a git repo."""
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.tool import app
+        from usethis._test import change_cwd
+
         (tmp_path / "pyproject.toml").write_text("[project]\nname = 'example'\n")
 
         # Act
@@ -309,6 +412,11 @@ class TestPreCommit:
     def test_removes_okay_without_git(self, tmp_path: Path):
         """Test that pre-commit removes without a git repo."""
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.tool import app
+        from usethis._test import change_cwd
+
         (tmp_path / "pyproject.toml").write_text("[project]\nname = 'example'\n")
         (tmp_path / ".pre-commit-config.yaml").write_text("")
 
@@ -324,6 +432,12 @@ class TestPreCommit:
 
 class TestRequirementsTxt:
     def test_runs(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.tool import app
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):
@@ -333,6 +447,12 @@ class TestRequirementsTxt:
         assert result.exit_code == 0, result.output
 
     def test_how(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.tool import app
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):
@@ -353,6 +473,10 @@ class TestRequirementsTxt:
 class TestRuff:
     @pytest.mark.usefixtures("_vary_network_conn")
     def test_cli(self, uv_init_dir: Path):
+        from usethis._config import usethis_config
+        from usethis._subprocess import call_subprocess
+        from usethis._test import change_cwd
+
         with change_cwd(uv_init_dir):
             if not usethis_config.offline:
                 call_subprocess(["usethis", "tool", "ruff"])
@@ -365,6 +489,12 @@ class TestRuff:
         Note carefully! If this test is updated, the README.md file must be
         updated too.
         """
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.tool import app
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(uv_init_dir):
@@ -389,6 +519,12 @@ class TestRuff:
         )
 
     def test_how(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.tool import app
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):
@@ -408,6 +544,13 @@ class TestRuff:
 class TestPytest:
     @pytest.mark.usefixtures("_vary_network_conn")
     def test_add(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._config import usethis_config
+        from usethis._interface.tool import app
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):
@@ -426,6 +569,11 @@ class TestPytest:
         updated too.
         """
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.tool import app
+        from usethis._test import change_cwd
+
         # We've already run ruff...
         (tmp_path / "pyproject.toml").write_text("""\
 [project]
@@ -458,6 +606,12 @@ line-length = 88
         )
 
     def test_how(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.tool import app
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):
@@ -475,9 +629,13 @@ line-length = 88
         )
 
 
-@pytest.mark.benchmark
-def test_several_tools_add_and_remove(tmp_path: Path):
+def test_several_tools_add_and_remove(tmp_path: Path, benchmark: BenchmarkFixture):
     # Arrange
+    from typer.testing import CliRunner
+
+    from usethis._interface.tool import app
+    from usethis._test import change_cwd
+
     # The rationale for using src layout is to avoid writing
     # hatch config unnecessarily slowing down I/O
     tmp_path = tmp_path / "benchmark"  # To get a fixed project name
@@ -489,23 +647,36 @@ def test_several_tools_add_and_remove(tmp_path: Path):
     # Act
     runner = CliRunner()
     with change_cwd(tmp_path):
-        runner.invoke(app, ["pytest"])
-        runner.invoke(app, ["coverage.py"])
-        runner.invoke(app, ["ruff"])
-        runner.invoke(app, ["deptry"])
-        runner.invoke(app, ["pre-commit"])
-        runner.invoke(app, ["ruff", "--remove"])
-        runner.invoke(app, ["pyproject-fmt"])
-        runner.invoke(app, ["pytest", "--remove"])
+
+        def invoke():
+            runner.invoke(app, ["pytest"])
+            runner.invoke(app, ["coverage.py"])
+            runner.invoke(app, ["ruff"])
+            runner.invoke(app, ["deptry"])
+            runner.invoke(app, ["pre-commit"])
+            runner.invoke(app, ["ruff", "--remove"])
+            runner.invoke(app, ["pyproject-fmt"])
+            runner.invoke(app, ["pytest", "--remove"])
+
+        benchmark(invoke)
 
 
 def test_tool_matches_command():
+    # Arrange
+
+    from usethis._interface.tool import ALL_TOOL_COMMANDS
+    from usethis._tool.all_ import ALL_TOOLS
+
     assert {tool.name.lower().replace(" ", "-") for tool in ALL_TOOLS} == set(
         ALL_TOOL_COMMANDS
     )
 
 
 def test_app_commands_match_list():
+    # Arrange
+
+    from usethis._interface.tool import ALL_TOOL_COMMANDS, app
+
     commands = app.registered_commands
     names = [command.name for command in commands]
     names.remove("coverage")  # Deprecated

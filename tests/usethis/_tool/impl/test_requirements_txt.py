@@ -2,10 +2,6 @@ from pathlib import Path
 
 import pytest
 
-from usethis._config_file import files_manager
-from usethis._test import change_cwd
-from usethis._tool.impl.requirements_txt import RequirementsTxtTool
-
 
 class TestRequirementsTxtTool:
     class TestPrintHowToUse:
@@ -13,6 +9,10 @@ class TestRequirementsTxtTool:
             self, tmp_path: Path, capfd: pytest.CaptureFixture[str]
         ):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._test import change_cwd
+            from usethis._tool.impl.requirements_txt import RequirementsTxtTool
+
             (tmp_path / ".pre-commit-config.yaml").touch()
 
             # Act

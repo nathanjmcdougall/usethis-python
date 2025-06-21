@@ -1,17 +1,14 @@
 from pathlib import Path
 
-from ruamel.yaml.comments import CommentedMap, CommentedSeq
-
-from usethis._integrations.file.yaml.io_ import edit_yaml
-from usethis._integrations.file.yaml.update import (
-    lcs_list_update,
-    update_ruamel_yaml_map,
-)
-
 
 class TestUpdateRuamelYamlMap:
     def test_no_change(self, tmp_path: Path):
         # Arrange
+        from ruamel.yaml.comments import CommentedMap
+
+        from usethis._integrations.file.yaml.io_ import edit_yaml
+        from usethis._integrations.file.yaml.update import update_ruamel_yaml_map
+
         path = tmp_path / "test.yaml"
         path.write_text("""\
 hello: world # comment
@@ -36,6 +33,11 @@ hello: world # comment
 
     def test_map(self, tmp_path: Path):
         # Arrange
+        from ruamel.yaml.comments import CommentedMap
+
+        from usethis._integrations.file.yaml.io_ import edit_yaml
+        from usethis._integrations.file.yaml.update import update_ruamel_yaml_map
+
         path = tmp_path / "test.yaml"
         path.write_text("""\
 hello: world # comment
@@ -60,6 +62,11 @@ hello: universe # comment
 
     def test_list(self, tmp_path: Path):
         # Arrange
+        from ruamel.yaml.comments import CommentedMap
+
+        from usethis._integrations.file.yaml.io_ import edit_yaml
+        from usethis._integrations.file.yaml.update import update_ruamel_yaml_map
+
         path = tmp_path / "test.yaml"
         path.write_text("""\
 key:
@@ -90,6 +97,11 @@ key:
 
     def test_remove_key(self, tmp_path: Path):
         # Arrange
+        from ruamel.yaml.comments import CommentedMap
+
+        from usethis._integrations.file.yaml.io_ import edit_yaml
+        from usethis._integrations.file.yaml.update import update_ruamel_yaml_map
+
         path = tmp_path / "test.yaml"
         path.write_text("""\
 key: value
@@ -115,6 +127,11 @@ key: new value
 
     def test_nested_map(self, tmp_path: Path):
         # Arrange
+        from ruamel.yaml.comments import CommentedMap
+
+        from usethis._integrations.file.yaml.io_ import edit_yaml
+        from usethis._integrations.file.yaml.update import update_ruamel_yaml_map
+
         path = tmp_path / "test.yaml"
         path.write_text("""\
 key: # comment1
@@ -143,6 +160,11 @@ banana: yummy
 
     def test_reuse_ref(self, tmp_path: Path):
         # Arrange
+        from ruamel.yaml.comments import CommentedMap
+
+        from usethis._integrations.file.yaml.io_ import edit_yaml
+        from usethis._integrations.file.yaml.update import update_ruamel_yaml_map
+
         path = tmp_path / "test.yaml"
         path.write_text("""\
 key:
@@ -181,6 +203,11 @@ key:
 
     def test_remove_list_element(self, tmp_path: Path):
         # Arrange
+        from ruamel.yaml.comments import CommentedMap
+
+        from usethis._integrations.file.yaml.io_ import edit_yaml
+        from usethis._integrations.file.yaml.update import update_ruamel_yaml_map
+
         path = tmp_path / "test.yaml"
         path.write_text("""\
 key:
@@ -211,6 +238,11 @@ key:
 
     def test_remove_nested_list(self, tmp_path: Path):
         # Arrange
+        from ruamel.yaml.comments import CommentedMap
+
+        from usethis._integrations.file.yaml.io_ import edit_yaml
+        from usethis._integrations.file.yaml.update import update_ruamel_yaml_map
+
         path = tmp_path / "test.yaml"
         path.write_text("""\
 key:
@@ -241,6 +273,11 @@ key:
 
     def test_anchor_with_ref(self, tmp_path: Path):
         # Arrange
+        from ruamel.yaml.comments import CommentedMap
+
+        from usethis._integrations.file.yaml.io_ import edit_yaml
+        from usethis._integrations.file.yaml.update import update_ruamel_yaml_map
+
         path = tmp_path / "test.yaml"
         path.write_text("""\
 key: &anchor
@@ -273,6 +310,11 @@ new_key: *anchor
 
     def test_anchor_without_ref(self, tmp_path: Path):
         # Arrange
+        from ruamel.yaml.comments import CommentedMap, CommentedSeq
+
+        from usethis._integrations.file.yaml.io_ import edit_yaml
+        from usethis._integrations.file.yaml.update import update_ruamel_yaml_map
+
         path = tmp_path / "test.yaml"
         path.write_text("""\
 key:
@@ -309,6 +351,11 @@ new_key: *banana
 
     def test_new_anchor(self, tmp_path: Path):
         # Arrange
+        from ruamel.yaml.comments import CommentedSeq
+
+        from usethis._integrations.file.yaml.io_ import edit_yaml
+        from usethis._integrations.file.yaml.update import update_ruamel_yaml_map
+
         path = tmp_path / "test.yaml"
         path.write_text("{}")
 
@@ -341,6 +388,9 @@ new_key: *banana
 class TestLCSListUpdate:
     def test_identical(self):
         # Arrange
+
+        from usethis._integrations.file.yaml.update import lcs_list_update
+
         x = [1, 2, 3, 4]
         new = [1, 2, 3, 4]
 
@@ -352,6 +402,8 @@ class TestLCSListUpdate:
 
     def test_addition(self):
         # Arrange
+        from usethis._integrations.file.yaml.update import lcs_list_update
+
         x = [1, 2, 3, 4]
         new = [1, 2, 3, 4, 5]
 
@@ -363,6 +415,8 @@ class TestLCSListUpdate:
 
     def test_deletion(self):
         # Arrange
+        from usethis._integrations.file.yaml.update import lcs_list_update
+
         x = [1, 2, 3, 4]
         new = [1, 2, 4]
 
@@ -374,6 +428,11 @@ class TestLCSListUpdate:
 
     def test_ruamel_yaml_file(self, tmp_path: Path):
         # Arrange
+        from ruamel.yaml.comments import CommentedSeq
+
+        from usethis._integrations.file.yaml.io_ import edit_yaml
+        from usethis._integrations.file.yaml.update import lcs_list_update
+
         path = tmp_path / "test.yaml"
         path.write_text("""\
 - 1 # comment

@@ -3,19 +3,19 @@ from sysconfig import get_python_version
 
 import pytest
 
-from usethis._config_file import files_manager
-from usethis._integrations.ci.bitbucket.steps import add_placeholder_step_in_default
-from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._integrations.python.version import extract_major_version
-from usethis._test import change_cwd
-from usethis._tool.impl.pytest import PytestTool
-
 
 class TestPytestTool:
     class TestUpdateBitbucketSteps:
         def test_new_file(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._integrations.ci.bitbucket.steps import (
+                add_placeholder_step_in_default,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.pytest import PytestTool
+
             with change_cwd(uv_init_dir), files_manager():
-                # Arrange
                 add_placeholder_step_in_default(report_placeholder=False)
                 (uv_init_dir / "pytest.ini").touch()
 
@@ -71,6 +71,10 @@ pipelines:
         ):
             """Note this test also checks we don't add a cache when it's not needed."""
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._test import change_cwd
+            from usethis._tool.impl.pytest import PytestTool
+
             (uv_init_dir / "bitbucket-pipelines.yml").write_text(
                 """\
 image: atlassian/default-image:3
@@ -121,6 +125,14 @@ pipelines:
 
         def test_no_requires_python(self, tmp_path: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._integrations.ci.bitbucket.steps import (
+                add_placeholder_step_in_default,
+            )
+            from usethis._integrations.python.version import extract_major_version
+            from usethis._test import change_cwd
+            from usethis._tool.impl.pytest import PytestTool
+
             (tmp_path / "pyproject.toml").write_text(
                 """\
 [project]
@@ -166,6 +178,10 @@ pipelines:
 
     class TestRemoveBitbucketSteps:
         def test_no_file(self, uv_init_dir: Path):
+            # Arrange
+            from usethis._test import change_cwd
+            from usethis._tool.impl.pytest import PytestTool
+
             # Act
             with change_cwd(uv_init_dir):
                 PytestTool().remove_bitbucket_steps()
@@ -175,6 +191,13 @@ pipelines:
 
         def test_dont_touch_if_no_pytest_steps(self, uv_init_dir: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._integrations.ci.bitbucket.steps import (
+                add_placeholder_step_in_default,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.pytest import PytestTool
+
             with change_cwd(uv_init_dir), files_manager():
                 add_placeholder_step_in_default(report_placeholder=False)
                 PytestTool().update_bitbucket_steps()
@@ -191,6 +214,12 @@ pipelines:
 
         def test_one_step(self, uv_init_dir: Path):
             # Arrange
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.pytest import PytestTool
+
             (uv_init_dir / "bitbucket-pipelines.yml").write_text(
                 """\
 image: atlassian/default-image:3

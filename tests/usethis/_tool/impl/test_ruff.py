@@ -2,17 +2,17 @@ from pathlib import Path
 
 import pytest
 
-from usethis._config_file import DotRuffTOMLManager, RuffTOMLManager, files_manager
-from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._test import change_cwd
-from usethis._tool.impl.ruff import RuffTool
-
 
 class TestRuffTool:
     class TestSelectRules:
         def test_no_pyproject_toml(
             self, tmp_path: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._test import change_cwd
+            from usethis._tool.impl.ruff import RuffTool
+
             # Act
             with (
                 change_cwd(tmp_path),
@@ -33,6 +33,12 @@ class TestRuffTool:
 
         def test_message(self, tmp_path: Path, capfd: pytest.CaptureFixture[str]):
             # Arrange
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.ruff import RuffTool
+
             (tmp_path / "pyproject.toml").write_text("")
 
             # Act
@@ -45,6 +51,12 @@ class TestRuffTool:
 
         def test_blank_slate(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.ruff import RuffTool
+
             (tmp_path / "pyproject.toml").write_text("")
 
             # Act
@@ -58,6 +70,12 @@ class TestRuffTool:
 
         def test_mixing(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.ruff import RuffTool
+
             (tmp_path / "pyproject.toml").write_text(
                 """
     [tool.ruff.lint]
@@ -75,6 +93,12 @@ class TestRuffTool:
 
         def test_respects_order(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.ruff import RuffTool
+
             (tmp_path / "pyproject.toml").write_text(
                 """
 [tool.ruff.lint]
@@ -91,6 +115,10 @@ select = ["D", "B", "A"]
 
         def test_ruff_toml(self, tmp_path: Path):
             # Arrange
+            from usethis._config_file import RuffTOMLManager
+            from usethis._test import change_cwd
+            from usethis._tool.impl.ruff import RuffTool
+
             (tmp_path / "ruff.toml").write_text(
                 """
 [lint]
@@ -109,6 +137,12 @@ select = ["A", "B"]
 
         def test_no_rules(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.ruff import RuffTool
+
             (tmp_path / "pyproject.toml").write_text(
                 """
 [tool.ruff.lint]
@@ -125,6 +159,11 @@ select = ["A"]
 
     class TestDeselectRules:
         def test_no_pyproject_toml(self, tmp_path: Path):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._test import change_cwd
+            from usethis._tool.impl.ruff import RuffTool
+
             # Act
             with change_cwd(tmp_path), files_manager():
                 RuffTool().deselect_rules(["A"])
@@ -134,6 +173,12 @@ select = ["A"]
 
         def test_blank_slate(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.ruff import RuffTool
+
             (tmp_path / "pyproject.toml").write_text("")
 
             # Act
@@ -145,6 +190,12 @@ select = ["A"]
 
         def test_single_rule(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.ruff import RuffTool
+
             (tmp_path / "pyproject.toml").write_text(
                 """
 [tool.ruff.lint]
@@ -161,6 +212,12 @@ select = ["A"]
 
         def test_mix(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.ruff import RuffTool
+
             (tmp_path / "pyproject.toml").write_text(
                 """
 [tool.ruff.lint]
@@ -177,6 +234,10 @@ select = ["A", "B", "C"]
 
         def test_ruff_toml(self, tmp_path: Path):
             # Arrange
+            from usethis._config_file import DotRuffTOMLManager
+            from usethis._test import change_cwd
+            from usethis._tool.impl.ruff import RuffTool
+
             (tmp_path / ".ruff.toml").write_text(
                 """\
 [lint]
@@ -194,6 +255,12 @@ select = ["A", "B"]
     class TestIgnoreRules:
         def test_add_to_existing(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.ruff import RuffTool
+
             (tmp_path / "pyproject.toml").write_text(
                 """\
 [tool.ruff.lint]
@@ -210,6 +277,12 @@ ignore = ["A", "B"]
 
         def test_no_rules(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.ruff import RuffTool
+
             (tmp_path / "pyproject.toml").write_text(
                 """\
 [tool.ruff.lint]
@@ -226,12 +299,23 @@ ignore = ["A"]
 
     class TestIsLinterUsed:
         def test_neither_subtool_has_config_assume_both_used(self, tmp_path: Path):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._test import change_cwd
+            from usethis._tool.impl.ruff import RuffTool
+
             # Act
             with change_cwd(tmp_path), files_manager():
                 assert RuffTool().is_linter_used()
 
         def test_formatter_used(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.ruff import RuffTool
+
             (tmp_path / "pyproject.toml").write_text(
                 """\
 [tool.ruff.format]
@@ -244,6 +328,12 @@ select = ["A"]
 
         def test_pyproject_toml(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.ruff import RuffTool
+
             (tmp_path / "pyproject.toml").write_text(
                 """\
 [tool.ruff.lint]
@@ -257,6 +347,10 @@ select = ["A"]
 
         def test_ruff_toml(self, tmp_path: Path):
             # Arrange
+            from usethis._config_file import DotRuffTOMLManager
+            from usethis._test import change_cwd
+            from usethis._tool.impl.ruff import RuffTool
+
             (tmp_path / ".ruff.toml").write_text(
                 """\
 [lint]
@@ -270,12 +364,23 @@ select = ["A"]
 
     class TestIsFormatterUsed:
         def test_neither_subtool_has_config_assume_both_used(self, tmp_path: Path):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._test import change_cwd
+            from usethis._tool.impl.ruff import RuffTool
+
             # Act
             with change_cwd(tmp_path), files_manager():
                 assert RuffTool().is_formatter_used()
 
         def test_linter_used(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.ruff import RuffTool
+
             (tmp_path / "pyproject.toml").write_text(
                 """\
 [tool.ruff.lint]
@@ -289,6 +394,12 @@ select = ["A"]
 
         def test_pyproject_toml(self, tmp_path: Path):
             # Arrange
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.ruff import RuffTool
+
             (tmp_path / "pyproject.toml").write_text(
                 """\
 [tool.ruff.format]
@@ -302,6 +413,10 @@ select = ["A"]
 
         def test_ruff_toml(self, tmp_path: Path):
             # Arrange
+            from usethis._config_file import DotRuffTOMLManager
+            from usethis._test import change_cwd
+            from usethis._tool.impl.ruff import RuffTool
+
             (tmp_path / ".ruff.toml").write_text(
                 """\
 [format]

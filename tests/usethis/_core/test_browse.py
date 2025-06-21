@@ -1,11 +1,12 @@
 import pytest
-import typer
-
-from usethis._core.browse import browse_pypi
 
 
 class TestPyPI:
     def test_message(self, capfd: pytest.CaptureFixture[str]):
+        # Arrange
+
+        from usethis._core.browse import browse_pypi
+
         # Act
         browse_pypi(package="numpy", browser=False)
 
@@ -16,6 +17,10 @@ class TestPyPI:
 
     def test_open_in_browser(self, monkeypatch):
         # Arrange
+        import typer
+
+        from usethis._core.browse import browse_pypi
+
         class MockLaunch:
             def __init__(self):
                 self.url = None

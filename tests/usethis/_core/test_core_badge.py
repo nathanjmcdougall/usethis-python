@@ -2,14 +2,12 @@ from pathlib import Path
 
 import pytest
 
-from usethis._core.badge import Badge, add_badge, is_badge, remove_badge
-from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._test import change_cwd
-
 
 class TestIsBadge:
     def test_badge_no_braces(self):
         # Arrange
+        from usethis._core.badge import is_badge
+
         txt = """![Ruff](https://example.com)"""
 
         # Act
@@ -20,6 +18,8 @@ class TestIsBadge:
 
     def test_badge_with_braces(self):
         # Arrange
+        from usethis._core.badge import is_badge
+
         txt = """![Ruff](<https://example.com>)"""
 
         # Act
@@ -30,6 +30,8 @@ class TestIsBadge:
 
     def test_badge_with_link(self):
         # Arrange
+        from usethis._core.badge import is_badge
+
         txt = """[![Ruff](<https://example.com>)](https://example.com)"""
 
         # Act
@@ -40,6 +42,8 @@ class TestIsBadge:
 
     def test_not_badge(self):
         # Arrange
+        from usethis._core.badge import is_badge
+
         txt = """# Header"""
 
         # Act
@@ -51,6 +55,11 @@ class TestIsBadge:
 
 class TestAddBadge:
     def test_no_readme(self, bare_dir: Path, capfd: pytest.CaptureFixture[str]):
+        # Arrange
+        from usethis._core.badge import Badge, add_badge
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(bare_dir), PyprojectTOMLManager():
             add_badge(
@@ -70,6 +79,10 @@ class TestAddBadge:
 
     def test_not_markdown(self, bare_dir: Path, capfd: pytest.CaptureFixture[str]):
         # Arrange
+        from usethis._core.badge import Badge, add_badge
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         path = bare_dir / "README.foo"
         path.write_text("# Header\n")
 
@@ -91,6 +104,10 @@ class TestAddBadge:
 
     def test_empty(self, bare_dir: Path, capfd: pytest.CaptureFixture[str]):
         # Arrange
+        from usethis._core.badge import Badge, add_badge
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         path = bare_dir / "README.md"
         path.write_text("")
 
@@ -121,6 +138,10 @@ class TestAddBadge:
 
     def test_only_newline(self, bare_dir: Path):
         # Arrange
+        from usethis._core.badge import Badge, add_badge
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         path = bare_dir / "README.md"
         path.write_text("""\
 
@@ -146,6 +167,10 @@ class TestAddBadge:
 
     def test_predecessor(self, bare_dir: Path):
         # Arrange
+        from usethis._core.badge import Badge, add_badge
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         path = bare_dir / "README.md"
         path.write_text("""\
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
@@ -171,6 +196,10 @@ class TestAddBadge:
 
     def test_not_predecessor(self, bare_dir: Path):
         # Arrange
+        from usethis._core.badge import Badge, add_badge
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         path = bare_dir / "README.md"
         path.write_text("""\
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
@@ -196,6 +225,10 @@ class TestAddBadge:
 
     def test_not_recognized_gets_put_after_known_order(self, bare_dir: Path):
         # Arrange
+        from usethis._core.badge import Badge, add_badge
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         path = bare_dir / "README.md"
         path.write_text("""\
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
@@ -221,6 +254,10 @@ class TestAddBadge:
 
     def test_skip_header1(self, bare_dir: Path, capfd: pytest.CaptureFixture[str]):
         # Arrange
+        from usethis._core.badge import Badge, add_badge
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         path = bare_dir / "README.md"
         path.write_text("""\
 # Header
@@ -249,6 +286,10 @@ class TestAddBadge:
 
     def test_skip_header2(self, bare_dir: Path):
         # Arrange
+        from usethis._core.badge import Badge, add_badge
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         path = bare_dir / "README.md"
         path.write_text("""\
 ## Header
@@ -274,6 +315,10 @@ class TestAddBadge:
 
     def test_skip_header_with_extra_newline(self, bare_dir: Path):
         # Arrange
+        from usethis._core.badge import Badge, add_badge
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         path = bare_dir / "README.md"
         path.write_text("""\
 # Header
@@ -300,6 +345,10 @@ class TestAddBadge:
 
     def test_extra_unstripped_space(self, bare_dir: Path):
         # Arrange
+        from usethis._core.badge import Badge, add_badge
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         path = bare_dir / "README.md"
         path.write_text("""\
   # Header  
@@ -329,6 +378,10 @@ class TestAddBadge:
 
     def test_already_exists(self, bare_dir: Path, capfd: pytest.CaptureFixture[str]):
         # Arrange
+        from usethis._core.badge import Badge, add_badge
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         path = bare_dir / "README.md"
         path.write_text("""\
 ![Licence](https://img.shields.io/badge/licence-mit-green)
@@ -355,6 +408,10 @@ class TestAddBadge:
 
     def test_badge_followed_by_text(self, bare_dir: Path):
         # Arrange
+        from usethis._core.badge import Badge, add_badge
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         path = bare_dir / "README.md"
         path.write_text("""\
 # Header
@@ -384,6 +441,10 @@ Some text
 
     def test_predecessor_based_on_name(self, bare_dir: Path):
         # Arrange
+        from usethis._core.badge import Badge, add_badge
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         path = bare_dir / "README.md"
         path.write_text("""\
 ![Ruff](https://example.com)
@@ -408,6 +469,10 @@ Some text
 
     def test_recognized_gets_put_before_unknown(self, bare_dir: Path):
         # Arrange
+        from usethis._core.badge import Badge, add_badge
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         path = bare_dir / "README.md"
         path.write_text("""\
 ![Don't Know What This Is](https://example.com)
@@ -432,6 +497,10 @@ Some text
 
     def test_already_exists_no_newline_added(self, bare_dir: Path):
         # Arrange
+        from usethis._core.badge import Badge, add_badge
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         path = bare_dir / Path("README.md")
         content = """![Ruff](https://example.com)"""
         path.write_text(content)
@@ -445,6 +514,10 @@ Some text
 
     def test_no_unnecessary_spaces(self, bare_dir: Path):
         # Arrange
+        from usethis._core.badge import Badge, add_badge
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         path = bare_dir / "README.md"
         path.write_text("""\
 # usethis
@@ -480,6 +553,10 @@ Automate Python project setup and development tasks that are otherwise performed
         self, bare_dir: Path, capfd: pytest.CaptureFixture[str]
     ):
         # Arrange
+        from usethis._core.badge import Badge, add_badge
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         path = bare_dir / "README.md"
         content = """\
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit>)](<https://github.com/pre-commit/pre-commit
@@ -503,6 +580,10 @@ Automate Python project setup and development tasks that are otherwise performed
 
     def test_skip_html_block(self, bare_dir: Path):
         # Arrange
+        from usethis._core.badge import Badge, add_badge
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         path = bare_dir / "README.md"
         path.write_text("""\
 <h1 align="center">
@@ -540,6 +621,10 @@ Automate Python project setup and development tasks that are otherwise performed
 
     def test_add_to_no_file_extension_readme(self, bare_dir: Path):
         # Arrange
+        from usethis._core.badge import Badge, add_badge
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         path = bare_dir / "README"
         path.write_text("""\
 # usethis
@@ -568,6 +653,10 @@ Automate Python project setup and development tasks that are otherwise performed
         self, bare_dir: Path, capfd: pytest.CaptureFixture[str]
     ):
         # Arrange
+        from usethis._core.badge import Badge, add_badge
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         path = bare_dir / "README.md"
         path.write_text(
             """\
@@ -593,6 +682,9 @@ Automate Python project setup and development tasks that are otherwise performed
 class TestRemoveBadge:
     def test_empty(self, bare_dir: Path, capfd: pytest.CaptureFixture[str]):
         # Arrange
+        from usethis._core.badge import Badge, remove_badge
+        from usethis._test import change_cwd
+
         path = bare_dir / "README.md"
         path.touch()
 
@@ -613,6 +705,9 @@ class TestRemoveBadge:
 
     def test_single(self, bare_dir: Path, capfd: pytest.CaptureFixture[str]):
         # Arrange
+        from usethis._core.badge import Badge, remove_badge
+        from usethis._test import change_cwd
+
         path = bare_dir / "README.md"
         path.write_text("""\
 ![Licence](https://img.shields.io/badge/licence-mit-green)
@@ -635,6 +730,9 @@ class TestRemoveBadge:
 
     def test_no_reademe_file(self, bare_dir: Path):
         # Arrange
+        from usethis._core.badge import Badge, remove_badge
+        from usethis._test import change_cwd
+
         path = bare_dir / "README.md"
 
         # Act
@@ -650,6 +748,9 @@ class TestRemoveBadge:
 
     def test_header_and_text(self, bare_dir: Path):
         # Arrange
+        from usethis._core.badge import Badge, remove_badge
+        from usethis._test import change_cwd
+
         path = bare_dir / "README.md"
         path.write_text("""\
 # Header
@@ -679,6 +780,9 @@ And some text
 
     def test_multiple_badges(self, bare_dir: Path):
         # Arrange
+        from usethis._core.badge import Badge, remove_badge
+        from usethis._test import change_cwd
+
         path = bare_dir / "README.md"
         path.write_text("""\
 ![Ruff](https://example.com)
@@ -703,6 +807,9 @@ And some text
 
     def test_no_badges_but_header_and_text(self, bare_dir: Path):
         # Arrange
+        from usethis._core.badge import Badge, remove_badge
+        from usethis._test import change_cwd
+
         path = bare_dir / Path("README.md")
         content = """\
 # Header
@@ -724,6 +831,9 @@ And some text
 
     def test_already_exists_no_newline_added(self, bare_dir: Path):
         # Arrange
+        from usethis._core.badge import Badge, remove_badge
+        from usethis._test import change_cwd
+
         path = bare_dir / Path("README.md")
         content = """Nothing will be removed"""
         path.write_text(content)

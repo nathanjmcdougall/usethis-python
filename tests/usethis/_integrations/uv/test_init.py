@@ -3,16 +3,13 @@ from typing import Any
 
 import pytest
 
-import usethis._integrations.uv.call
-from usethis._integrations.file.pyproject_toml.errors import PyprojectTOMLInitError
-from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._integrations.uv.errors import UVInitError, UVSubprocessFailedError
-from usethis._integrations.uv.init import ensure_pyproject_toml, opinionated_uv_init
-from usethis._test import change_cwd
-
 
 class TestTestOpinionatedUVInit:
     def test_empty_dir(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.uv.init import opinionated_uv_init
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(tmp_path):
             opinionated_uv_init()
@@ -22,6 +19,9 @@ class TestTestOpinionatedUVInit:
 
     def test_short_circuits_if_pyproject_toml_exists(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.uv.init import opinionated_uv_init
+        from usethis._test import change_cwd
+
         (tmp_path / "pyproject.toml").write_text("test")
 
         # Act (& Assert there is no error)
@@ -30,6 +30,12 @@ class TestTestOpinionatedUVInit:
 
     def test_subprocess_failed(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         # Arrange
+        import usethis._integrations.uv.call
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.uv.errors import UVInitError, UVSubprocessFailedError
+        from usethis._integrations.uv.init import opinionated_uv_init
+        from usethis._test import change_cwd
+
         def mock_call_uv_subprocess(*_: Any, **__: Any) -> None:
             raise UVSubprocessFailedError
 
@@ -50,6 +56,11 @@ class TestTestOpinionatedUVInit:
 
 class TestEnsurePyprojectTOML:
     def test_created(self, tmp_path: Path, capfd: pytest.CaptureFixture[str]):
+        # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.uv.init import ensure_pyproject_toml
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(tmp_path), PyprojectTOMLManager():
             ensure_pyproject_toml()
@@ -64,6 +75,10 @@ class TestEnsurePyprojectTOML:
         self, tmp_path: Path, capfd: pytest.CaptureFixture[str]
     ):
         # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.uv.init import ensure_pyproject_toml
+        from usethis._test import change_cwd
+
         (tmp_path / "pyproject.toml").write_text("test")
 
         # Act
@@ -78,6 +93,10 @@ class TestEnsurePyprojectTOML:
 
     def test_hello_py_respected(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.uv.init import ensure_pyproject_toml
+        from usethis._test import change_cwd
+
         (tmp_path / "hello.py").write_text("test")
 
         # Act
@@ -90,6 +109,10 @@ class TestEnsurePyprojectTOML:
 
     def test_main_py_respected(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.uv.init import ensure_pyproject_toml
+        from usethis._test import change_cwd
+
         (tmp_path / "main.py").write_text("test")
 
         # Act
@@ -101,6 +124,11 @@ class TestEnsurePyprojectTOML:
         assert (tmp_path / "main.py").read_text() == "test"
 
     def test_no_hello_py_created(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.uv.init import ensure_pyproject_toml
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(tmp_path), PyprojectTOMLManager():
             ensure_pyproject_toml()
@@ -109,6 +137,11 @@ class TestEnsurePyprojectTOML:
         assert not (tmp_path / "hello.py").exists()
 
     def test_no_main_py_created(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.uv.init import ensure_pyproject_toml
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(tmp_path), PyprojectTOMLManager():
             ensure_pyproject_toml()
@@ -117,6 +150,11 @@ class TestEnsurePyprojectTOML:
         assert not (tmp_path / "main.py").exists()
 
     def test_no_readme(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.uv.init import ensure_pyproject_toml
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(tmp_path), PyprojectTOMLManager():
             ensure_pyproject_toml()
@@ -125,6 +163,11 @@ class TestEnsurePyprojectTOML:
         assert not (tmp_path / "README.md").exists()
 
     def test_no_pin_python(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.uv.init import ensure_pyproject_toml
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(tmp_path), PyprojectTOMLManager():
             ensure_pyproject_toml()
@@ -133,6 +176,11 @@ class TestEnsurePyprojectTOML:
         assert not (tmp_path / ".python-version").exists()
 
     def test_no_vcs(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.uv.init import ensure_pyproject_toml
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(tmp_path), PyprojectTOMLManager():
             ensure_pyproject_toml()
@@ -142,6 +190,15 @@ class TestEnsurePyprojectTOML:
 
     def test_subprocess_failed(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         # Arrange
+        import usethis._integrations.uv.call
+        from usethis._integrations.file.pyproject_toml.errors import (
+            PyprojectTOMLInitError,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.uv.errors import UVSubprocessFailedError
+        from usethis._integrations.uv.init import ensure_pyproject_toml
+        from usethis._test import change_cwd
+
         def mock_call_uv_subprocess(*_: Any, **__: Any) -> None:
             raise UVSubprocessFailedError
 
@@ -160,6 +217,12 @@ class TestEnsurePyprojectTOML:
             ensure_pyproject_toml()
 
     def test_build_backend(self, tmp_path: Path):
+        # Arrange
+
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.uv.init import ensure_pyproject_toml
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path), PyprojectTOMLManager():
             # Act
             ensure_pyproject_toml()

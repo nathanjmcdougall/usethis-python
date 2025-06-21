@@ -2,17 +2,15 @@ from pathlib import Path
 
 import pytest
 
-from usethis._config_file import files_manager
-from usethis._core.docstyle import use_docstyle
-from usethis._core.enums.docstyle import DocStyleEnum
-from usethis._core.tool import use_ruff
-from usethis._integrations.uv.init import ensure_pyproject_toml
-from usethis._test import change_cwd
-
 
 class TestUseDocstyle:
     def test_numpy(self, tmp_path: Path):
         # Arrange
+        from usethis._config_file import files_manager
+        from usethis._core.docstyle import use_docstyle
+        from usethis._core.enums.docstyle import DocStyleEnum
+        from usethis._test import change_cwd
+
         (tmp_path / "ruff.toml").touch()
 
         # Act
@@ -35,6 +33,11 @@ convention = "numpy"
 
     def test_google(self, tmp_path: Path, capfd: pytest.CaptureFixture[str]):
         # Arrange
+        from usethis._config_file import files_manager
+        from usethis._core.docstyle import use_docstyle
+        from usethis._core.enums.docstyle import DocStyleEnum
+        from usethis._test import change_cwd
+
         (tmp_path / "ruff.toml").touch()
 
         # Act
@@ -63,6 +66,11 @@ convention = "google"
 
     def test_pep257(self, tmp_path: Path):
         # Arrange
+        from usethis._config_file import files_manager
+        from usethis._core.docstyle import use_docstyle
+        from usethis._core.enums.docstyle import DocStyleEnum
+        from usethis._test import change_cwd
+
         (tmp_path / "ruff.toml").touch()
 
         # Act
@@ -86,8 +94,14 @@ convention = "pep257"
     def test_pyproject_toml_numpy(self, tmp_path: Path):
         # Also tests the case that ruff isn't used yet.
 
+        # Arrange
+        from usethis._config_file import files_manager
+        from usethis._core.docstyle import use_docstyle
+        from usethis._core.enums.docstyle import DocStyleEnum
+        from usethis._integrations.uv.init import ensure_pyproject_toml
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path), files_manager():
-            # Arrange
             ensure_pyproject_toml()
 
             # Act
@@ -101,6 +115,11 @@ convention = "pep257"
 
     def test_dont_add_d_if_already_selected(self, tmp_path: Path):
         # Arrange
+        from usethis._config_file import files_manager
+        from usethis._core.docstyle import use_docstyle
+        from usethis._core.enums.docstyle import DocStyleEnum
+        from usethis._test import change_cwd
+
         (tmp_path / "ruff.toml").write_text(
             """\
 [lint]
@@ -128,6 +147,11 @@ convention = "numpy"
 
     def test_dont_add_d_if_all_already_selected_ruff(self, tmp_path: Path):
         # Arrange
+        from usethis._config_file import files_manager
+        from usethis._core.docstyle import use_docstyle
+        from usethis._core.enums.docstyle import DocStyleEnum
+        from usethis._test import change_cwd
+
         (tmp_path / "ruff.toml").write_text(
             """\
 [lint]
@@ -155,6 +179,11 @@ convention = "numpy"
 
     def test_leave_ok_config_alone(self, tmp_path: Path):
         # Arrange
+        from usethis._config_file import files_manager
+        from usethis._core.docstyle import use_docstyle
+        from usethis._core.enums.docstyle import DocStyleEnum
+        from usethis._test import change_cwd
+
         contents = """\
 [lint]
 select = ["D123"]
@@ -172,6 +201,12 @@ convention = "numpy"
 
     def test_adding_ruff_afterwards_allows_default_rules(self, tmp_path: Path):
         # Arrange
+        from usethis._config_file import files_manager
+        from usethis._core.docstyle import use_docstyle
+        from usethis._core.enums.docstyle import DocStyleEnum
+        from usethis._core.tool import use_ruff
+        from usethis._test import change_cwd
+
         (tmp_path / "ruff.toml").touch()
 
         # Act

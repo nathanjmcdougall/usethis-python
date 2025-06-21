@@ -1,20 +1,11 @@
 import pytest
-from rich.table import Table
-
-from usethis._config import usethis_config
-from usethis._console import (
-    box_print,
-    err_print,
-    info_print,
-    plain_print,
-    table_print,
-    tick_print,
-    warn_print,
-)
 
 
 class TestPlainPrint:
     def test_out(self, capfd: pytest.CaptureFixture[str]) -> None:
+        # Arrange
+        from usethis._console import plain_print
+
         # Act
         plain_print("Hello")
 
@@ -25,6 +16,11 @@ class TestPlainPrint:
 
 class TestTablePrint:
     def test_out(self, capfd: pytest.CaptureFixture[str]) -> None:
+        # Arrange
+        from rich.table import Table
+
+        from usethis._console import table_print
+
         # Act
         table_print(
             Table(
@@ -43,6 +39,9 @@ class TestTablePrint:
 
 class TestTickPrint:
     def test_out(self, capfd: pytest.CaptureFixture[str]) -> None:
+        # Arrange
+        from usethis._console import tick_print
+
         # Act
         tick_print("Hello")
 
@@ -51,6 +50,10 @@ class TestTickPrint:
         assert out == "✔ Hello\n"
 
     def test_alert_only_suppresses(self, capfd: pytest.CaptureFixture[str]) -> None:
+        # Arrange
+        from usethis._config import usethis_config
+        from usethis._console import tick_print
+
         # Act
         with usethis_config.set(alert_only=True):
             tick_print("Hello")
@@ -63,6 +66,9 @@ class TestTickPrint:
 
 class TestBoxPrint:
     def test_out(self, capfd: pytest.CaptureFixture[str]) -> None:
+        # Arrange
+        from usethis._console import box_print
+
         # Act
         box_print("Hello")
 
@@ -73,6 +79,9 @@ class TestBoxPrint:
 
 class TestInfoPrint:
     def test_out(self, capfd: pytest.CaptureFixture[str]) -> None:
+        # Arrange
+        from usethis._console import info_print
+
         # Act
         info_print("Hello")
 
@@ -83,6 +92,9 @@ class TestInfoPrint:
 
 class TestErrPrint:
     def test_out(self, capfd: pytest.CaptureFixture[str]) -> None:
+        # Arrange
+        from usethis._console import err_print
+
         # Act
         err_print("Hello")
 
@@ -94,6 +106,10 @@ class TestErrPrint:
     def test_alert_only_doesnt_suppress(
         self, capfd: pytest.CaptureFixture[str]
     ) -> None:
+        # Arrange
+        from usethis._config import usethis_config
+        from usethis._console import err_print
+
         # Act
         with usethis_config.set(alert_only=False):
             err_print("Hello")
@@ -106,6 +122,9 @@ class TestErrPrint:
 
 class TestWarnPrint:
     def test_out(self, capfd: pytest.CaptureFixture[str]) -> None:
+        # Arrange
+        from usethis._console import warn_print
+
         # Act
         warn_print("Hello")
 
@@ -117,6 +136,10 @@ class TestWarnPrint:
     def test_alert_only_doesnt_suppress(
         self, capfd: pytest.CaptureFixture[str]
     ) -> None:
+        # Arrange
+        from usethis._config import usethis_config
+        from usethis._console import warn_print
+
         # Act
         with usethis_config.set(alert_only=False):
             warn_print("Hello")

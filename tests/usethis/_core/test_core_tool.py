@@ -6,43 +6,13 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from usethis._config import usethis_config
-from usethis._config_file import RuffTOMLManager, files_manager
-from usethis._core.ci import use_ci_bitbucket
-from usethis._core.tool import (
-    use_codespell,
-    use_coverage_py,
-    use_deptry,
-    use_import_linter,
-    use_pre_commit,
-    use_pyproject_fmt,
-    use_pyproject_toml,
-    use_pytest,
-    use_requirements_txt,
-    use_ruff,
-)
-from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._integrations.pre_commit.hooks import (
-    _HOOK_ORDER,
-    get_hook_ids,
-)
-from usethis._integrations.python.version import get_python_version
-from usethis._integrations.uv.call import call_uv_subprocess
-from usethis._integrations.uv.deps import (
-    Dependency,
-    add_deps_to_group,
-    get_deps_from_group,
-    is_dep_satisfied_in,
-)
-from usethis._integrations.uv.link_mode import ensure_symlink_mode
-from usethis._integrations.uv.toml import UVTOMLManager
-from usethis._test import change_cwd
-from usethis._tool.all_ import ALL_TOOLS
-from usethis._tool.impl.ruff import RuffTool
-
 
 class TestAllHooksList:
     def test_subset_hook_names(self, tmp_path: Path):
+        from usethis._integrations.pre_commit.hooks import _HOOK_ORDER
+        from usethis._test import change_cwd
+        from usethis._tool.all_ import ALL_TOOLS
+
         with change_cwd(tmp_path):
             for tool in ALL_TOOLS:
                 try:
@@ -62,6 +32,15 @@ class TestCodespell:
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_config(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_codespell
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._integrations.uv.deps import Dependency, add_deps_to_group
+            from usethis._integrations.uv.link_mode import ensure_symlink_mode
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_dir), PyprojectTOMLManager():
                 add_deps_to_group([Dependency(name="codespell")], "dev")
                 ensure_symlink_mode()
@@ -94,8 +73,13 @@ ignore-regex = ["[A-Za-z0-9+/]{100,}"]
         def test_bitbucket_integration(
             self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.ci import use_ci_bitbucket
+            from usethis._core.tool import use_codespell
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_dir), files_manager():
-                # Arrange
                 use_ci_bitbucket()
                 capfd.readouterr()
 
@@ -119,8 +103,14 @@ ignore-regex = ["[A-Za-z0-9+/]{100,}"]
         def test_pre_commit_integration(
             self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_codespell, use_pre_commit
+            from usethis._integrations.pre_commit.hooks import get_hook_ids
+            from usethis._integrations.uv.deps import get_deps_from_group
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_dir), files_manager():
-                # Arrange
                 use_pre_commit()
                 capfd.readouterr()
 
@@ -148,8 +138,15 @@ ignore-regex = ["[A-Za-z0-9+/]{100,}"]
         def test_runs(self, uv_env_dir: Path):
             # An env is needed in which to run codespell
 
+            # Arrange
+            from usethis._core.tool import use_codespell
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._integrations.uv.call import call_uv_subprocess
+            from usethis._test import change_cwd
+
             with change_cwd(uv_env_dir), PyprojectTOMLManager():
-                # Arrange
                 use_codespell()
 
                 # Act, Assert (no errors)
@@ -161,6 +158,10 @@ ignore-regex = ["[A-Za-z0-9+/]{100,}"]
             # some codespell config in the file
 
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_codespell
+            from usethis._test import change_cwd
+
             (uv_init_dir / ".codespellrc").write_text(
                 """\
 [codespell]
@@ -187,8 +188,12 @@ ignore-words-list = ...
         ):
             # https://github.com/usethis-python/usethis-python/issues/509
 
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_codespell
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_dir), files_manager():
-                # Arrange
                 use_codespell()
                 capfd.readouterr()
 
@@ -208,6 +213,10 @@ ignore-words-list = ...
             # works correctly.
 
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_codespell
+            from usethis._test import change_cwd
+
             content = """\
 [codespell]
 foo = bar
@@ -215,7 +224,7 @@ foo = bar
             (uv_init_dir / "setup.cfg").write_text(content)
 
             with change_cwd(uv_init_dir), files_manager():
-                # Arrange
+                # Act
                 use_codespell()
 
             # Assert
@@ -230,10 +239,14 @@ foo = bar
             # works correctly.
 
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_codespell
+            from usethis._test import change_cwd
+
             (uv_init_dir / "setup.cfg").touch()
 
             with change_cwd(uv_init_dir), files_manager():
-                # Arrange
+                # Act
                 use_codespell()
 
             # Assert
@@ -246,6 +259,10 @@ foo = bar
             self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_codespell
+            from usethis._test import change_cwd
+
             (uv_init_dir / "pyproject.toml").write_text(
                 """\
 [tool.codespell]
@@ -266,6 +283,11 @@ foo = "bar"
         def test_doesnt_add_pyproject(self, tmp_path: Path):
             # No pyproject.toml file to begin with...
 
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_codespell
+            from usethis._test import change_cwd
+
             # Act
             with change_cwd(tmp_path), files_manager():
                 use_codespell(remove=True)
@@ -280,6 +302,15 @@ class TestCoverage:
         def test_from_nothing(
             self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_coverage_py
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._integrations.uv.deps import Dependency, get_deps_from_group
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_dir), files_manager():
                 # Act
                 use_coverage_py()
@@ -305,6 +336,12 @@ class TestCoverage:
             self, tmp_path: Path, capfd: pytest.CaptureFixture[str]
         ):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_coverage_py
+            from usethis._integrations.python.version import get_python_version
+            from usethis._integrations.uv.deps import Dependency, get_deps_from_group
+            from usethis._test import change_cwd
+
             # Set python version
             (tmp_path / ".python-version").write_text(get_python_version())
 
@@ -329,8 +366,14 @@ class TestCoverage:
         def test_pytest_integration(
             self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config import usethis_config
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_coverage_py, use_pytest
+            from usethis._integrations.uv.deps import Dependency, get_deps_from_group
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_dir), files_manager():
-                # Arrange
                 with usethis_config.set(quiet=True):
                     use_pytest()
 
@@ -352,6 +395,10 @@ class TestCoverage:
 
         def test_coverage_rc_file(self, uv_init_dir: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_coverage_py
+            from usethis._test import change_cwd
+
             (uv_init_dir / ".coveragerc").write_text("")
 
             # Act
@@ -380,6 +427,10 @@ omit =
 
         def test_tox_ini_file(self, uv_init_dir: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_coverage_py
+            from usethis._test import change_cwd
+
             (uv_init_dir / "tox.ini").touch()
 
             # Act
@@ -412,6 +463,11 @@ omit =
         # https://github.com/usethis-python/usethis-python/issues/558
 
         # Arrange
+        from usethis._config_file import files_manager
+        from usethis._core.tool import use_coverage_py
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         (tmp_path / "pyproject.toml").write_text("""\
 [project]
 name = "example"
@@ -438,6 +494,14 @@ ignore-regex = ["[A-Za-z0-9+/]{100,}"]
 
     class TestRemove:
         def test_unused(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
+            # Arrange
+            from usethis._core.tool import use_coverage_py
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._integrations.uv.deps import get_deps_from_group
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_dir), PyprojectTOMLManager():
                 # Act
                 use_coverage_py(remove=True)
@@ -449,8 +513,14 @@ ignore-regex = ["[A-Za-z0-9+/]{100,}"]
                 assert not err
 
         def test_roundtrip(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
+            # Arrange
+            from usethis._config import usethis_config
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_coverage_py
+            from usethis._integrations.uv.deps import get_deps_from_group
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_dir), files_manager():
-                # Arrange
                 with usethis_config.set(quiet=True):
                     use_coverage_py()
 
@@ -469,8 +539,14 @@ ignore-regex = ["[A-Za-z0-9+/]{100,}"]
         def test_pytest_integration(
             self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config import usethis_config
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_coverage_py, use_pytest
+            from usethis._integrations.uv.deps import Dependency, get_deps_from_group
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_dir), files_manager():
-                # Arrange
                 with usethis_config.set(quiet=True):
                     use_pytest()
                     use_coverage_py()
@@ -492,6 +568,11 @@ ignore-regex = ["[A-Za-z0-9+/]{100,}"]
         ):
             # No pyproject.toml file to begin with...
 
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_coverage_py
+            from usethis._test import change_cwd
+
             # Act
             with change_cwd(tmp_path), files_manager():
                 use_coverage_py(remove=True)
@@ -506,6 +587,14 @@ class TestDeptry:
     class TestAdd:
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_dependency_added(self, uv_init_dir: Path):
+            # Arrange
+            from usethis._core.tool import use_deptry
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._integrations.uv.deps import Dependency, get_deps_from_group
+            from usethis._test import change_cwd
+
             # Act
             with change_cwd(uv_init_dir), PyprojectTOMLManager():
                 use_deptry()
@@ -520,6 +609,13 @@ class TestDeptry:
             uv_init_dir: Path,
             capfd: pytest.CaptureFixture[str],
         ):
+            # Arrange
+            from usethis._core.tool import use_deptry
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             # Act
             with change_cwd(uv_init_dir), PyprojectTOMLManager():
                 use_deptry()
@@ -540,6 +636,14 @@ class TestDeptry:
         ):
             # The idea here is we make sure that the 'uv run' prefix is added
 
+            # Arrange
+            from usethis._config import usethis_config
+            from usethis._core.tool import use_deptry
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             # Act
             with (
                 change_cwd(uv_init_dir),
@@ -558,6 +662,12 @@ class TestDeptry:
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_run_deptry_fail(self, uv_init_dir: Path, uv_path: Path):
             # Arrange
+            from usethis._core.tool import use_deptry
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             f = uv_init_dir / "bad.py"
             f.write_text("import broken_dependency")
 
@@ -576,6 +686,14 @@ class TestDeptry:
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_run_deptry_pass(self, uv_init_dir: Path):
             # Arrange
+            from usethis._config import usethis_config
+            from usethis._core.tool import use_deptry
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._integrations.uv.call import call_uv_subprocess
+            from usethis._test import change_cwd
+
             f = uv_init_dir / "good.py"
             f.write_text("import sys")
 
@@ -594,6 +712,12 @@ class TestDeptry:
         def test_pre_commit_after(
             self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_deptry, use_pre_commit
+            from usethis._integrations.pre_commit.hooks import get_hook_ids
+            from usethis._test import change_cwd
+
             # Act
             with change_cwd(uv_init_dir), files_manager():
                 use_deptry()
@@ -639,8 +763,13 @@ repos:
 
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_bitbucket_integration_no_pre_commit(self, uv_init_repo_dir: Path):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.ci import use_ci_bitbucket
+            from usethis._core.tool import use_deptry
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_repo_dir), files_manager():
-                # Arrange
                 use_ci_bitbucket()
 
                 # Act
@@ -652,8 +781,13 @@ repos:
 
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_bitbucket_integration_with_pre_commit(self, uv_init_repo_dir: Path):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.ci import use_ci_bitbucket
+            from usethis._core.tool import use_deptry, use_pre_commit
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_repo_dir), files_manager():
-                # Arrange
                 use_ci_bitbucket()
                 use_pre_commit()
 
@@ -667,8 +801,19 @@ repos:
     class TestRemove:
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_dep(self, uv_init_dir: Path):
+            # Arrange
+            from usethis._core.tool import use_deptry
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._integrations.uv.deps import (
+                Dependency,
+                add_deps_to_group,
+                get_deps_from_group,
+            )
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_dir), PyprojectTOMLManager():
-                # Arrange
                 add_deps_to_group([Dependency(name="deptry")], "dev")
 
                 # Act
@@ -679,8 +824,13 @@ repos:
 
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_bitbucket_integration(self, uv_init_repo_dir: Path):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.ci import use_ci_bitbucket
+            from usethis._core.tool import use_deptry
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_repo_dir), files_manager():
-                # Arrange
                 use_ci_bitbucket()
                 use_deptry()
 
@@ -694,6 +844,12 @@ repos:
         def test_use_deptry_removes_config(self, tmp_path: Path):
             """Test that use_deptry removes the tool's config when removing."""
             # Arrange
+            from usethis._core.tool import use_deptry
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             pyproject = tmp_path / "pyproject.toml"
             pyproject.write_text("""[tool.deptry]
 ignore_missing = ["pytest"]
@@ -709,6 +865,12 @@ ignore_missing = ["pytest"]
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_roundtrip(self, uv_init_dir: Path):
             # Arrange
+            from usethis._core.tool import use_deptry
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             contents = (uv_init_dir / "pyproject.toml").read_text()
 
             # Act
@@ -734,6 +896,10 @@ dev = []
             self, tmp_path: Path, capfd: pytest.CaptureFixture[str]
         ):
             # No pyproject.toml file to begin with...
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_deptry
+            from usethis._test import change_cwd
 
             # Act
             with change_cwd(tmp_path), files_manager():
@@ -751,8 +917,13 @@ dev = []
             self, uv_init_repo_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
             """Basically this checks that the placeholders gets removed."""
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_deptry, use_pre_commit
+            from usethis._integrations.pre_commit.hooks import get_hook_ids
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_repo_dir), files_manager():
-                # Arrange
                 use_pre_commit()
                 capfd.readouterr()
 
@@ -797,6 +968,12 @@ repos:
             self, uv_init_repo_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
             # Arrange
+            from usethis._core.tool import use_deptry
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             (uv_init_repo_dir / ".pre-commit-config.yaml").write_text(
                 """\
 repos:
@@ -825,12 +1002,17 @@ repos:
             )
 
         def test_remove(self, uv_init_repo_dir: Path):
+            # Arrange
+            from usethis._config import usethis_config
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_deptry, use_pre_commit
+            from usethis._test import change_cwd
+
             with (
                 change_cwd(uv_init_repo_dir),
                 files_manager(),
                 usethis_config.set(quiet=True),
             ):
-                # Arrange
                 use_deptry()
                 use_pre_commit()
                 content = (uv_init_repo_dir / ".pre-commit-config.yaml").read_text()
@@ -847,6 +1029,12 @@ repos:
 class TestImportLinter:
     class TestAdd:
         def test_dependency(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_import_linter
+            from usethis._integrations.uv.deps import Dependency, get_deps_from_group
+            from usethis._test import change_cwd
+
             # Act
             with change_cwd(uv_init_dir), files_manager():
                 use_import_linter()
@@ -868,6 +1056,10 @@ class TestImportLinter:
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_ini_contracts(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_import_linter
+            from usethis._test import change_cwd
+
             (tmp_path / ".importlinter").touch()
             (tmp_path / "qwerttyuiop").mkdir()
             (tmp_path / "qwerttyuiop" / "a.py").touch()
@@ -904,6 +1096,10 @@ exhaustive = True
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_toml_contracts(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_import_linter
+            from usethis._test import change_cwd
+
             (tmp_path / "pyproject.toml").write_text(
                 """\
 [project]
@@ -951,6 +1147,10 @@ exhaustive = true
             self, tmp_path: Path, capfd: pytest.CaptureFixture[str]
         ):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_import_linter
+            from usethis._test import change_cwd
+
             (tmp_path / ".pre-commit-config.yaml").write_text(
                 """\
 repos:
@@ -981,6 +1181,10 @@ repos:
             self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
         ):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_import_linter
+            from usethis._test import change_cwd
+
             (tmp_path / ".importlinter").touch()
             (tmp_path / "qwerttyuiop").mkdir()
             (tmp_path / "qwerttyuiop" / "a.py").touch()
@@ -1018,6 +1222,10 @@ exhaustive = True
 
         def test_cyclic_excluded(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_import_linter
+            from usethis._test import change_cwd
+
             (tmp_path / ".importlinter").touch()
             (tmp_path / "a").mkdir()
             (tmp_path / "a" / "__init__.py").touch()
@@ -1053,6 +1261,10 @@ exhaustive_ignores =
 
         def test_existing_ini_match(self, tmp_path: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_import_linter
+            from usethis._test import change_cwd
+
             (tmp_path / ".importlinter").write_text(
                 """\
 [importlinter:contract:0]
@@ -1081,6 +1293,10 @@ root_packages =
 
         def test_existing_ini_differs(self, tmp_path: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_import_linter
+            from usethis._test import change_cwd
+
             (tmp_path / ".importlinter").write_text(
                 """\
 [importlinter:contract:existing]
@@ -1109,6 +1325,10 @@ root_packages =
 
         def test_numbers_in_layer_names(self, tmp_path: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_import_linter
+            from usethis._test import change_cwd
+
             (tmp_path / ".importlinter").touch()
             (tmp_path / "hillslope").mkdir()
             (tmp_path / "hillslope" / "__init__.py").touch()
@@ -1140,6 +1360,10 @@ exhaustive = True
 
         def test_nesting(self, tmp_path: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_import_linter
+            from usethis._test import change_cwd
+
             (tmp_path / ".importlinter").touch()
             (tmp_path / "hillslope").mkdir()
             (tmp_path / "hillslope" / "__init__.py").touch()
@@ -1186,6 +1410,10 @@ exhaustive = True
             # levels required to reach the minimum number of modules which is 3.
 
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_import_linter
+            from usethis._test import change_cwd
+
             (tmp_path / ".importlinter").touch()
             (tmp_path / "hillslope").mkdir()
             (tmp_path / "hillslope" / "__init__.py").touch()
@@ -1266,6 +1494,12 @@ exhaustive = True
             # Having an issue where the message is being repeated multiple times
             # https://github.com/usethis-python/usethis-python/pull/501#issuecomment-2784482750
 
+            # Arrange
+            from usethis._config import usethis_config
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_import_linter
+            from usethis._test import change_cwd
+
             # Act
             with change_cwd(tmp_path), files_manager(), usethis_config.set(frozen=True):
                 use_import_linter()
@@ -1294,6 +1528,10 @@ exhaustive = True
             # we will leave the existing configuration alone if it already exists.
 
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_import_linter
+            from usethis._test import change_cwd
+
             (tmp_path / ".importlinter").write_text(
                 """\
 [importlinter]
@@ -1321,6 +1559,10 @@ root_package = a
             self, tmp_path: Path
         ):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_import_linter
+            from usethis._test import change_cwd
+
             (tmp_path / "pyproject.toml").write_text(
                 """\
 [tool.importlinter]
@@ -1340,6 +1582,13 @@ root_package = "a"
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_inp_rules_selected(self, tmp_path: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import (
+                use_import_linter,
+            )
+            from usethis._test import change_cwd
+            from usethis._tool.impl.ruff import RuffTool
+
             (tmp_path / "ruff.toml").touch()
 
             with change_cwd(tmp_path), files_manager():
@@ -1352,6 +1601,10 @@ root_package = "a"
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_inp_rules_not_selected_for_tests_dir(self, tmp_path: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_import_linter
+            from usethis._test import change_cwd
+
             (tmp_path / "ruff.toml").touch()
 
             with change_cwd(tmp_path), files_manager():
@@ -1374,6 +1627,10 @@ select = ["INP"]
     class TestRemove:
         def test_config_file(self, uv_init_repo_dir: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_import_linter
+            from usethis._test import change_cwd
+
             (uv_init_repo_dir / ".importlinter").touch()
 
             # Act
@@ -1385,6 +1642,10 @@ select = ["INP"]
 
         def test_doesnt_add_pyproject(self, tmp_path: Path):
             # No pyproject.toml file to begin with...
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_import_linter
+            from usethis._test import change_cwd
 
             # Act
             with change_cwd(tmp_path), files_manager():
@@ -1395,6 +1656,11 @@ select = ["INP"]
 
         def test_doesnt_deselect_inp_rules(self, tmp_path: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_import_linter
+            from usethis._test import change_cwd
+            from usethis._tool.impl.ruff import RuffTool
+
             (tmp_path / "ruff.toml").touch()
 
             with change_cwd(tmp_path), files_manager():
@@ -1412,6 +1678,10 @@ select = ["INP"]
             self, uv_init_repo_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_import_linter
+            from usethis._test import change_cwd
+
             (uv_init_repo_dir / ".pre-commit-config.yaml").write_text(
                 """\
 repos:
@@ -1444,6 +1714,10 @@ repos:
     class TestBitbucketIntegration:
         def test_config_file(self, tmp_path: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_import_linter
+            from usethis._test import change_cwd
+
             (tmp_path / "bitbucket-pipelines.yml").write_text("""\
 image: atlassian/default-image:3
 """)
@@ -1464,6 +1738,12 @@ class TestPreCommit:
     class TestAdd:
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_fresh(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit
+            from usethis._integrations.uv.deps import Dependency, get_deps_from_group
+            from usethis._test import change_cwd
+
             # Act
             with change_cwd(uv_init_dir), files_manager():
                 use_pre_commit()
@@ -1503,6 +1783,10 @@ repos:
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_config_file_already_exists(self, uv_init_repo_dir: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit
+            from usethis._test import change_cwd
+
             (uv_init_repo_dir / ".pre-commit-config.yaml").write_text(
                 """\
 repos:
@@ -1538,6 +1822,10 @@ repos:
             # This needs a venv so that we can actually run pre-commit via git
 
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit
+            from usethis._test import change_cwd
+
             (uv_env_dir / ".gitignore").write_text(".venv/\n")
 
             # Act
@@ -1571,8 +1859,14 @@ repos:
 
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_requirements_txt_used(self, uv_init_dir: Path):
+            # Arrange
+            from usethis._config import usethis_config
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit, use_requirements_txt
+            from usethis._integrations.pre_commit.hooks import get_hook_ids
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_dir), files_manager():
-                # Arrange
                 with usethis_config.set(frozen=False):
                     use_requirements_txt()
 
@@ -1584,8 +1878,14 @@ repos:
 
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_pyproject_fmt_used(self, uv_init_repo_dir: Path):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit, use_pyproject_fmt
+            from usethis._integrations.pre_commit.hooks import get_hook_ids
+            from usethis._integrations.uv.deps import get_deps_from_group
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_repo_dir), files_manager():
-                # Arrange
                 use_pyproject_fmt()
 
                 # Act
@@ -1601,8 +1901,14 @@ repos:
 
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_codespell_used(self, uv_init_repo_dir: Path):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_codespell, use_pre_commit
+            from usethis._integrations.pre_commit.hooks import get_hook_ids
+            from usethis._integrations.uv.deps import get_deps_from_group
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_repo_dir), files_manager():
-                # Arrange
                 use_codespell()
 
                 # Act
@@ -1620,6 +1926,10 @@ repos:
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_config_file(self, uv_init_repo_dir: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit
+            from usethis._test import change_cwd
+
             (uv_init_repo_dir / ".pre-commit-config.yaml").touch()
 
             # Act
@@ -1631,8 +1941,17 @@ repos:
 
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_dep(self, uv_init_repo_dir: Path):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit
+            from usethis._integrations.uv.deps import (
+                Dependency,
+                add_deps_to_group,
+                get_deps_from_group,
+            )
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_repo_dir), files_manager():
-                # Arrange
                 add_deps_to_group([Dependency(name="pre-commit")], "dev")
 
                 # Act
@@ -1644,6 +1963,11 @@ repos:
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_stdout(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit
+            from usethis._integrations.uv.deps import Dependency, add_deps_to_group
+            from usethis._test import change_cwd
+
             (uv_init_dir / ".pre-commit-config.yaml").write_text(
                 """\
 repos:
@@ -1675,8 +1999,13 @@ repos:
         def test_requirements_txt_used(
             self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config import usethis_config
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit, use_requirements_txt
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_dir), files_manager():
-                # Arrange
                 use_pre_commit()
                 with usethis_config.set(frozen=False):
                     use_requirements_txt()
@@ -1698,8 +2027,13 @@ repos:
         def test_pyproject_fmt_used(
             self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config import usethis_config
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit, use_pyproject_fmt
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_dir), files_manager():
-                # Arrange
                 with usethis_config.set(quiet=True):
                     use_pre_commit()
                     use_pyproject_fmt()
@@ -1722,8 +2056,13 @@ repos:
         def test_codepsell_used(
             self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config import usethis_config
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_codespell, use_pre_commit
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_dir), files_manager():
-                # Arrange
                 with usethis_config.set(quiet=True):
                     use_pre_commit()
                     use_codespell()
@@ -1746,6 +2085,10 @@ repos:
 
         def test_doesnt_add_pyproject(self, uv_init_repo_dir: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit
+            from usethis._test import change_cwd
+
             # We use uv_init_repo_dir to get a git repo
             (uv_init_repo_dir / "pyproject.toml").unlink()
 
@@ -1759,6 +2102,10 @@ repos:
     class TestBitbucketCIIntegration:
         def test_prexisting(self, uv_init_repo_dir: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit
+            from usethis._test import change_cwd
+
             (uv_init_repo_dir / "bitbucket-pipelines.yml").write_text(
                 """\
 image: atlassian/default-image:3
@@ -1775,6 +2122,10 @@ image: atlassian/default-image:3
 
         def test_remove(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_dir), files_manager():
                 use_pre_commit()
             capfd.readouterr()
@@ -1832,8 +2183,13 @@ pipelines:
 
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_remove_subsumed_tools(self, uv_init_repo_dir: Path):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.ci import use_ci_bitbucket
+            from usethis._core.tool import use_deptry, use_pre_commit, use_ruff
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_repo_dir), files_manager():
-                # Arrange
                 use_ci_bitbucket()
                 # other tools moved to pre-commit, which should be removed
                 use_deptry()
@@ -1850,8 +2206,13 @@ pipelines:
 
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_add_unsubsumed_tools(self, uv_init_repo_dir: Path):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.ci import use_ci_bitbucket
+            from usethis._core.tool import use_deptry, use_pre_commit, use_ruff
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_repo_dir), files_manager():
-                # Arrange
                 use_ci_bitbucket()
                 use_pre_commit()
                 # other tools moved from pre-commit, which should be added
@@ -1874,6 +2235,14 @@ class TestPyprojectFmt:
             @pytest.mark.usefixtures("_vary_network_conn")
             def test_added(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
                 # Arrange
+                from usethis._config import usethis_config
+                from usethis._core.tool import use_pyproject_fmt
+                from usethis._integrations.file.pyproject_toml.io_ import (
+                    PyprojectTOMLManager,
+                )
+                from usethis._integrations.uv.deps import Dependency, add_deps_to_group
+                from usethis._test import change_cwd
+
                 with (
                     change_cwd(uv_init_dir),
                     PyprojectTOMLManager(),
@@ -1905,6 +2274,17 @@ keep_full_version = true
         class TestDeps:
             @pytest.mark.usefixtures("_vary_network_conn")
             def test_added(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
+                # Arrange
+                from usethis._core.tool import use_pyproject_fmt
+                from usethis._integrations.file.pyproject_toml.io_ import (
+                    PyprojectTOMLManager,
+                )
+                from usethis._integrations.uv.deps import (
+                    Dependency,
+                    get_deps_from_group,
+                )
+                from usethis._test import change_cwd
+
                 with change_cwd(uv_init_dir), PyprojectTOMLManager():
                     # Act
                     use_pyproject_fmt()
@@ -1925,6 +2305,11 @@ keep_full_version = true
             self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.ci import use_ci_bitbucket
+            from usethis._core.tool import use_pyproject_fmt
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_dir), files_manager():
                 use_ci_bitbucket()
                 capfd.readouterr()
@@ -1951,6 +2336,12 @@ keep_full_version = true
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_config_file(self, uv_init_dir: Path):
             # Arrange
+            from usethis._core.tool import use_pyproject_fmt
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             (uv_init_dir / "pyproject.toml").write_text(
                 """\
 [tool.pyproject-fmt]
@@ -1967,8 +2358,13 @@ foo = "bar"
 
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_bitbucket_integration(self, uv_init_dir: Path):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.ci import use_ci_bitbucket
+            from usethis._core.tool import use_pyproject_fmt
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_dir), files_manager():
-                # Arrange
                 use_ci_bitbucket()
                 use_pyproject_fmt()
 
@@ -1981,6 +2377,10 @@ foo = "bar"
 
         def test_doesnt_add_pyproject(self, tmp_path: Path):
             # No pyproject.toml file to begin with...
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pyproject_fmt
+            from usethis._test import change_cwd
 
             # Act
             with change_cwd(tmp_path), files_manager():
@@ -1992,8 +2392,13 @@ foo = "bar"
     class TestPreCommitIntegration:
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_use_first(self, uv_init_repo_dir: Path):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit, use_pyproject_fmt
+            from usethis._integrations.pre_commit.hooks import get_hook_ids
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_repo_dir), files_manager():
-                # Arrange
                 use_pre_commit()
 
                 # Act
@@ -2007,8 +2412,13 @@ foo = "bar"
 
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_use_after(self, uv_init_repo_dir: Path):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit, use_pyproject_fmt
+            from usethis._integrations.pre_commit.hooks import get_hook_ids
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_repo_dir), files_manager():
-                # Arrange
                 use_pyproject_fmt()
 
                 # Act
@@ -2024,8 +2434,13 @@ foo = "bar"
         def test_remove_with_precommit(
             self, uv_init_repo_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config import usethis_config
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit, use_pyproject_fmt
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_repo_dir), files_manager():
-                # Arrange
                 with usethis_config.set(quiet=True):
                     use_pyproject_fmt()
                     use_pre_commit()
@@ -2049,8 +2464,15 @@ foo = "bar"
         def test_remove_without_precommit(
             self, uv_init_repo_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config import usethis_config
+            from usethis._core.tool import use_pyproject_fmt
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_repo_dir), PyprojectTOMLManager():
-                # Arrange
                 with usethis_config.set(quiet=True):
                     use_pyproject_fmt()
 
@@ -2070,6 +2492,9 @@ class TestPyprojectTOML:
     class TestRemove:
         def test_doesnt_invoke_ensure_pyproject_toml(self, tmp_path: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pyproject_toml
+            from usethis._test import change_cwd
             # Mock the ensure_pyproject_toml function to raise an error
 
             mock = MagicMock()
@@ -2091,6 +2516,16 @@ class TestPytest:
     class TestAdd:
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_no_pyproject(self, tmp_path: Path, capfd: pytest.CaptureFixture[str]):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pytest
+            from usethis._integrations.uv.deps import (
+                Dependency,
+                get_deps_from_group,
+                is_dep_satisfied_in,
+            )
+            from usethis._test import change_cwd
+
             with change_cwd(tmp_path), files_manager():
                 # Act
                 use_pytest()
@@ -2131,8 +2566,15 @@ minversion = "7\""""
 
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_bitbucket_integration(self, uv_init_dir: Path):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.ci import use_ci_bitbucket
+            from usethis._core.tool import (
+                use_pytest,
+            )
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_dir), files_manager():
-                # Arrange
                 use_ci_bitbucket()
 
                 # Act
@@ -2145,8 +2587,13 @@ minversion = "7\""""
         def test_coverage_integration(
             self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config import usethis_config
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_coverage_py, use_pytest
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_dir), files_manager():
-                # Arrange
                 with usethis_config.set(quiet=True):
                     use_coverage_py()
 
@@ -2169,6 +2616,12 @@ minversion = "7\""""
 
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_pytest_installed(self, tmp_path: Path):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pytest
+            from usethis._integrations.uv.call import call_uv_subprocess
+            from usethis._test import change_cwd
+
             with change_cwd(tmp_path), files_manager():
                 # Act
                 use_pytest()
@@ -2179,6 +2632,14 @@ minversion = "7\""""
 
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_registers_test_group(self, tmp_path: Path):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pytest
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             with change_cwd(tmp_path), files_manager():
                 # Act
                 use_pytest()
@@ -2191,8 +2652,13 @@ minversion = "7\""""
 
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_registers_test_group_uv_toml(self, tmp_path: Path):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pytest
+            from usethis._integrations.uv.toml import UVTOMLManager
+            from usethis._test import change_cwd
+
             with change_cwd(tmp_path), files_manager():
-                # Arrange
                 (tmp_path / "uv.toml").touch()
 
                 # Act
@@ -2204,8 +2670,13 @@ minversion = "7\""""
 
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_ruff_integration(self, uv_init_dir: Path):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pytest, use_ruff
+            from usethis._test import change_cwd
+            from usethis._tool.impl.ruff import RuffTool
+
             with change_cwd(uv_init_dir), files_manager():
-                # Arrange
                 use_ruff()
 
                 # Act
@@ -2217,6 +2688,13 @@ minversion = "7\""""
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_pytest_ini_priority(self, uv_init_dir: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pytest
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             (uv_init_dir / "pytest.ini").touch()
             (uv_init_dir / "uv.lock").touch()
 
@@ -2251,6 +2729,10 @@ minversion = 7
         def test_pyproject_with_ini_priority(self, uv_init_repo_dir: Path):
             # testing it takes priority over setup.cfg
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pytest
+            from usethis._test import change_cwd
+
             (uv_init_repo_dir / "setup.cfg").touch()
             (uv_init_repo_dir / "pyproject.toml").write_text("""\
 [tool.pytest.ini_options]
@@ -2269,6 +2751,10 @@ testpaths = ["tests"]
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_pyproject_without_ini_priority(self, uv_init_repo_dir: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pytest
+            from usethis._test import change_cwd
+
             (uv_init_repo_dir / "setup.cfg").touch()
             (uv_init_repo_dir / "pyproject.toml").write_text("""\
 [tool.pytest]
@@ -2286,6 +2772,11 @@ foo = "bar"
             # https://github.com/usethis-python/usethis-python/issues/347
 
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pytest
+            from usethis._integrations.uv.call import call_uv_subprocess
+            from usethis._test import change_cwd
+
             # No build backend, so finding './src' for imports won't work unless we
             # explicitly tell pytest where to go.
             (tmp_path / "pyproject.toml").touch()
@@ -2314,6 +2805,10 @@ def test_foo():
         class TestRuffIntegration:
             def test_deselected(self, uv_init_dir: Path):
                 # Arrange
+                from usethis._config_file import files_manager
+                from usethis._core.tool import use_pytest
+                from usethis._test import change_cwd
+
                 (uv_init_dir / "pyproject.toml").write_text(
                     """\
 [tool.ruff.lint]
@@ -2337,6 +2832,10 @@ select = ["E"]
                 self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
             ):
                 # Arrange
+                from usethis._config_file import files_manager
+                from usethis._core.tool import use_pytest
+                from usethis._test import change_cwd
+
                 (uv_init_dir / "pyproject.toml").write_text(
                     """\
 [tool.ruff.lint]
@@ -2362,6 +2861,10 @@ select = ["PT"]
                 self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
             ):
                 # Arrange
+                from usethis._config_file import files_manager
+                from usethis._core.tool import use_pytest
+                from usethis._test import change_cwd
+
                 (uv_init_dir / "pyproject.toml").write_text(
                     """\
     [tool.pytest]
@@ -2382,8 +2885,17 @@ select = ["PT"]
 
         class TestDependencies:
             def test_removed(self, uv_init_dir: Path):
+                # Arrange
+                from usethis._config_file import files_manager
+                from usethis._core.tool import use_pytest
+                from usethis._integrations.uv.deps import (
+                    Dependency,
+                    add_deps_to_group,
+                    get_deps_from_group,
+                )
+                from usethis._test import change_cwd
+
                 with change_cwd(uv_init_dir), files_manager():
-                    # Arrange
                     add_deps_to_group([Dependency(name="pytest")], "test")
 
                     # Act
@@ -2395,6 +2907,11 @@ select = ["PT"]
         class TestBitbucketIntegration:
             def test_remove(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
                 # Arrange
+                from usethis._config import usethis_config
+                from usethis._config_file import files_manager
+                from usethis._core.tool import use_pytest
+                from usethis._test import change_cwd
+
                 with (
                     change_cwd(uv_init_dir),
                     files_manager(),
@@ -2457,8 +2974,13 @@ pipelines:
         def test_coverage_integration(
             self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config import usethis_config
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_coverage_py, use_pytest
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_dir), files_manager():
-                # Arrange
                 with usethis_config.set(quiet=True):
                     use_coverage_py()
                     use_pytest()
@@ -2477,6 +2999,10 @@ pipelines:
 
         def test_doesnt_create_pyproject_toml(self, tmp_path: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pytest
+            from usethis._test import change_cwd
+
             (tmp_path / "pyproject.toml").unlink(missing_ok=True)
 
             # Act
@@ -2492,6 +3018,13 @@ class TestRequirementsTxt:
         def test_start_from_nothing(
             self, tmp_path: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._core.tool import use_requirements_txt
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             # Act
             with change_cwd(tmp_path), PyprojectTOMLManager():
                 use_requirements_txt()
@@ -2510,6 +3043,14 @@ class TestRequirementsTxt:
         def test_start_from_uv_init(
             self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config import usethis_config
+            from usethis._core.tool import use_requirements_txt
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             # Act
             with (
                 change_cwd(uv_init_dir),
@@ -2531,12 +3072,20 @@ class TestRequirementsTxt:
         def test_start_from_uv_locked(
             self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config import usethis_config
+            from usethis._core.tool import use_requirements_txt
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._integrations.uv.call import call_uv_subprocess
+            from usethis._test import change_cwd
+
             with (
                 change_cwd(uv_init_dir),
                 PyprojectTOMLManager(),
                 usethis_config.set(frozen=False),
             ):
-                # Arrange
                 call_uv_subprocess(["lock"], change_toml=False)
 
                 # Act
@@ -2555,12 +3104,17 @@ class TestRequirementsTxt:
         def test_pre_commit(
             self, uv_init_repo_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config import usethis_config
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit, use_requirements_txt
+            from usethis._test import change_cwd
+
             with (
                 change_cwd(uv_init_repo_dir),
                 files_manager(),
                 usethis_config.set(frozen=False),
             ):
-                # Arrange
                 use_pre_commit()
                 capfd.readouterr()
 
@@ -2595,6 +3149,12 @@ repos:
     class TestRemove:
         def test_file_gone(self, tmp_path: Path):
             # Arrange
+            from usethis._core.tool import use_requirements_txt
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             (tmp_path / "requirements.txt").touch()
 
             # Act
@@ -2606,6 +3166,12 @@ repos:
 
         def test_requirements_dir(self, tmp_path: Path):
             # Arrange
+            from usethis._core.tool import use_requirements_txt
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             (tmp_path / "requirements.txt").mkdir()
 
             # Act
@@ -2617,6 +3183,12 @@ repos:
 
         def test_precommit_integration(self, tmp_path: Path):
             # Arrange
+            from usethis._core.tool import use_requirements_txt
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             (tmp_path / ".pre-commit-config.yaml").write_text(
                 """\
 repos:
@@ -2636,8 +3208,14 @@ repos:
             assert "uv-export" not in content
 
         def test_roundtrip(self, tmp_path: Path):
+            # Arrange
+            from usethis._core.tool import use_requirements_txt
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             with change_cwd(tmp_path), PyprojectTOMLManager():
-                # Arrange
                 use_requirements_txt()
 
                 # Act
@@ -2647,6 +3225,11 @@ repos:
             assert not (tmp_path / "requirements.txt").exists()
 
         def test_doesnt_create_pyproject_toml(self, tmp_path: Path):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_requirements_txt
+            from usethis._test import change_cwd
+
             # Act
             with change_cwd(tmp_path), files_manager():
                 use_requirements_txt(remove=True)
@@ -2659,6 +3242,12 @@ class TestRuff:
     class TestAdd:
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_dependency_added(self, uv_init_dir: Path):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_ruff
+            from usethis._integrations.uv.deps import Dependency, get_deps_from_group
+            from usethis._test import change_cwd
+
             # Act
             with change_cwd(uv_init_dir), files_manager():
                 use_ruff()
@@ -2669,6 +3258,11 @@ class TestRuff:
 
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_stdout(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_ruff
+            from usethis._test import change_cwd
+
             # Act
             with change_cwd(uv_init_dir), files_manager():
                 use_ruff()
@@ -2687,6 +3281,12 @@ class TestRuff:
 
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_pre_commit_first(self, uv_init_repo_dir: Path):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit, use_ruff
+            from usethis._integrations.pre_commit.hooks import get_hook_ids
+            from usethis._test import change_cwd
+
             # Act
             with change_cwd(uv_init_repo_dir), files_manager():
                 use_ruff()
@@ -2701,6 +3301,11 @@ class TestRuff:
         def test_creates_pyproject_toml(
             self, tmp_path: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_ruff
+            from usethis._test import change_cwd
+
             # Act
             with change_cwd(tmp_path), files_manager():
                 use_ruff()
@@ -2717,6 +3322,10 @@ class TestRuff:
             # https://github.com/usethis-python/usethis-python/issues/420
 
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_ruff
+            from usethis._test import change_cwd
+
             (uv_init_dir / "ruff.toml").write_text("""\
 namespace-packages = ["src/usethis/namespace"]
 
@@ -2761,6 +3370,10 @@ docstring-code-format = true
 
         def test_doesnt_overwrite_existing_line_length(self, uv_init_dir: Path):
             # Arrange
+            from usethis._config_file import RuffTOMLManager, files_manager
+            from usethis._core.tool import use_ruff
+            from usethis._test import change_cwd
+
             (uv_init_dir / "ruff.toml").write_text("line-length = 100")
 
             # Act
@@ -2773,6 +3386,14 @@ docstring-code-format = true
         def test_only_add_linter(
             self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_ruff
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             # Act
             with change_cwd(uv_init_dir), files_manager():
                 use_ruff(linter=True, formatter=False)
@@ -2795,6 +3416,14 @@ docstring-code-format = true
         def test_only_add_formatter(
             self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_ruff
+            from usethis._integrations.file.pyproject_toml.io_ import (
+                PyprojectTOMLManager,
+            )
+            from usethis._test import change_cwd
+
             # Act
             with change_cwd(uv_init_dir), files_manager():
                 use_ruff(linter=False, formatter=True)
@@ -2814,6 +3443,10 @@ docstring-code-format = true
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_config_file(self, uv_init_dir: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_ruff
+            from usethis._test import change_cwd
+
             (uv_init_dir / "pyproject.toml").write_text(
                 """\
 [tool.ruff.lint]
@@ -2831,6 +3464,10 @@ select = ["A", "B", "C"]
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_blank_slate(self, uv_init_dir: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_ruff
+            from usethis._test import change_cwd
+
             contents = (uv_init_dir / "pyproject.toml").read_text()
 
             # Act
@@ -2843,6 +3480,11 @@ select = ["A", "B", "C"]
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_roundtrip(self, uv_init_dir: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_ruff
+            from usethis._integrations.uv.link_mode import ensure_symlink_mode
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_dir), files_manager():
                 ensure_symlink_mode()
             contents = (uv_init_dir / "pyproject.toml").read_text()
@@ -2865,6 +3507,10 @@ dev = []
 
         def test_doesnt_create_pyproject_toml(self, tmp_path: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_ruff
+            from usethis._test import change_cwd
+
             (tmp_path / "pyproject.toml").unlink(missing_ok=True)
 
             # Act
@@ -2876,6 +3522,10 @@ dev = []
 
         def test_only_formatter(self, tmp_path: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_ruff
+            from usethis._test import change_cwd
+
             (tmp_path / "pyproject.toml").write_text(
                 """\
 [tool.ruff.lint]
@@ -2901,6 +3551,10 @@ select = ["E", "PT"]
 
         def test_only_linter(self, tmp_path: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_ruff
+            from usethis._test import change_cwd
+
             (tmp_path / "pyproject.toml").write_text(
                 """\
 [tool.ruff.lint]
@@ -2927,6 +3581,11 @@ select = ["F"]
         def test_both_linter_and_formatter(
             self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_ruff
+            from usethis._test import change_cwd
+
             # Act
             with change_cwd(uv_init_dir), files_manager():
                 use_ruff(how=True, linter=True, formatter=True)
@@ -2941,6 +3600,11 @@ select = ["F"]
         def test_only_linter(
             self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_ruff
+            from usethis._test import change_cwd
+
             # Act
             with change_cwd(uv_init_dir), files_manager():
                 use_ruff(how=True, linter=True, formatter=False)
@@ -2954,6 +3618,11 @@ select = ["F"]
         def test_only_formatter(
             self, uv_init_repo_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_ruff
+            from usethis._test import change_cwd
+
             # Act
             with change_cwd(uv_init_repo_dir), files_manager():
                 use_ruff(how=True, linter=False, formatter=True)
@@ -2965,8 +3634,13 @@ select = ["F"]
     class TestPrecommitIntegration:
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_use_first(self, uv_init_repo_dir: Path):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit, use_ruff
+            from usethis._integrations.pre_commit.hooks import get_hook_ids
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_repo_dir), files_manager():
-                # Arrange
                 use_ruff()
 
                 # Act
@@ -2980,8 +3654,13 @@ select = ["F"]
 
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_use_after(self, uv_init_repo_dir: Path):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit, use_ruff
+            from usethis._integrations.pre_commit.hooks import get_hook_ids
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_repo_dir), files_manager():
-                # Arrange
                 use_pre_commit()
 
                 # Act
@@ -2997,8 +3676,13 @@ select = ["F"]
         def test_remove(
             self, uv_init_repo_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config import usethis_config
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit, use_ruff
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_repo_dir), files_manager():
-                # Arrange
                 with usethis_config.set(quiet=True):
                     use_ruff()
                     use_pre_commit()
@@ -3022,8 +3706,13 @@ select = ["F"]
         def test_add_only_linter(
             self, uv_init_repo_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit, use_ruff
+            from usethis._integrations.pre_commit.hooks import get_hook_ids
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_repo_dir), files_manager():
-                # Arrange
                 use_pre_commit()
                 capfd.readouterr()
 
@@ -3063,8 +3752,13 @@ repos:
         def test_add_only_linter_to_existing_formatter(
             self, uv_init_repo_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit, use_ruff
+            from usethis._integrations.pre_commit.hooks import get_hook_ids
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_repo_dir), files_manager():
-                # Arrange
                 use_ruff(formatter=True)
                 use_pre_commit()
                 capfd.readouterr()
@@ -3117,8 +3811,13 @@ repos:
         def test_add_only_formatter(
             self, uv_init_repo_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit, use_ruff
+            from usethis._integrations.pre_commit.hooks import get_hook_ids
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_repo_dir), files_manager():
-                # Arrange
                 use_pre_commit()
                 capfd.readouterr()
 
@@ -3158,8 +3857,13 @@ repos:
         def test_remove_only_linter(
             self, uv_init_repo_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
+            # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_pre_commit, use_ruff
+            from usethis._integrations.pre_commit.hooks import get_hook_ids
+            from usethis._test import change_cwd
+
             with change_cwd(uv_init_repo_dir), files_manager():
-                # Arrange
                 use_ruff()
                 use_pre_commit()
                 capfd.readouterr()
@@ -3201,6 +3905,11 @@ repos:
             self, uv_init_repo_dir: Path, capfd: pytest.CaptureFixture[str]
         ):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_ruff
+            from usethis._integrations.pre_commit.hooks import get_hook_ids
+            from usethis._test import change_cwd
+
             (uv_init_repo_dir / ".pre-commit-config.yaml").write_text("""\
 repos:
   - repo: local
@@ -3267,6 +3976,10 @@ repos:
     class TestBitbucketIntegration:
         def test_add_linter_only(self, tmp_path: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_ruff
+            from usethis._test import change_cwd
+
             (tmp_path / "bitbucket-pipelines.yml").write_text("""\
 image: atlassian/default-image:3
 """)
@@ -3283,6 +3996,10 @@ image: atlassian/default-image:3
 
         def test_add_formatter_only(self, tmp_path: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_ruff
+            from usethis._test import change_cwd
+
             (tmp_path / "bitbucket-pipelines.yml").write_text("""\
 image: atlassian/default-image:3
 """)
@@ -3299,6 +4016,10 @@ image: atlassian/default-image:3
 
         def test_remove_linter_only(self, uv_init_dir: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_ruff
+            from usethis._test import change_cwd
+
             (uv_init_dir / "bitbucket-pipelines.yml").write_text(
                 """\
 image: atlassian/default-image:3
@@ -3344,6 +4065,10 @@ pipelines:
 
         def test_remove_formatter_only_unchanged(self, uv_init_dir: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_ruff
+            from usethis._test import change_cwd
+
             (uv_init_dir / "bitbucket-pipelines.yml").write_text(
                 """\
 image: atlassian/default-image:3
@@ -3378,6 +4103,10 @@ pipelines:
     class TestConfig:
         def test_removed(self, uv_init_dir: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_ruff
+            from usethis._test import change_cwd
+
             (uv_init_dir / ".ruff.toml").write_text(
                 """\
 [lint]
@@ -3394,6 +4123,10 @@ select = ["A", "B", "C"]
 
         def test_adding_to_file(self, uv_init_dir: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_ruff
+            from usethis._test import change_cwd
+
             (uv_init_dir / ".ruff.toml").touch()
 
             # Act
@@ -3406,6 +4139,10 @@ select = ["A", "B", "C"]
 
         def test_highest_priority(self, uv_init_dir: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_ruff
+            from usethis._test import change_cwd
+
             (uv_init_dir / ".ruff.toml").touch()
             (uv_init_dir / "pyproject.toml").touch()
             (uv_init_dir / "ruff.toml").touch()
@@ -3421,6 +4158,10 @@ select = ["A", "B", "C"]
 
         def test_removed_from_all_files(self, uv_init_dir: Path):
             # Arrange
+            from usethis._config_file import files_manager
+            from usethis._core.tool import use_ruff
+            from usethis._test import change_cwd
+
             (uv_init_dir / ".ruff.toml").write_text(
                 """\
 [lint]

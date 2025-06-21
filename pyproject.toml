@@ -114,6 +114,7 @@ lint.select = [
   "S",
   "SIM",
   "TC",
+  "TID",
   "UP",
 ]
 lint.ignore = [ "PLR2004", "S101", "SIM108" ]

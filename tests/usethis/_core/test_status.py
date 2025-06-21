@@ -2,15 +2,15 @@ from pathlib import Path
 
 import pytest
 
-from usethis._core.enums.status import DevelopmentStatusEnum
-from usethis._core.status import use_development_status
-from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._test import change_cwd
-
 
 class TestUseDevelopmentStatus:
     def test_planning(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
         # Arrange
+        from usethis._core.enums.status import DevelopmentStatusEnum
+        from usethis._core.status import use_development_status
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         status = DevelopmentStatusEnum.planning
 
         # Act
@@ -32,6 +32,11 @@ class TestUseDevelopmentStatus:
 
     def test_planning_code(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
         # Arrange
+        from usethis._core.enums.status import DevelopmentStatusEnum
+        from usethis._core.status import use_development_status
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         status = DevelopmentStatusEnum.planning_code
 
         # Act
@@ -53,6 +58,11 @@ class TestUseDevelopmentStatus:
 
     def test_prealpha(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
         # Arrange
+        from usethis._core.enums.status import DevelopmentStatusEnum
+        from usethis._core.status import use_development_status
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         status = DevelopmentStatusEnum.prealpha
 
         # Act
@@ -74,6 +84,11 @@ class TestUseDevelopmentStatus:
 
     def test_alpha(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
         # Arrange
+        from usethis._core.enums.status import DevelopmentStatusEnum
+        from usethis._core.status import use_development_status
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         status = DevelopmentStatusEnum.alpha
 
         # Act
@@ -93,6 +108,11 @@ class TestUseDevelopmentStatus:
 
     def test_beta(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
         # Arrange
+        from usethis._core.enums.status import DevelopmentStatusEnum
+        from usethis._core.status import use_development_status
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         status = DevelopmentStatusEnum.beta
 
         # Act
@@ -112,6 +132,11 @@ class TestUseDevelopmentStatus:
 
     def test_production(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
         # Arrange
+        from usethis._core.enums.status import DevelopmentStatusEnum
+        from usethis._core.status import use_development_status
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         status = DevelopmentStatusEnum.production
 
         # Act
@@ -134,6 +159,11 @@ class TestUseDevelopmentStatus:
 
     def test_mature(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
         # Arrange
+        from usethis._core.enums.status import DevelopmentStatusEnum
+        from usethis._core.status import use_development_status
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         status = DevelopmentStatusEnum.mature
 
         # Act
@@ -153,6 +183,11 @@ class TestUseDevelopmentStatus:
 
     def test_inactive(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
         # Arrange
+        from usethis._core.enums.status import DevelopmentStatusEnum
+        from usethis._core.status import use_development_status
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         status = DevelopmentStatusEnum.inactive
 
         # Act
@@ -174,6 +209,11 @@ class TestUseDevelopmentStatus:
 
     def test_no_pyproject_toml(self, tmp_path: Path, capfd: pytest.CaptureFixture[str]):
         # Arrange
+        from usethis._core.enums.status import DevelopmentStatusEnum
+        from usethis._core.status import use_development_status
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         status = DevelopmentStatusEnum.planning
 
         # Act
@@ -192,6 +232,11 @@ class TestUseDevelopmentStatus:
         self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
     ):
         # Arrange
+        from usethis._core.enums.status import DevelopmentStatusEnum
+        from usethis._core.status import use_development_status
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         status = DevelopmentStatusEnum.beta
 
         # Create an existing classifier
@@ -226,6 +271,11 @@ classifiers = [
         self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
     ):
         # Arrange
+        from usethis._core.enums.status import DevelopmentStatusEnum
+        from usethis._core.status import use_development_status
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         status = DevelopmentStatusEnum.production
 
         # Create existing classifiers

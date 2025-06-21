@@ -2,21 +2,15 @@ from pathlib import Path
 
 import pytest
 
-from usethis._config_file import files_manager
-from usethis._core.rule import (
-    deselect_rules,
-    ignore_rules,
-    select_rules,
-    unignore_rules,
-)
-from usethis._integrations.uv.deps import Dependency, get_deps_from_group
-from usethis._test import change_cwd
-from usethis._tool.impl.deptry import DeptryTool
-from usethis._tool.impl.ruff import RuffTool
-
 
 class TestSelectRules:
     def test_ruff_gets_installed(self, uv_init_dir: Path):
+        # Arrange
+        from usethis._config_file import files_manager
+        from usethis._core.rule import select_rules
+        from usethis._integrations.uv.deps import Dependency, get_deps_from_group
+        from usethis._test import change_cwd
+
         with change_cwd(uv_init_dir), files_manager():
             # Act
             select_rules(rules=["A"])
@@ -27,6 +21,12 @@ class TestSelectRules:
     def test_deptry_rule_selected(
         self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
     ):
+        # Arrange
+        from usethis._config_file import files_manager
+        from usethis._core.rule import select_rules
+        from usethis._integrations.uv.deps import Dependency, get_deps_from_group
+        from usethis._test import change_cwd
+
         with change_cwd(uv_init_dir), files_manager():
             # Act
             select_rules(rules=["DEP001"])
@@ -44,8 +44,13 @@ class TestSelectRules:
         )
 
     def test_success(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
+        # Arrange
+        from usethis._config_file import files_manager
+        from usethis._core.rule import select_rules
+        from usethis._test import change_cwd
+        from usethis._tool.impl.ruff import RuffTool
+
         with change_cwd(uv_init_dir), files_manager():
-            # Arrange
             (uv_init_dir / "ruff.toml").touch()  # avoid installation messages for ruff
 
             # Act
@@ -61,8 +66,13 @@ class TestSelectRules:
 
 class TestDeselectRules:
     def test_success(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
+        # Arrange
+        from usethis._config_file import files_manager
+        from usethis._core.rule import deselect_rules
+        from usethis._test import change_cwd
+        from usethis._tool.impl.ruff import RuffTool
+
         with change_cwd(uv_init_dir), files_manager():
-            # Arrange
             (uv_init_dir / "ruff.toml").write_text(
                 """\
 [lint]
@@ -83,8 +93,13 @@ select = ["RUF001"]
 
 class TestUnignoreRules:
     def test_ruff(self, uv_init_dir: Path):
+        # Arrange
+        from usethis._config_file import files_manager
+        from usethis._core.rule import unignore_rules
+        from usethis._test import change_cwd
+        from usethis._tool.impl.ruff import RuffTool
+
         with change_cwd(uv_init_dir), files_manager():
-            # Arrange
             (uv_init_dir / "ruff.toml").write_text(
                 """\
 [lint]
@@ -99,8 +114,13 @@ ignore = ["RUF001"]
             assert "RUF001" not in RuffTool().get_ignored_rules()
 
     def test_deptry(self, uv_init_dir: Path):
+        # Arrange
+        from usethis._config_file import files_manager
+        from usethis._core.rule import unignore_rules
+        from usethis._test import change_cwd
+        from usethis._tool.impl.deptry import DeptryTool
+
         with change_cwd(uv_init_dir), files_manager():
-            # Arrange
             (uv_init_dir / "pyproject.toml").write_text(
                 """\
 [tool.deptry]
@@ -117,6 +137,11 @@ ignore = ["DEP001"]
 
 class TestIgnoreRules:
     def test_deptry_rule(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
+        # Arrange
+        from usethis._config_file import files_manager
+        from usethis._core.rule import ignore_rules
+        from usethis._test import change_cwd
+
         with change_cwd(uv_init_dir), files_manager():
             # Act
             ignore_rules(rules=["DEP001"])

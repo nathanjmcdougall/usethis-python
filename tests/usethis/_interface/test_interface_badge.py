@@ -1,13 +1,14 @@
 from pathlib import Path
 
-from typer.testing import CliRunner
-
-from usethis._interface.badge import app
-from usethis._test import change_cwd
-
 
 class TestPyPI:
     def test_add(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.badge import app
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):
@@ -18,6 +19,11 @@ class TestPyPI:
 
     def test_remove(self, tmp_path: Path):
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.badge import app
+        from usethis._test import change_cwd
+
         (tmp_path / "README.md").write_text("")
 
         # Act
@@ -30,6 +36,11 @@ class TestPyPI:
 
     def test_show(self, tmp_path: Path):
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.badge import app
+        from usethis._test import change_cwd
+
         (tmp_path / "README.md").write_text("")
 
         # Act
@@ -43,6 +54,12 @@ class TestPyPI:
 
 class TestRuff:
     def test_add(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.badge import app
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):
@@ -53,6 +70,11 @@ class TestRuff:
 
     def test_remove(self, tmp_path: Path):
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.badge import app
+        from usethis._test import change_cwd
+
         (tmp_path / "README.md").write_text("")
 
         # Act
@@ -65,6 +87,11 @@ class TestRuff:
 
     def test_wrong_encoding(self, tmp_path: Path):
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.badge import app
+        from usethis._test import change_cwd
+
         (tmp_path / "README.md").write_text("utf-8", encoding="utf-16")
 
         # Act
@@ -77,6 +104,11 @@ class TestRuff:
 
     def test_show(self, tmp_path: Path):
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.badge import app
+        from usethis._test import change_cwd
+
         (tmp_path / "README.md").write_text("")
 
         # Act
@@ -90,6 +122,12 @@ class TestRuff:
 
 class TestPreCommit:
     def test_add(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.badge import app
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):
@@ -100,6 +138,11 @@ class TestPreCommit:
 
     def test_remove(self, tmp_path: Path):
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.badge import app
+        from usethis._test import change_cwd
+
         (tmp_path / "README.md").write_text("")
 
         # Act
@@ -112,6 +155,11 @@ class TestPreCommit:
 
     def test_show(self, tmp_path: Path):
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.badge import app
+        from usethis._test import change_cwd
+
         (tmp_path / "README.md").write_text("")
 
         # Act
@@ -125,6 +173,12 @@ class TestPreCommit:
 
 class TestUsethis:
     def test_add(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.badge import app
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):
@@ -135,6 +189,11 @@ class TestUsethis:
 
     def test_remove(self, tmp_path: Path):
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.badge import app
+        from usethis._test import change_cwd
+
         (tmp_path / "README.md").write_text("")
 
         # Act
@@ -147,6 +206,11 @@ class TestUsethis:
 
     def test_show(self, tmp_path: Path):
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.badge import app
+        from usethis._test import change_cwd
+
         (tmp_path / "README.md").write_text("")
 
         # Act
@@ -164,6 +228,12 @@ class TestUsethis:
 
 class TestUV:
     def test_add(self, tmp_path: Path):
+        # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.badge import app
+        from usethis._test import change_cwd
+
         # Act
         runner = CliRunner()
         with change_cwd(tmp_path):
@@ -174,6 +244,11 @@ class TestUV:
 
     def test_remove(self, tmp_path: Path):
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.badge import app
+        from usethis._test import change_cwd
+
         (tmp_path / "README.md").write_text("")
 
         # Act
@@ -186,6 +261,11 @@ class TestUV:
 
     def test_show(self, tmp_path: Path):
         # Arrange
+        from typer.testing import CliRunner
+
+        from usethis._interface.badge import app
+        from usethis._test import change_cwd
+
         (tmp_path / "README.md").write_text("")
 
         # Act

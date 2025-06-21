@@ -2,23 +2,32 @@ import os
 from pathlib import Path
 
 import pytest
-import requests
-
-from usethis._integrations.ci.bitbucket.schema import Script, Step, Step2, StepBase
-from usethis._test import is_offline
 
 
 class TestStep2:
     def test_shared_parent(self):
+        from usethis._integrations.ci.bitbucket.schema import (
+            Script,
+            Step,
+            Step2,
+            StepBase,
+        )
+
         assert isinstance(Step2(script=Script(["hi"])), StepBase)
         assert isinstance(Step(script=Script(["hi"])), StepBase)
 
     def test_field_subset(self):
+        from usethis._integrations.ci.bitbucket.schema import Step, Step2
+
         assert set(Step2.model_fields.keys()) == set(Step.model_fields.keys())
 
 
 class TestSchemaJSON:
     def test_matches_schema_store(self):
+        import requests
+
+        from usethis._test import is_offline
+
         if is_offline():
             pytest.skip("Cannot fetch JSON schema when offline")
 

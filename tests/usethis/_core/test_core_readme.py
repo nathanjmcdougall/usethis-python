@@ -2,15 +2,16 @@ from pathlib import Path
 
 import pytest
 
-from usethis._core.readme import add_readme
-from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._test import change_cwd
-
 
 class TestAddReadme:
     def test_start_from_nothing(
         self, tmp_path: Path, capfd: pytest.CaptureFixture[str]
     ):
+        # Arrange
+        from usethis._core.readme import add_readme
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(tmp_path), PyprojectTOMLManager():
             add_readme()
@@ -26,6 +27,10 @@ class TestAddReadme:
 
     def test_different_suffix(self, tmp_path: Path):
         # Arrange
+        from usethis._core.readme import add_readme
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         (tmp_path / "README.rst").write_text("Existing content")
 
         # Act
@@ -37,6 +42,10 @@ class TestAddReadme:
 
     def test_readme_directory(self, tmp_path: Path):
         # Arrange
+        from usethis._core.readme import add_readme
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         (tmp_path / "README").mkdir()
 
         # Act
@@ -48,6 +57,10 @@ class TestAddReadme:
 
     def test_readme_no_suffix(self, tmp_path: Path, capfd: pytest.CaptureFixture[str]):
         # Arrange
+        from usethis._core.readme import add_readme
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         (tmp_path / "README").write_text("Existing content")
 
         # Act
@@ -62,6 +75,10 @@ class TestAddReadme:
 
     def test_no_pyproject_toml(self, tmp_path: Path):
         # We should automatically generate the TOML file.
+        # Arrange
+        from usethis._core.readme import add_readme
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
 
         # Act
         with change_cwd(tmp_path), PyprojectTOMLManager():
@@ -73,6 +90,10 @@ class TestAddReadme:
 
     def test_no_project_name_nor_description(self, tmp_path: Path):
         # Arrange
+        from usethis._core.readme import add_readme
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         name = "test_no_project_name_nor_description"
         (tmp_path / "pyproject.toml").write_text("")
 
@@ -87,6 +108,10 @@ class TestAddReadme:
 
     def test_no_project_name_only_description(self, tmp_path: Path):
         # Arrange
+        from usethis._core.readme import add_readme
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         name = "test_no_project_name_only_description"
         (tmp_path / "pyproject.toml").write_text(
             """\
@@ -107,6 +132,10 @@ description = "A description"
 
     def test_no_project_description_only_name(self, tmp_path: Path):
         # Arrange
+        from usethis._core.readme import add_readme
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         (tmp_path / "pyproject.toml").write_text(
             """\
 [project]
@@ -124,6 +153,10 @@ name = "A name"
 
     def test_project_name_and_description(self, tmp_path: Path):
         # Arrange
+        from usethis._core.readme import add_readme
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         (tmp_path / "pyproject.toml").write_text(
             """\
 [project]
@@ -142,6 +175,10 @@ description = "A description"
 
     def test_start_from_readme_empty(self, tmp_path: Path):
         # Arrange
+        from usethis._core.readme import add_readme
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._test import change_cwd
+
         (tmp_path / "pyproject.toml").write_text(
             """\
 [project]

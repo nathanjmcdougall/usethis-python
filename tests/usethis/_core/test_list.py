@@ -2,15 +2,16 @@ from pathlib import Path
 
 import pytest
 
-from usethis._config_file import files_manager
-from usethis._core.list import UsageRow, UsageTable, get_usage_table, show_usage_table
-from usethis._test import change_cwd
-
 
 class TestShowUsageTable:
     def test_empty_project(
         self, tmp_path: Path, capfd: pytest.CaptureFixture[str]
     ) -> None:
+        # Arrange
+        from usethis._config_file import files_manager
+        from usethis._core.list import show_usage_table
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(tmp_path), files_manager():
             show_usage_table()
@@ -25,6 +26,11 @@ class TestShowUsageTable:
 
 class TestGetUsageTable:
     def test_empty_project(self, tmp_path: Path):
+        # Arrange
+        from usethis._config_file import files_manager
+        from usethis._core.list import UsageRow, UsageTable, get_usage_table
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(tmp_path), files_manager():
             table = get_usage_table()
@@ -51,6 +57,10 @@ class TestGetUsageTable:
 
     def test_ruff_used(self, tmp_path: Path):
         # Arrange
+        from usethis._config_file import files_manager
+        from usethis._core.list import UsageRow, UsageTable, get_usage_table
+        from usethis._test import change_cwd
+
         (tmp_path / "ruff.toml").touch()
 
         # Act
@@ -78,6 +88,11 @@ class TestGetUsageTable:
         assert table == expected
 
     def test_uv_init_case(self, uv_init_dir: Path):
+        # Arrange
+        from usethis._config_file import files_manager
+        from usethis._core.list import UsageRow, UsageTable, get_usage_table
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(uv_init_dir), files_manager():
             table = get_usage_table()

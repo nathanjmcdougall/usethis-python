@@ -2,31 +2,6 @@ from collections import OrderedDict
 from pathlib import Path
 
 import pytest
-from ruamel.yaml.comments import (
-    CommentedMap,
-    CommentedOrderedMap,
-    CommentedSeq,
-    CommentedSet,
-    TaggedScalar,
-)
-from ruamel.yaml.scalarbool import ScalarBoolean
-from ruamel.yaml.scalarfloat import ScalarFloat
-from ruamel.yaml.scalarint import (
-    BinaryInt,
-    HexCapsInt,
-    HexInt,
-    OctalInt,
-    ScalarInt,
-)
-from ruamel.yaml.scalarstring import (
-    FoldedScalarString,
-    LiteralScalarString,
-)
-from ruamel.yaml.timestamp import TimeStamp
-
-from usethis._integrations.file.yaml.errors import InvalidYAMLError
-from usethis._integrations.file.yaml.io_ import edit_yaml
-from usethis._test import change_cwd
 
 
 class TestEditYaml:
@@ -35,6 +10,9 @@ class TestEditYaml:
 
         def test_none(self, tmp_path: Path):
             # Arrange
+
+            from usethis._integrations.file.yaml.io_ import edit_yaml
+
             path = tmp_path / "test.yaml"
             path.write_text("hello: null")
 
@@ -45,6 +23,9 @@ class TestEditYaml:
 
         def test_str(self, tmp_path: Path):
             # Arrange
+
+            from usethis._integrations.file.yaml.io_ import edit_yaml
+
             path = tmp_path / "test.yaml"
             path.write_text("hello")
 
@@ -56,6 +37,11 @@ class TestEditYaml:
 
         def test_literal_scalar_string(self, tmp_path: Path):
             # Arrange
+            from ruamel.yaml.comments import CommentedMap
+            from ruamel.yaml.scalarstring import LiteralScalarString
+
+            from usethis._integrations.file.yaml.io_ import edit_yaml
+
             path = tmp_path / "test.yaml"
             path.write_text("""\
 hello: |
@@ -71,6 +57,11 @@ hello: |
 
         def test_folded_scalar_string(self, tmp_path: Path):
             # Arrange
+            from ruamel.yaml.comments import CommentedMap
+            from ruamel.yaml.scalarstring import FoldedScalarString
+
+            from usethis._integrations.file.yaml.io_ import edit_yaml
+
             path = tmp_path / "test.yaml"
             path.write_text("""\
 hello: >
@@ -85,6 +76,9 @@ hello: >
 
         def test_int(self, tmp_path: Path):
             # Arrange
+
+            from usethis._integrations.file.yaml.io_ import edit_yaml
+
             path = tmp_path / "test.yaml"
             path.write_text("3")
 
@@ -96,6 +90,10 @@ hello: >
 
         def test_float(self, tmp_path: Path):
             # Arrange
+            from ruamel.yaml.scalarfloat import ScalarFloat
+
+            from usethis._integrations.file.yaml.io_ import edit_yaml
+
             path = tmp_path / "test.yaml"
             path.write_text("3.14")
 
@@ -107,6 +105,10 @@ hello: >
 
         def test_scientific_notation(self, tmp_path: Path):
             # Arrange
+            from ruamel.yaml.scalarfloat import ScalarFloat
+
+            from usethis._integrations.file.yaml.io_ import edit_yaml
+
             path = tmp_path / "test.yaml"
             path.write_text("3.14e-2")
 
@@ -118,6 +120,10 @@ hello: >
 
         def test_hex(self, tmp_path: Path):
             # Arrange
+            from ruamel.yaml.scalarint import HexInt
+
+            from usethis._integrations.file.yaml.io_ import edit_yaml
+
             path = tmp_path / "test.yaml"
             path.write_text("0x3")
 
@@ -129,6 +135,10 @@ hello: >
 
         def test_hex_caps(self, tmp_path: Path):
             # Arrange
+            from ruamel.yaml.scalarint import HexCapsInt
+
+            from usethis._integrations.file.yaml.io_ import edit_yaml
+
             path = tmp_path / "test.yaml"
             path.write_text("0xE")
 
@@ -140,6 +150,10 @@ hello: >
 
         def test_octal(self, tmp_path: Path):
             # Arrange
+            from ruamel.yaml.scalarint import OctalInt
+
+            from usethis._integrations.file.yaml.io_ import edit_yaml
+
             path = tmp_path / "test.yaml"
             path.write_text("0o3")
 
@@ -151,6 +165,10 @@ hello: >
 
         def test_binary(self, tmp_path: Path):
             # Arrange
+            from ruamel.yaml.scalarint import BinaryInt
+
+            from usethis._integrations.file.yaml.io_ import edit_yaml
+
             path = tmp_path / "test.yaml"
             path.write_text("0b11")
 
@@ -162,6 +180,10 @@ hello: >
 
         def test_scalar_int(self, tmp_path: Path):
             # Arrange
+            from ruamel.yaml.scalarint import ScalarInt
+
+            from usethis._integrations.file.yaml.io_ import edit_yaml
+
             path = tmp_path / "test.yaml"
             path.write_text("&anchor 3")
 
@@ -173,6 +195,9 @@ hello: >
 
         def test_bool(self, tmp_path: Path):
             # Arrange
+
+            from usethis._integrations.file.yaml.io_ import edit_yaml
+
             path = tmp_path / "test.yaml"
             path.write_text("true")
 
@@ -184,6 +209,10 @@ hello: >
 
         def test_scalar_bool(self, tmp_path: Path):
             # Arrange
+            from ruamel.yaml.scalarbool import ScalarBoolean
+
+            from usethis._integrations.file.yaml.io_ import edit_yaml
+
             path = tmp_path / "test.yaml"
             path.write_text("&anchor true")
 
@@ -195,6 +224,10 @@ hello: >
 
         def test_commented_seq(self, tmp_path: Path):
             # Arrange
+            from ruamel.yaml.comments import CommentedSeq
+
+            from usethis._integrations.file.yaml.io_ import edit_yaml
+
             path = tmp_path / "test.yaml"
             path.write_text("""\
 - one
@@ -209,6 +242,10 @@ hello: >
 
         def test_commented_set(self, tmp_path: Path):
             # Arrange
+            from ruamel.yaml.comments import CommentedSet
+
+            from usethis._integrations.file.yaml.io_ import edit_yaml
+
             path = tmp_path / "test.yaml"
             path.write_text("""\
 !!set
@@ -224,6 +261,10 @@ hello: >
 
         def test_commented_map(self, tmp_path: Path):
             # Arrange
+            from ruamel.yaml.comments import CommentedMap
+
+            from usethis._integrations.file.yaml.io_ import edit_yaml
+
             path = tmp_path / "test.yaml"
             path.write_text("""\
 hello: world
@@ -237,6 +278,10 @@ hello: world
 
         def test_commented_ordered_map(self, tmp_path: Path):
             # Arrange
+            from ruamel.yaml.comments import CommentedOrderedMap
+
+            from usethis._integrations.file.yaml.io_ import edit_yaml
+
             path = tmp_path / "test.yaml"
             path.write_text("""\
 !!omap
@@ -251,6 +296,10 @@ hello: world
 
         def test_tagged_scalar(self, tmp_path: Path):
             # Arrange
+            from ruamel.yaml.comments import TaggedScalar
+
+            from usethis._integrations.file.yaml.io_ import edit_yaml
+
             path = tmp_path / "test.yaml"
             path.write_text("""\
 !!custom 3
@@ -263,6 +312,10 @@ hello: world
 
         def test_time_stamp(self, tmp_path: Path):
             # Arrange
+            from ruamel.yaml.timestamp import TimeStamp
+
+            from usethis._integrations.file.yaml.io_ import edit_yaml
+
             path = tmp_path / "test.yaml"
             path.write_text("2001-12-15T02:59:43.1Z")
 
@@ -276,6 +329,11 @@ hello: world
             reason="Not providing this guarantee yet. ruamel.yaml isn't easily able to cope with perfect round-tripping"
         )
         def test_single_quote_preserved(self, tmp_path: Path):
+            # Arrange
+
+            from usethis._integrations.file.yaml.io_ import edit_yaml
+            from usethis._test import change_cwd
+
             path = tmp_path / "x.yml"
             path.write_text(
                 """\
@@ -300,6 +358,11 @@ x: 'hi'
             reason="Not providing this guarantee yet. ruamel.yaml isn't easily able to cope with perfect round-tripping"
         )
         def test_single_quoted_preserved(self, tmp_path: Path):
+            # Arrange
+
+            from usethis._integrations.file.yaml.io_ import edit_yaml
+            from usethis._test import change_cwd
+
             path = tmp_path / "x.yml"
             path.write_text(
                 """\
@@ -321,6 +384,11 @@ x: 'hi'
             )
 
         def test_unquoted_preserved(self, tmp_path: Path):
+            # Arrange
+
+            from usethis._integrations.file.yaml.io_ import edit_yaml
+            from usethis._test import change_cwd
+
             path = tmp_path / "x.yml"
             path.write_text(
                 """\
@@ -342,6 +410,11 @@ x: hi
             )
 
         def test_indentation_5_3(self, tmp_path: Path):
+            # Arrange
+
+            from usethis._integrations.file.yaml.io_ import edit_yaml
+            from usethis._test import change_cwd
+
             path = tmp_path / "x.yml"
             path.write_text(
                 """\
@@ -369,6 +442,11 @@ x:
             )
 
     def test_no_guess_indent(self, tmp_path: Path):
+        # Arrange
+
+        from usethis._integrations.file.yaml.io_ import edit_yaml
+        from usethis._test import change_cwd
+
         path = tmp_path / "x.yml"
         path.write_text(
             """\
@@ -397,6 +475,11 @@ x:
 
     def test_invalid_indentation(self, tmp_path: Path):
         # Arrange
+
+        from usethis._integrations.file.yaml.errors import InvalidYAMLError
+        from usethis._integrations.file.yaml.io_ import edit_yaml
+        from usethis._test import change_cwd
+
         (tmp_path / "x.yml").write_text(
             """\
 repos:
@@ -416,6 +499,11 @@ repos:
 
     def test_incorrect_indentation(self, tmp_path: Path, capfd: pytest.CaptureFixture):
         # Arrange
+
+        from usethis._integrations.file.yaml.errors import InvalidYAMLError
+        from usethis._integrations.file.yaml.io_ import edit_yaml
+        from usethis._test import change_cwd
+
         (tmp_path / "x.yml").write_text("""\
 - path: / 
     backend: 

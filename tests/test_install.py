@@ -5,17 +5,16 @@ from tempfile import TemporaryDirectory
 
 import pytest
 
-from usethis._config import usethis_config
-from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._integrations.uv.call import call_uv_subprocess
-from usethis._subprocess import call_subprocess
-from usethis._test import change_cwd
-
 
 @pytest.fixture
 def usethis_installed_dir(
     uv_init_dir: Path, usethis_dev_dir: Path
 ) -> Generator[Path, None, None]:
+    from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+    from usethis._integrations.uv.call import call_uv_subprocess
+    from usethis._subprocess import call_subprocess
+    from usethis._test import change_cwd
+
     with TemporaryDirectory() as tmp_path:
         # Make a copy of the current usethis codebase to avoid interacting with pytest
         copy_usethis_dev_dir = Path(tmp_path) / "usethis-python"
@@ -46,12 +45,19 @@ def usethis_installed_dir(
 
 class TestInstalledInOwnVenv:
     def test_help(self, usethis_installed_dir: Path):
+        from usethis._subprocess import call_subprocess
+        from usethis._test import change_cwd
+
         with change_cwd(usethis_installed_dir):
             # Should run without error
             call_subprocess(["usethis", "--help"])
 
     @pytest.mark.usefixtures("_vary_network_conn")
     def test_add_pytest(self, usethis_installed_dir: Path):
+        from usethis._config import usethis_config
+        from usethis._subprocess import call_subprocess
+        from usethis._test import change_cwd
+
         with change_cwd(usethis_installed_dir):
             # Should run without error
             if not usethis_config.offline:

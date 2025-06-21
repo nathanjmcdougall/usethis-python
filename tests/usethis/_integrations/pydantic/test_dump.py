@@ -1,13 +1,13 @@
 from typing import Literal
 
-from pydantic import BaseModel, Field, RootModel
-
-from usethis._integrations.pydantic.dump import fancy_model_dump
-
 
 class TestFancyModelDump:
     def test_base_model(self):
         # Arrange
+        from pydantic import BaseModel
+
+        from usethis._integrations.pydantic.dump import fancy_model_dump
+
         class MyBaseModel(BaseModel):
             x: int
             y: float
@@ -22,6 +22,10 @@ class TestFancyModelDump:
 
     def test_list_remove_element(self):
         # Arrange
+        from pydantic import RootModel
+
+        from usethis._integrations.pydantic.dump import fancy_model_dump
+
         class MyRootModel(RootModel):
             root: list[int]
 
@@ -35,6 +39,10 @@ class TestFancyModelDump:
 
     def test_alias(self):
         # Arrange
+        from pydantic import BaseModel, Field
+
+        from usethis._integrations.pydantic.dump import fancy_model_dump
+
         class MyModel(BaseModel):
             x: int
             y: float = Field(alias="z")
@@ -50,6 +58,10 @@ class TestFancyModelDump:
     class TestRootModel:
         def test_singleton_list(self):
             # Arrange
+            from pydantic import RootModel
+
+            from usethis._integrations.pydantic.dump import fancy_model_dump
+
             class MyRootModel(RootModel):
                 root: list[int]
 
@@ -63,6 +75,10 @@ class TestFancyModelDump:
 
         def test_list_length_differs_ref_length(self):
             # Arrange
+            from pydantic import BaseModel, RootModel
+
+            from usethis._integrations.pydantic.dump import fancy_model_dump
+
             class MySubModel(BaseModel):
                 x: Literal[0, 1] = 1
                 y: Literal[0, 1] = 0
@@ -92,6 +108,10 @@ class TestFancyModelDump:
 
         def test_mismatch_list_ref(self):
             # Arrange
+            from pydantic import RootModel
+
+            from usethis._integrations.pydantic.dump import fancy_model_dump
+
             class MyRootModel(RootModel):
                 root: list[int]
 
@@ -105,6 +125,10 @@ class TestFancyModelDump:
 
         def test_constant(self):
             # Arrange
+            from pydantic import RootModel
+
+            from usethis._integrations.pydantic.dump import fancy_model_dump
+
             class MyRootModel(RootModel):
                 root: str
 
@@ -118,6 +142,9 @@ class TestFancyModelDump:
 
         def test_basemodel(self):
             # Arrange
+            from pydantic import BaseModel, RootModel
+
+            from usethis._integrations.pydantic.dump import fancy_model_dump
 
             class MySubModel(BaseModel):
                 x: int = -1
@@ -138,6 +165,10 @@ class TestFancyModelDump:
 
     def test_bool_type(self):
         # Arrange
+        from pydantic import RootModel
+
+        from usethis._integrations.pydantic.dump import fancy_model_dump
+
         class MyRootModel(RootModel):
             root: list[bool]
 
@@ -152,6 +183,10 @@ class TestFancyModelDump:
     class TestNesting:
         def test_basemodel(self):
             # Arrange
+            from pydantic import BaseModel
+
+            from usethis._integrations.pydantic.dump import fancy_model_dump
+
             class MyInnerModel(BaseModel):
                 x: int
 
@@ -168,6 +203,10 @@ class TestFancyModelDump:
 
         def test_rootmodel(self):
             # Arrange
+            from pydantic import RootModel
+
+            from usethis._integrations.pydantic.dump import fancy_model_dump
+
             class MyInnerModel(RootModel):
                 root: list[str]
 
@@ -185,6 +224,10 @@ class TestFancyModelDump:
     class TestCustomOrder:
         def test_unnested(self):
             # Arrange
+            from pydantic import BaseModel
+
+            from usethis._integrations.pydantic.dump import fancy_model_dump
+
             class MyBaseModel(BaseModel):
                 x: int
                 y: float
@@ -200,6 +243,10 @@ class TestFancyModelDump:
 
         def test_nested(self):
             # Arrange
+            from pydantic import BaseModel
+
+            from usethis._integrations.pydantic.dump import fancy_model_dump
+
             class MyInnerModel(BaseModel):
                 x: int
                 y: float
@@ -220,6 +267,10 @@ class TestFancyModelDump:
     class TestReference:
         def test_no_reference_drop_default(self):
             # Arrange
+            from pydantic import BaseModel
+
+            from usethis._integrations.pydantic.dump import fancy_model_dump
+
             class MyModel(BaseModel):
                 x: int
                 y: float = 2.0
@@ -234,6 +285,10 @@ class TestFancyModelDump:
 
         def test_keep_default(self):
             # Arrange
+            from pydantic import BaseModel
+
+            from usethis._integrations.pydantic.dump import fancy_model_dump
+
             class MyModel(BaseModel):
                 x: int
                 y: float = 2.0
@@ -249,6 +304,10 @@ class TestFancyModelDump:
 
         def test_nondefault(self):
             # Arrange
+            from pydantic import BaseModel
+
+            from usethis._integrations.pydantic.dump import fancy_model_dump
+
             class MyModel(BaseModel):
                 x: int
                 y: float = 2.0
@@ -264,6 +323,10 @@ class TestFancyModelDump:
 
         def test_nested(self):
             # Arrange
+            from pydantic import BaseModel
+
+            from usethis._integrations.pydantic.dump import fancy_model_dump
+
             class MyInnerModel(BaseModel):
                 x: int
                 y: float = 2.0
@@ -282,6 +345,10 @@ class TestFancyModelDump:
 
         def test_drop_default_with_ref(self):
             # Arrange
+            from pydantic import BaseModel
+
+            from usethis._integrations.pydantic.dump import fancy_model_dump
+
             class MyModel(BaseModel):
                 x: int = 1
 

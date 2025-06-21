@@ -2,12 +2,13 @@ from pathlib import Path
 
 import pytest
 
-from usethis._integrations.pytest.core import add_pytest_dir, remove_pytest_dir
-from usethis._test import change_cwd
-
 
 class TestAddPytestDir:
     def test_exists(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.pytest.core import add_pytest_dir
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(tmp_path):
             add_pytest_dir()
@@ -16,6 +17,10 @@ class TestAddPytestDir:
         assert (tmp_path / "tests").exists()
 
     def test_message(self, tmp_path: Path, capfd: pytest.CaptureFixture[str]):
+        # Arrange
+        from usethis._integrations.pytest.core import add_pytest_dir
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(tmp_path):
             add_pytest_dir()
@@ -26,6 +31,9 @@ class TestAddPytestDir:
 
     def test_conftest_exists(self, tmp_path: Path, capfd: pytest.CaptureFixture[str]):
         # Arrange
+        from usethis._integrations.pytest.core import add_pytest_dir
+        from usethis._test import change_cwd
+
         (tmp_path / "tests").mkdir()
 
         # Act
@@ -40,6 +48,10 @@ class TestAddPytestDir:
 
 class TestRemovePytestDir:
     def test_blank_slate(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.pytest.core import remove_pytest_dir
+        from usethis._test import change_cwd
+
         # Act
         with change_cwd(tmp_path):
             remove_pytest_dir()
@@ -49,6 +61,9 @@ class TestRemovePytestDir:
 
     def test_dir(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.pytest.core import remove_pytest_dir
+        from usethis._test import change_cwd
+
         (tmp_path / "tests").mkdir()
 
         # Act
@@ -60,6 +75,9 @@ class TestRemovePytestDir:
 
     def test_protect_file(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.pytest.core import remove_pytest_dir
+        from usethis._test import change_cwd
+
         (tmp_path / "tests").mkdir()
         (tmp_path / "tests" / "test_something.py").touch()
 
@@ -72,8 +90,11 @@ class TestRemovePytestDir:
         assert (tmp_path / "tests" / "test_something.py").exists()
 
     def test_roundtrip(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.pytest.core import add_pytest_dir, remove_pytest_dir
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path):
-            # Arrange
             add_pytest_dir()
 
             # Act

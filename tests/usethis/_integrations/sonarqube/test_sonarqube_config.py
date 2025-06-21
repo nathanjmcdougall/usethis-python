@@ -2,27 +2,15 @@ from pathlib import Path
 
 import pytest
 
-from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._integrations.python.version import get_python_version
-from usethis._integrations.sonarqube.config import (
-    _validate_project_key,
-    get_sonar_project_properties,
-)
-from usethis._integrations.sonarqube.errors import (
-    CoverageReportConfigNotFoundError,
-    InvalidSonarQubeProjectKeyError,
-    MissingProjectKeyError,
-)
-from usethis._integrations.uv.init import ensure_pyproject_toml
-from usethis._integrations.uv.python import python_pin
-from usethis._test import change_cwd
-
 
 class TestGetSonarProjectProperties:
     def test_dump_file(self, tmp_path: Path):
         # If the file already exists, we just return it.
 
         # Arrange
+        from usethis._integrations.sonarqube.config import get_sonar_project_properties
+        from usethis._test import change_cwd
+
         path = tmp_path / "sonar-project.properties"
         contents = "foo=bar\n"
         path.write_text(contents)
@@ -39,6 +27,11 @@ class TestGetSonarProjectProperties:
         # the repo.
 
         # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.sonarqube.config import get_sonar_project_properties
+        from usethis._integrations.uv.python import python_pin
+        from usethis._test import change_cwd
+
         with change_cwd(uv_init_dir), PyprojectTOMLManager():
             PyprojectTOMLManager().set_value(
                 keys=["tool", "usethis", "sonarqube", "project-key"], value="foobar"
@@ -70,9 +63,15 @@ sonar.verbose=false
 
     def test_different_python_version(self, tmp_path: Path):
         # If the python version is different, it should be updated.
+        # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.python.version import get_python_version
+        from usethis._integrations.sonarqube.config import get_sonar_project_properties
+        from usethis._integrations.uv.init import ensure_pyproject_toml
+        from usethis._integrations.uv.python import python_pin
+        from usethis._test import change_cwd
 
         with change_cwd(tmp_path), PyprojectTOMLManager():
-            # Arrange
             assert get_python_version()
             python_pin("3.10")
             ensure_pyproject_toml()
@@ -104,8 +103,14 @@ sonar.verbose=false
         )
 
     def test_no_pin_python(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.python.version import get_python_version
+        from usethis._integrations.sonarqube.config import get_sonar_project_properties
+        from usethis._integrations.uv.init import ensure_pyproject_toml
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path), PyprojectTOMLManager():
-            # Arrange
             ensure_pyproject_toml()
             PyprojectTOMLManager().set_value(
                 keys=["tool", "usethis", "sonarqube", "project-key"], value="foobar"
@@ -132,8 +137,14 @@ sonar.verbose=false
         )
 
     def test_different_project_key(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.sonarqube.config import get_sonar_project_properties
+        from usethis._integrations.uv.init import ensure_pyproject_toml
+        from usethis._integrations.uv.python import python_pin
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path), PyprojectTOMLManager():
-            # Arrange
             python_pin("3.12")
             ensure_pyproject_toml()
             PyprojectTOMLManager().set_value(
@@ -161,8 +172,14 @@ sonar.verbose=false
         )
 
     def test_set_verbose_true(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.sonarqube.config import get_sonar_project_properties
+        from usethis._integrations.uv.init import ensure_pyproject_toml
+        from usethis._integrations.uv.python import python_pin
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path), PyprojectTOMLManager():
-            # Arrange
             python_pin("3.12")
             ensure_pyproject_toml()
             PyprojectTOMLManager().set_value(
@@ -193,6 +210,11 @@ sonar.verbose=true
         )
 
     def test_missing_pyproject_toml_raises(self, tmp_path: Path):
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.sonarqube.config import get_sonar_project_properties
+        from usethis._integrations.sonarqube.errors import MissingProjectKeyError
+        from usethis._test import change_cwd
+
         with (
             change_cwd(tmp_path),
             PyprojectTOMLManager(),
@@ -201,8 +223,14 @@ sonar.verbose=true
             get_sonar_project_properties()
 
     def test_missing_project_key_section_raises(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.sonarqube.config import get_sonar_project_properties
+        from usethis._integrations.sonarqube.errors import MissingProjectKeyError
+        from usethis._integrations.uv.init import ensure_pyproject_toml
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path), PyprojectTOMLManager():
-            # Arrange
             ensure_pyproject_toml()
 
             # Act, Assert
@@ -210,8 +238,14 @@ sonar.verbose=true
                 get_sonar_project_properties()
 
     def test_patch_version_ignored(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.sonarqube.config import get_sonar_project_properties
+        from usethis._integrations.uv.init import ensure_pyproject_toml
+        from usethis._integrations.uv.python import python_pin
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path), PyprojectTOMLManager():
-            # Arrange
             python_pin("3.12.1")
             ensure_pyproject_toml()
             PyprojectTOMLManager().set_value(
@@ -239,8 +273,14 @@ sonar.verbose=false
         )
 
     def test_exclusions(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.sonarqube.config import get_sonar_project_properties
+        from usethis._integrations.uv.init import ensure_pyproject_toml
+        from usethis._integrations.uv.python import python_pin
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path), PyprojectTOMLManager():
-            # Arrange
             python_pin("3.12")
             ensure_pyproject_toml()
             PyprojectTOMLManager().set_value(
@@ -276,8 +316,14 @@ sonar.exclusions=**/Dockerfile, src/notebooks/**/*
         )
 
     def test_different_coverage_file_location(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.sonarqube.config import get_sonar_project_properties
+        from usethis._integrations.uv.init import ensure_pyproject_toml
+        from usethis._integrations.uv.python import python_pin
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path), PyprojectTOMLManager():
-            # Arrange
             python_pin("3.12")
             ensure_pyproject_toml()
             PyprojectTOMLManager().set_value(
@@ -306,8 +352,17 @@ sonar.verbose=false
         )
 
     def test_missing_coverage_file_location_error(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.sonarqube.config import get_sonar_project_properties
+        from usethis._integrations.sonarqube.errors import (
+            CoverageReportConfigNotFoundError,
+        )
+        from usethis._integrations.uv.init import ensure_pyproject_toml
+        from usethis._integrations.uv.python import python_pin
+        from usethis._test import change_cwd
+
         with change_cwd(tmp_path), PyprojectTOMLManager():
-            # Arrange
             python_pin("3.12")
             ensure_pyproject_toml()
             PyprojectTOMLManager().set_value(
@@ -322,6 +377,8 @@ sonar.verbose=false
 class TestValidateProjectKey:
     def test_valid(self):
         # Arrange
+        from usethis._integrations.sonarqube.config import _validate_project_key
+
         project_key = "foo:bar"
 
         # Act
@@ -332,6 +389,11 @@ class TestValidateProjectKey:
 
     def test_bad_characters(self):
         # Arrange
+        from usethis._integrations.sonarqube.config import _validate_project_key
+        from usethis._integrations.sonarqube.errors import (
+            InvalidSonarQubeProjectKeyError,
+        )
+
         project_key = "foo bar"
 
         # Act, Assert
@@ -342,6 +404,11 @@ class TestValidateProjectKey:
         # The key must contain at least one non-digit character.
 
         # Arrange
+        from usethis._integrations.sonarqube.config import _validate_project_key
+        from usethis._integrations.sonarqube.errors import (
+            InvalidSonarQubeProjectKeyError,
+        )
+
         project_key = "123"
 
         # Act, Assert

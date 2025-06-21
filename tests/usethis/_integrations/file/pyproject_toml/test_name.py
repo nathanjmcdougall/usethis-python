@@ -2,19 +2,14 @@ from pathlib import Path
 
 import pytest
 
-from usethis._integrations.file.pyproject_toml.errors import (
-    PyprojectTOMLProjectDescriptionError,
-    PyprojectTOMLProjectNameError,
-    PyprojectTOMLProjectSectionError,
-)
-from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._integrations.file.pyproject_toml.name import get_description, get_name
-from usethis._test import change_cwd
-
 
 class TestGetName:
     def test_basic(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.file.pyproject_toml.name import get_name
+        from usethis._test import change_cwd
+
         path = tmp_path / "pyproject.toml"
         path.write_text(
             """\
@@ -31,6 +26,11 @@ class TestGetName:
         assert result == "usethis"
 
     def test_missing_file(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.file.pyproject_toml.name import get_name
+        from usethis._test import change_cwd
+
         # Act, Assert
         with (
             change_cwd(tmp_path),
@@ -41,6 +41,13 @@ class TestGetName:
 
     def test_missing_section(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.file.pyproject_toml.errors import (
+            PyprojectTOMLProjectSectionError,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.file.pyproject_toml.name import get_name
+        from usethis._test import change_cwd
+
         path = tmp_path / "pyproject.toml"
         path.write_text("")
 
@@ -54,6 +61,13 @@ class TestGetName:
 
     def test_missing_name_value(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.file.pyproject_toml.errors import (
+            PyprojectTOMLProjectNameError,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.file.pyproject_toml.name import get_name
+        from usethis._test import change_cwd
+
         path = tmp_path / "pyproject.toml"
         path.write_text("[project]")
 
@@ -67,6 +81,13 @@ class TestGetName:
 
     def test_invalid_name_value(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.file.pyproject_toml.errors import (
+            PyprojectTOMLProjectNameError,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.file.pyproject_toml.name import get_name
+        from usethis._test import change_cwd
+
         path = tmp_path / "pyproject.toml"
         path.write_text(
             """\
@@ -87,6 +108,10 @@ class TestGetName:
 class TestGetDescription:
     def test_basic(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.file.pyproject_toml.name import get_description
+        from usethis._test import change_cwd
+
         path = tmp_path / "pyproject.toml"
         path.write_text(
             """\
@@ -103,6 +128,11 @@ class TestGetDescription:
         assert result == "A package for doing things."
 
     def test_missing_file(self, tmp_path: Path):
+        # Arrange
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.file.pyproject_toml.name import get_description
+        from usethis._test import change_cwd
+
         # Act, Assert
         with (
             change_cwd(tmp_path),
@@ -113,6 +143,13 @@ class TestGetDescription:
 
     def test_missing_section(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.file.pyproject_toml.errors import (
+            PyprojectTOMLProjectSectionError,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.file.pyproject_toml.name import get_description
+        from usethis._test import change_cwd
+
         path = tmp_path / "pyproject.toml"
         path.write_text("")
 
@@ -126,6 +163,13 @@ class TestGetDescription:
 
     def test_missing_name_value(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.file.pyproject_toml.errors import (
+            PyprojectTOMLProjectDescriptionError,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.file.pyproject_toml.name import get_description
+        from usethis._test import change_cwd
+
         path = tmp_path / "pyproject.toml"
         path.write_text("[project]")
 
@@ -139,6 +183,13 @@ class TestGetDescription:
 
     def test_invalid_string(self, tmp_path: Path):
         # Arrange
+        from usethis._integrations.file.pyproject_toml.errors import (
+            PyprojectTOMLProjectDescriptionError,
+        )
+        from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
+        from usethis._integrations.file.pyproject_toml.name import get_description
+        from usethis._test import change_cwd
+
         path = tmp_path / "pyproject.toml"
         path.write_text(
             """\
