@@ -125,6 +125,7 @@ ignore-regex = ["[A-Za-z0-9+/]{100,}"]
 
 
 class TestDeptry:
+    @pytest.mark.benchmark
     @pytest.mark.usefixtures("_vary_network_conn")
     def test_cli(self, uv_init_dir: Path):
         with change_cwd(uv_init_dir):
@@ -133,12 +134,14 @@ class TestDeptry:
             else:
                 call_subprocess(["usethis", "tool", "deptry", "--offline"])
 
+    @pytest.mark.benchmark
     @pytest.mark.usefixtures("_vary_network_conn")
     def test_cli_frozen(self, uv_init_dir: Path):
         with change_cwd(uv_init_dir):
             call_subprocess(["usethis", "tool", "deptry", "--frozen"])
             assert not (uv_init_dir / ".venv").exists()
 
+    @pytest.mark.benchmark
     @pytest.mark.usefixtures("_vary_network_conn")
     def test_cli_not_frozen(self, uv_init_dir: Path):
         with change_cwd(uv_init_dir):
@@ -249,6 +252,7 @@ class TestPyprojectFmt:
 
 
 class TestPreCommit:
+    @pytest.mark.benchmark
     @pytest.mark.usefixtures("_vary_network_conn")
     def test_cli_pass(self, uv_init_repo_dir: Path):
         with change_cwd(uv_init_repo_dir):
@@ -261,6 +265,7 @@ class TestPreCommit:
                 ["run", "pre-commit", "run", "--all-files"], change_toml=False
             )
 
+    @pytest.mark.benchmark
     @pytest.mark.usefixtures("_vary_network_conn")
     def test_cli_fail(self, uv_init_repo_dir: Path):
         with change_cwd(uv_init_repo_dir):
@@ -351,6 +356,7 @@ class TestRequirementsTxt:
 
 
 class TestRuff:
+    @pytest.mark.benchmark
     @pytest.mark.usefixtures("_vary_network_conn")
     def test_cli(self, uv_init_dir: Path):
         with change_cwd(uv_init_dir):

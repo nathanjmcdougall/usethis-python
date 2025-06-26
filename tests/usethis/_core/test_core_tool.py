@@ -591,6 +591,7 @@ class TestDeptry:
                 # Assert
                 call_uv_subprocess(["run", "deptry", "."], change_toml=False)
 
+        @pytest.mark.benchmark
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_pre_commit_after(
             self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
@@ -1534,6 +1535,7 @@ repos:
 """
             )
 
+        @pytest.mark.benchmark
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_bad_commit(self, uv_env_dir: Path, git_path: Path):
             # This needs a venv so that we can actually run pre-commit via git
@@ -1570,6 +1572,7 @@ repos:
                 f"stdout: {result.stdout}\nstderr: {result.stderr}\n"
             )
 
+        @pytest.mark.benchmark
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_requirements_txt_used(self, uv_init_dir: Path):
             with change_cwd(uv_init_dir), files_manager():
@@ -1672,6 +1675,7 @@ repos:
                 "✔ Removing dependency 'pre-commit' from the 'dev' group in 'pyproject.toml'.\n"
             )
 
+        @pytest.mark.benchmark
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_requirements_txt_used(
             self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
@@ -1695,6 +1699,7 @@ repos:
                     "☐ Run 'uv export --no-default-groups -o=requirements.txt' to write 'requirements.txt'."
                 )
 
+        @pytest.mark.benchmark
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_pyproject_fmt_used(
             self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]
@@ -1774,6 +1779,7 @@ image: atlassian/default-image:3
             contents = (uv_init_repo_dir / "bitbucket-pipelines.yml").read_text()
             assert "pre-commit" in contents
 
+        @pytest.mark.benchmark
         def test_remove(self, uv_init_dir: Path, capfd: pytest.CaptureFixture[str]):
             # Arrange
             with change_cwd(uv_init_dir), files_manager():
@@ -2569,6 +2575,7 @@ class TestRequirementsTxt:
                 "☐ Run 'uv export --no-default-groups -o=requirements.txt' to write 'requirements.txt'."
             )
 
+        @pytest.mark.benchmark
         @pytest.mark.usefixtures("_vary_network_conn")
         def test_pre_commit(
             self, uv_init_repo_dir: Path, capfd: pytest.CaptureFixture[str]

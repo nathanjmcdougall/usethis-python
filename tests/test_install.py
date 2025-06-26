@@ -45,11 +45,13 @@ def usethis_installed_dir(
 
 
 class TestInstalledInOwnVenv:
+    @pytest.mark.benchmark
     def test_help(self, usethis_installed_dir: Path):
         with change_cwd(usethis_installed_dir):
             # Should run without error
             call_subprocess(["usethis", "--help"])
 
+    @pytest.mark.benchmark
     @pytest.mark.usefixtures("_vary_network_conn")
     def test_add_pytest(self, usethis_installed_dir: Path):
         with change_cwd(usethis_installed_dir):
