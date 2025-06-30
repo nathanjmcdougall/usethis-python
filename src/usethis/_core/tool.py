@@ -28,6 +28,7 @@ from usethis._tool.impl.codespell import CodespellTool
 from usethis._tool.impl.coverage_py import CoveragePyTool
 from usethis._tool.impl.deptry import DeptryTool
 from usethis._tool.impl.import_linter import ImportLinterTool
+from usethis._tool.impl.mkdocs import MkDocsTool
 from usethis._tool.impl.pre_commit import PreCommitTool
 from usethis._tool.impl.pyproject_fmt import PyprojectFmtTool
 from usethis._tool.impl.pyproject_toml import PyprojectTOMLTool
@@ -154,6 +155,19 @@ def use_import_linter(*, remove: bool = False, how: bool = False) -> None:
         tool.remove_configs()
         tool.remove_dev_deps()
         tool.remove_managed_files()
+
+
+def use_mkdocs(*, remove: bool = False, how: bool = False) -> None:
+    tool = MkDocsTool()
+
+    if how:
+        tool.print_how_to_use()
+        return
+
+    if not remove:
+        raise NotImplementedError
+    else:
+        raise NotImplementedError
 
 
 def use_pre_commit(*, remove: bool = False, how: bool = False) -> None:

@@ -84,6 +84,17 @@ class Tool(Protocol):
         """
         return []
 
+    def get_doc_deps(self, *, unconditional: bool = False) -> list[Dependency]:
+        """The tool's documentation dependencies.
+
+        These should all be considered characteristic of this particular tool.
+
+        Args:
+            unconditional: Whether to return all possible dependencies regardless of
+                           whether they are relevant to the current project.
+        """
+        return []
+
     def get_config_spec(self) -> ConfigSpec:
         """Get the configuration specification for this tool.
 
@@ -165,6 +176,12 @@ class Tool(Protocol):
                 for dep in self.get_test_deps(unconditional=True)
             )
 
+        if not _is_declared:
+            _is_declared = any(
+                is_dep_in_any_group(dep)
+                for dep in self.get_doc_deps(unconditional=True)
+            )
+
         return _is_declared
 
     def add_dev_deps(self) -> None:
@@ -178,6 +195,12 @@ class Tool(Protocol):
 
     def remove_test_deps(self) -> None:
         remove_deps_from_group(self.get_test_deps(unconditional=True), "test")
+
+    def add_doc_deps(self) -> None:
+        add_deps_to_group(self.get_doc_deps(), "doc")
+
+    def remove_doc_deps(self) -> None:
+        remove_deps_from_group(self.get_doc_deps(unconditional=True), "doc")
 
     def get_pre_commit_repos(self) -> list[LocalRepo | UriRepo]:
         """Get the pre-commit repository definitions for the tool."""

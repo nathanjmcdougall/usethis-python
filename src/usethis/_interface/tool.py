@@ -114,6 +114,29 @@ def import_linter(
 
 
 @app.command(
+    name="mkdocs",
+    help="Use MkDocs: project documentation with Markdown.",
+    rich_help_panel="Documentation",
+)
+def mkdocs(
+    remove: bool = remove_opt,
+    how: bool = how_opt,
+    offline: bool = offline_opt,
+    quiet: bool = quiet_opt,
+    frozen: bool = frozen_opt,
+) -> None:
+    from usethis._config import usethis_config
+    from usethis._config_file import files_manager
+    from usethis._core.tool import use_mkdocs
+
+    with (
+        usethis_config.set(offline=offline, quiet=quiet, frozen=frozen),
+        files_manager(),
+    ):
+        _run_tool(use_mkdocs, remove=remove, how=how)
+
+
+@app.command(
     name="pre-commit",
     help="Use the pre-commit framework to manage and maintain pre-commit hooks.",
     rich_help_panel="Code Quality Tools",
@@ -275,6 +298,7 @@ ALL_TOOL_COMMANDS: list[str] = [
     "coverage.py",
     "deptry",
     "import-linter",
+    "mkdocs",
     "pre-commit",
     "pyproject.toml",
     "pyproject-fmt",
