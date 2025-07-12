@@ -7,6 +7,7 @@ from typing_extensions import assert_never
 
 from usethis._config import usethis_config
 from usethis._console import tick_print, warn_print
+from usethis._deps import add_deps_to_group, is_dep_in_any_group, remove_deps_from_group
 from usethis._integrations.ci.bitbucket.steps import (
     add_bitbucket_step_in_default,
     bitbucket_steps_are_equivalent,
@@ -21,11 +22,6 @@ from usethis._integrations.pre_commit.hooks import (
     hook_ids_are_equivalent,
     remove_hook,
 )
-from usethis._integrations.uv.deps import (
-    add_deps_to_group,
-    is_dep_in_any_group,
-    remove_deps_from_group,
-)
 from usethis._tool.config import ConfigSpec, NoConfigValue
 from usethis._tool.pre_commit import PreCommitConfig
 from usethis._tool.rule import RuleConfig
@@ -34,11 +30,11 @@ from usethis.errors import FileConfigError
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from usethis._integrations.ci.bitbucket.schema import Step as BitbucketStep
-    from usethis._integrations.pre_commit.schema import LocalRepo, UriRepo
-    from usethis._integrations.uv.deps import (
+    from usethis._integrations.backend.uv.deps import (
         Dependency,
     )
+    from usethis._integrations.ci.bitbucket.schema import Step as BitbucketStep
+    from usethis._integrations.pre_commit.schema import LocalRepo, UriRepo
     from usethis._io import KeyValueFileManager
     from usethis._tool.config import ResolutionT
     from usethis._tool.rule import Rule

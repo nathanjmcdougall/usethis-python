@@ -1,10 +1,10 @@
 import contextlib
 
+from usethis._integrations.backend.uv.toml import UVTOMLManager
 from usethis._integrations.file.pyproject_toml.errors import (
     PyprojectTOMLValueAlreadySetError,
 )
 from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._integrations.uv.toml import UVTOMLManager
 
 
 def ensure_symlink_mode() -> None:

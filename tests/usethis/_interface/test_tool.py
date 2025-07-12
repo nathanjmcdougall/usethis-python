@@ -5,8 +5,8 @@ from typer.testing import CliRunner
 
 from usethis._config import usethis_config
 from usethis._config_file import files_manager
+from usethis._integrations.backend.uv.call import call_uv_subprocess
 from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._integrations.uv.call import call_uv_subprocess
 from usethis._interface.tool import ALL_TOOL_COMMANDS, app
 from usethis._subprocess import SubprocessFailedError, call_subprocess
 from usethis._test import change_cwd

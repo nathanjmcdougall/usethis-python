@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import typer
 
-from usethis._options import quiet_opt
+from usethis._options import backend_opt, quiet_opt
+from usethis._types.backend import BackendEnum
 
 
 def readme(
     quiet: bool = quiet_opt,
+    backend: BackendEnum = backend_opt,
     badges: bool = typer.Option(False, "--badges", help="Add relevant badges"),
 ) -> None:
     from usethis._config import usethis_config
@@ -20,12 +22,14 @@ def readme(
         get_uv_badge,
     )
     from usethis._core.readme import add_readme
-    from usethis._integrations.uv.used import is_uv_used
+    from usethis._integrations.backend.uv.used import is_uv_used
     from usethis._tool.impl.pre_commit import PreCommitTool
     from usethis._tool.impl.ruff import RuffTool
     from usethis.errors import UsethisError
 
-    with usethis_config.set(quiet=quiet), files_manager():
+    assert isinstance(backend, BackendEnum)
+
+    with usethis_config.set(quiet=quiet, backend=backend), files_manager():
         try:
             add_readme()
 

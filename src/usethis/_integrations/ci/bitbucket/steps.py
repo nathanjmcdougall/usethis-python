@@ -10,6 +10,7 @@ from typing_extensions import assert_never
 import usethis._pipeweld.func
 from usethis._config import usethis_config
 from usethis._console import box_print, tick_print
+from usethis._integrations.backend.uv.python import get_supported_major_python_versions
 from usethis._integrations.ci.bitbucket.anchor import ScriptItemAnchor
 from usethis._integrations.ci.bitbucket.cache import _add_caches_via_doc, remove_cache
 from usethis._integrations.ci.bitbucket.dump import bitbucket_fancy_dump
@@ -35,7 +36,6 @@ from usethis._integrations.ci.bitbucket.schema import (
 )
 from usethis._integrations.ci.bitbucket.schema_utils import step1tostep
 from usethis._integrations.file.yaml.update import update_ruamel_yaml_map
-from usethis._integrations.uv.python import get_supported_major_python_versions
 
 if TYPE_CHECKING:
     from ruamel.yaml.anchor import Anchor

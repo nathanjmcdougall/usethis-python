@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from usethis.errors import UsethisError
+from usethis.errors import DepGroupError, UsethisError
 
 
 class UVError(UsethisError):
     """Base class for exceptions relating to uv."""
 
 
-class UVDepGroupError(UVError):
+class UVDepGroupError(DepGroupError):
     """Raised when adding or removing a dependency from a group fails."""
 
 

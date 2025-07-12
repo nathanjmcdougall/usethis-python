@@ -1,6 +1,7 @@
 import typer
 
 from usethis._config import (
+    BACKEND_DEFAULT,
     FROZEN_DEFAULT,
     HOW_DEFAULT,
     OFFLINE_DEFAULT,
@@ -22,4 +23,7 @@ frozen_opt = typer.Option(
     FROZEN_DEFAULT,
     "--frozen",
     help="Do not install dependencies, nor update lockfiles.",
+)
+backend_opt = typer.Option(
+    BACKEND_DEFAULT, "--backend", help="Package manager backend to use."
 )

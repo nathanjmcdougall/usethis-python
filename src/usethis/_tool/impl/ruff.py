@@ -7,6 +7,7 @@ from typing_extensions import assert_never
 
 from usethis._config_file import DotRuffTOMLManager, RuffTOMLManager
 from usethis._console import box_print, tick_print
+from usethis._integrations.backend.uv.used import is_uv_used
 from usethis._integrations.ci.bitbucket.anchor import (
     ScriptItemAnchor as BitbucketScriptItemAnchor,
 )
@@ -20,8 +21,6 @@ from usethis._integrations.pre_commit.schema import (
     Language,
     LocalRepo,
 )
-from usethis._integrations.uv.deps import Dependency
-from usethis._integrations.uv.used import is_uv_used
 from usethis._tool.base import Tool
 from usethis._tool.config import (
     ConfigEntry,
@@ -30,6 +29,7 @@ from usethis._tool.config import (
     ensure_file_manager_exists,
 )
 from usethis._tool.pre_commit import PreCommitConfig, PreCommitRepoConfig
+from usethis._types.deps import Dependency
 
 if TYPE_CHECKING:
     from usethis._integrations.ci.bitbucket.schema import Pipe as BitbucketPipe

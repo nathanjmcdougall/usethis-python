@@ -6,7 +6,7 @@ from usethis._core.tool import use_ruff
 from usethis._tool.impl.ruff import RuffTool
 
 if TYPE_CHECKING:
-    from usethis._core.enums.docstyle import DocStyleEnum
+    from usethis._types.docstyle import DocStyleEnum
 
 
 def use_docstyle(style: DocStyleEnum) -> None:

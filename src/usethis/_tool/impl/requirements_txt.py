@@ -6,13 +6,13 @@ from typing import TYPE_CHECKING
 from typing_extensions import assert_never
 
 from usethis._console import box_print
+from usethis._integrations.backend.uv.used import is_uv_used
 from usethis._integrations.pre_commit.schema import HookDefinition, Language, LocalRepo
-from usethis._integrations.uv.used import is_uv_used
 from usethis._tool.base import Tool
 from usethis._tool.pre_commit import PreCommitConfig
 
 if TYPE_CHECKING:
-    from usethis._integrations.uv.deps import (
+    from usethis._integrations.backend.uv.deps import (
         Dependency,
     )
 

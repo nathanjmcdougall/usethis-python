@@ -5,17 +5,18 @@ import pytest
 
 from usethis._config_file import files_manager
 from usethis._console import box_print
+from usethis._deps import add_deps_to_group
 from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
 from usethis._integrations.file.setup_cfg.io_ import SetupCFGManager
 from usethis._integrations.pre_commit.hooks import _PLACEHOLDER_ID, get_hook_ids
 from usethis._integrations.pre_commit.schema import HookDefinition, UriRepo
-from usethis._integrations.uv.deps import Dependency, add_deps_to_group
 from usethis._io import KeyValueFileManager
 from usethis._test import change_cwd
 from usethis._tool.base import Tool
 from usethis._tool.config import ConfigEntry, ConfigItem, ConfigSpec
 from usethis._tool.pre_commit import PreCommitConfig, PreCommitRepoConfig
 from usethis._tool.rule import RuleConfig
+from usethis._types.deps import Dependency
 
 
 class DefaultTool(Tool):

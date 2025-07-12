@@ -9,10 +9,11 @@ from usethis._core.rule import (
     select_rules,
     unignore_rules,
 )
-from usethis._integrations.uv.deps import Dependency, get_deps_from_group
+from usethis._deps import get_deps_from_group
 from usethis._test import change_cwd
 from usethis._tool.impl.deptry import DeptryTool
 from usethis._tool.impl.ruff import RuffTool
+from usethis._types.deps import Dependency
 
 
 class TestSelectRules:

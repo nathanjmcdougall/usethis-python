@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING, Any, Literal, TypeAlias
 from pydantic import BaseModel, InstanceOf
 
 from usethis._config import usethis_config
+from usethis._integrations.backend.uv.init import ensure_pyproject_toml
 from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._integrations.uv.init import ensure_pyproject_toml
 from usethis._io import Key, KeyValueFileManager
 
 if TYPE_CHECKING:

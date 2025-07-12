@@ -2,16 +2,16 @@ from pathlib import Path
 
 import pytest
 
+from usethis._integrations.backend.uv.python import (
+    _parse_python_version_from_uv_output,
+    get_available_python_versions,
+    get_supported_major_python_versions,
+)
 from usethis._integrations.file.pyproject_toml.errors import PyprojectTOMLNotFoundError
 from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
 from usethis._integrations.python.version import (
     extract_major_version,
     get_python_version,
-)
-from usethis._integrations.uv.python import (
-    _parse_python_version_from_uv_output,
-    get_available_python_versions,
-    get_supported_major_python_versions,
 )
 from usethis._test import change_cwd
 

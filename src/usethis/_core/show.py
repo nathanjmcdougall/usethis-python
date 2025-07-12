@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from usethis._config import usethis_config
 from usethis._console import plain_print
+from usethis._integrations.backend.uv.init import ensure_pyproject_toml
 from usethis._integrations.project.name import get_project_name
 from usethis._integrations.sonarqube.config import get_sonar_project_properties
-from usethis._integrations.uv.init import ensure_pyproject_toml
 
 
 def show_name() -> None:

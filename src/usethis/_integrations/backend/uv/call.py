@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 from usethis._config import usethis_config
+from usethis._integrations.backend.uv.errors import UVSubprocessFailedError
+from usethis._integrations.backend.uv.link_mode import ensure_symlink_mode
+from usethis._integrations.backend.uv.toml import UVTOMLManager
 from usethis._integrations.file.pyproject_toml.io_ import (
     PyprojectTOMLManager,
 )
 from usethis._integrations.file.pyproject_toml.valid import ensure_pyproject_validity
-from usethis._integrations.uv.errors import UVSubprocessFailedError
-from usethis._integrations.uv.link_mode import ensure_symlink_mode
 from usethis._subprocess import SubprocessFailedError, call_subprocess
+from usethis._types.backend import BackendEnum
+from usethis.errors import ForbiddenBackendError
 
 
 def call_uv_subprocess(args: list[str], change_toml: bool) -> str:
@@ -18,10 +21,11 @@ def call_uv_subprocess(args: list[str], change_toml: bool) -> str:
 
     Raises:
         UVSubprocessFailedError: If the subprocess fails.
+        ForbiddenBackendError: If the current backend is not uv (or auto).
     """
-    if usethis_config.disable_uv_subprocess:
-        msg = "The `disable_uv_subprocess` option is set."
-        raise UVSubprocessFailedError(msg)
+    if usethis_config.backend not in {BackendEnum.uv, BackendEnum.auto}:
+        msg = f"The '{usethis_config.backend.value}' backend is enabled, but a uv subprocess was invoked."
+        raise ForbiddenBackendError(msg)
 
     is_pyproject_toml = (usethis_config.cpd() / "pyproject.toml").exists()
 
@@ -77,3 +81,13 @@ def call_uv_subprocess(args: list[str], change_toml: bool) -> str:
         PyprojectTOMLManager().read_file()
 
     return output
+
+
+def add_default_groups_via_uv(groups: list[str]) -> None:
+    """Add default groups using the uv command-line tool."""
+    if UVTOMLManager().path.exists():
+        UVTOMLManager().extend_list(keys=["default-groups"], values=groups)
+    else:
+        PyprojectTOMLManager().extend_list(
+            keys=["tool", "uv", "default-groups"], values=groups
+        )

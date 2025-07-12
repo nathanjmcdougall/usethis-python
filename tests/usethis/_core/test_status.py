@@ -2,10 +2,10 @@ from pathlib import Path
 
 import pytest
 
-from usethis._core.enums.status import DevelopmentStatusEnum
 from usethis._core.status import use_development_status
 from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
 from usethis._test import change_cwd
+from usethis._types.status import DevelopmentStatusEnum
 
 
 class TestUseDevelopmentStatus:

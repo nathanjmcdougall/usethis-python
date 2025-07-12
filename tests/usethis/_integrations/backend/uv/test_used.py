@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from usethis._config_file import files_manager
-from usethis._integrations.uv.used import is_uv_used
+from usethis._integrations.backend.uv.used import is_uv_used
 from usethis._test import change_cwd
 
 

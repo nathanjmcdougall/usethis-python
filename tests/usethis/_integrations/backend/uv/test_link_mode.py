@@ -1,8 +1,8 @@
 from pathlib import Path
 
+from usethis._integrations.backend.uv.link_mode import ensure_symlink_mode
+from usethis._integrations.backend.uv.toml import UVTOMLManager
 from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._integrations.uv.link_mode import ensure_symlink_mode
-from usethis._integrations.uv.toml import UVTOMLManager
 from usethis._test import change_cwd
 
 

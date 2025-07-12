@@ -4,12 +4,22 @@ from typing import TYPE_CHECKING, Any
 
 import typer
 
-from usethis._options import frozen_opt, how_opt, offline_opt, quiet_opt, remove_opt
+from usethis._options import (
+    backend_opt,
+    frozen_opt,
+    how_opt,
+    offline_opt,
+    quiet_opt,
+    remove_opt,
+)
+from usethis._types.backend import BackendEnum
 
 if TYPE_CHECKING:
     from usethis._core.tool import UseToolFunc
 
 app = typer.Typer(help="Add and configure individual tools.", add_completion=False)
+
+# ruff: noqa: PLR0913 since there are many options for these commands.
 
 
 @app.command(
@@ -23,15 +33,18 @@ def codespell(
     offline: bool = offline_opt,
     quiet: bool = quiet_opt,
     frozen: bool = frozen_opt,
+    backend: BackendEnum = backend_opt,
 ) -> None:
     from usethis._config import usethis_config
     from usethis._config_file import files_manager
-    from usethis._core.tool import (
-        use_codespell,
-    )
+    from usethis._core.tool import use_codespell
+
+    assert isinstance(backend, BackendEnum)
 
     with (
-        usethis_config.set(offline=offline, quiet=quiet, frozen=frozen),
+        usethis_config.set(
+            offline=offline, quiet=quiet, frozen=frozen, backend=backend
+        ),
         files_manager(),
     ):
         _run_tool(use_codespell, remove=remove, how=how)
@@ -55,13 +68,18 @@ def coverage_py(
     offline: bool = offline_opt,
     quiet: bool = quiet_opt,
     frozen: bool = frozen_opt,
+    backend: BackendEnum = backend_opt,
 ) -> None:
     from usethis._config import usethis_config
     from usethis._config_file import files_manager
     from usethis._core.tool import use_coverage_py
 
+    assert isinstance(backend, BackendEnum)
+
     with (
-        usethis_config.set(offline=offline, quiet=quiet, frozen=frozen),
+        usethis_config.set(
+            offline=offline, quiet=quiet, frozen=frozen, backend=backend
+        ),
         files_manager(),
     ):
         _run_tool(use_coverage_py, remove=remove, how=how)
@@ -78,13 +96,18 @@ def deptry(
     offline: bool = offline_opt,
     quiet: bool = quiet_opt,
     frozen: bool = frozen_opt,
+    backend: BackendEnum = backend_opt,
 ) -> None:
     from usethis._config import usethis_config
     from usethis._config_file import files_manager
     from usethis._core.tool import use_deptry
 
+    assert isinstance(backend, BackendEnum)
+
     with (
-        usethis_config.set(offline=offline, quiet=quiet, frozen=frozen),
+        usethis_config.set(
+            offline=offline, quiet=quiet, frozen=frozen, backend=backend
+        ),
         files_manager(),
     ):
         _run_tool(use_deptry, remove=remove, how=how)
@@ -101,13 +124,18 @@ def import_linter(
     offline: bool = offline_opt,
     quiet: bool = quiet_opt,
     frozen: bool = frozen_opt,
+    backend: BackendEnum = backend_opt,
 ) -> None:
     from usethis._config import usethis_config
     from usethis._config_file import files_manager
     from usethis._core.tool import use_import_linter
 
+    assert isinstance(backend, BackendEnum)
+
     with (
-        usethis_config.set(offline=offline, quiet=quiet, frozen=frozen),
+        usethis_config.set(
+            offline=offline, quiet=quiet, frozen=frozen, backend=backend
+        ),
         files_manager(),
     ):
         _run_tool(use_import_linter, remove=remove, how=how)
@@ -124,13 +152,18 @@ def pre_commit(
     offline: bool = offline_opt,
     quiet: bool = quiet_opt,
     frozen: bool = frozen_opt,
+    backend: BackendEnum = backend_opt,
 ) -> None:
     from usethis._config import usethis_config
     from usethis._config_file import files_manager
     from usethis._core.tool import use_pre_commit
 
+    assert isinstance(backend, BackendEnum)
+
     with (
-        usethis_config.set(offline=offline, quiet=quiet, frozen=frozen),
+        usethis_config.set(
+            offline=offline, quiet=quiet, frozen=frozen, backend=backend
+        ),
         files_manager(),
     ):
         _run_tool(use_pre_commit, remove=remove, how=how)
@@ -147,13 +180,18 @@ def pyproject_fmt(
     offline: bool = offline_opt,
     quiet: bool = quiet_opt,
     frozen: bool = frozen_opt,
+    backend: BackendEnum = backend_opt,
 ) -> None:
     from usethis._config import usethis_config
     from usethis._config_file import files_manager
     from usethis._core.tool import use_pyproject_fmt
 
+    assert isinstance(backend, BackendEnum)
+
     with (
-        usethis_config.set(offline=offline, quiet=quiet, frozen=frozen),
+        usethis_config.set(
+            offline=offline, quiet=quiet, frozen=frozen, backend=backend
+        ),
         files_manager(),
     ):
         _run_tool(use_pyproject_fmt, remove=remove, how=how)
@@ -170,13 +208,18 @@ def pyproject_toml(
     offline: bool = offline_opt,
     quiet: bool = quiet_opt,
     frozen: bool = frozen_opt,
+    backend: BackendEnum = backend_opt,
 ) -> None:
     from usethis._config import usethis_config
     from usethis._config_file import files_manager
     from usethis._core.tool import use_pyproject_toml
 
+    assert isinstance(backend, BackendEnum)
+
     with (
-        usethis_config.set(offline=offline, quiet=quiet, frozen=frozen),
+        usethis_config.set(
+            offline=offline, quiet=quiet, frozen=frozen, backend=backend
+        ),
         files_manager(),
     ):
         _run_tool(use_pyproject_toml, remove=remove, how=how)
@@ -191,13 +234,18 @@ def pytest(
     offline: bool = offline_opt,
     quiet: bool = quiet_opt,
     frozen: bool = frozen_opt,
+    backend: BackendEnum = backend_opt,
 ) -> None:
     from usethis._config import usethis_config
     from usethis._config_file import files_manager
     from usethis._core.tool import use_pytest
 
+    assert isinstance(backend, BackendEnum)
+
     with (
-        usethis_config.set(offline=offline, quiet=quiet, frozen=frozen),
+        usethis_config.set(
+            offline=offline, quiet=quiet, frozen=frozen, backend=backend
+        ),
         files_manager(),
     ):
         _run_tool(use_pytest, remove=remove, how=how)
@@ -214,13 +262,18 @@ def requirements_txt(
     offline: bool = offline_opt,
     quiet: bool = quiet_opt,
     frozen: bool = frozen_opt,
+    backend: BackendEnum = backend_opt,
 ) -> None:
     from usethis._config import usethis_config
     from usethis._config_file import files_manager
     from usethis._core.tool import use_requirements_txt
 
+    assert isinstance(backend, BackendEnum)
+
     with (
-        usethis_config.set(offline=offline, quiet=quiet, frozen=frozen),
+        usethis_config.set(
+            offline=offline, quiet=quiet, frozen=frozen, backend=backend
+        ),
         files_manager(),
     ):
         _run_tool(use_requirements_txt, remove=remove, how=how)
@@ -231,12 +284,13 @@ def requirements_txt(
     help="Use Ruff: an extremely fast Python linter and code formatter.",
     rich_help_panel="Code Quality Tools",
 )
-def ruff(  # noqa: PLR0913
+def ruff(
     remove: bool = remove_opt,
     how: bool = how_opt,
     offline: bool = offline_opt,
     quiet: bool = quiet_opt,
     frozen: bool = frozen_opt,
+    backend: BackendEnum = backend_opt,
     linter: bool = typer.Option(
         True,
         "--linter/--no-linter",
@@ -252,8 +306,12 @@ def ruff(  # noqa: PLR0913
     from usethis._config_file import files_manager
     from usethis._core.tool import use_ruff
 
+    assert isinstance(backend, BackendEnum)
+
     with (
-        usethis_config.set(offline=offline, quiet=quiet, frozen=frozen),
+        usethis_config.set(
+            offline=offline, quiet=quiet, frozen=frozen, backend=backend
+        ),
         files_manager(),
     ):
         _run_tool(use_ruff, remove=remove, how=how, linter=linter, formatter=formatter)

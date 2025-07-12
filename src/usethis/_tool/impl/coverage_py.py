@@ -7,15 +7,13 @@ from usethis._config_file import (
     ToxINIManager,
 )
 from usethis._console import box_print
+from usethis._integrations.backend.uv.used import is_uv_used
 from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
 from usethis._integrations.file.setup_cfg.io_ import SetupCFGManager
 from usethis._integrations.project.layout import get_source_dir_str
-from usethis._integrations.uv.deps import (
-    Dependency,
-)
-from usethis._integrations.uv.used import is_uv_used
 from usethis._tool.base import Tool
 from usethis._tool.config import ConfigEntry, ConfigItem, ConfigSpec
+from usethis._types.deps import Dependency
 
 
 class CoveragePyTool(Tool):

@@ -182,16 +182,22 @@ name = "usethis"
 type = "layers"
 layers = [
   "_test | __main__",
+  # UI
   "_app",
   "_interface",
   "_options",
+  # Tool implementations
   "_toolset",
   "_core",
   "_tool",
-  "_config_file",
+  # Specific config file and backend implementations
+  "_deps",
+  "_config_file | _backend",
   "_integrations",
   "_io | _pipeweld | _subprocess | _console",
-  "_config | errors",
+  # Global state and constants
+  "_config",
+  "_types | errors",
 ]
 containers = [ "usethis" ]
 exhaustive = true
@@ -214,7 +220,6 @@ layers = [
   # docstyle uses (Ruff) tool, badge uses readme
   "badge | docstyle | list | rule",
   "author | browse | ci | readme | show | status | tool",
-  "enums",
 ]
 containers = [ "usethis._core" ]
 exhaustive = true
@@ -249,7 +254,7 @@ name = "usethis._integrations"
 type = "layers"
 layers = [
   "ci | pre_commit",
-  "uv | pytest | pydantic | sonarqube",
+  "backend | pytest | pydantic | sonarqube",
   "project | python",
   "file",
 ]

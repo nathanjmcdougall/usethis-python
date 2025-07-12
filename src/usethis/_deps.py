@@ -2,26 +2,22 @@ from __future__ import annotations
 
 import pydantic
 from packaging.requirements import Requirement
-from pydantic import BaseModel, TypeAdapter
+from pydantic import TypeAdapter
+from typing_extensions import assert_never
 
+from usethis._backend import get_backend
 from usethis._config import usethis_config
 from usethis._console import box_print, tick_print
+from usethis._integrations.backend.uv.call import add_default_groups_via_uv
+from usethis._integrations.backend.uv.deps import (
+    add_dep_to_group_via_uv,
+    get_default_groups_via_uv,
+    remove_dep_from_group_via_uv,
+)
 from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._integrations.uv.call import call_uv_subprocess
-from usethis._integrations.uv.errors import UVDepGroupError, UVSubprocessFailedError
-from usethis._integrations.uv.toml import UVTOMLManager
-
-
-class Dependency(BaseModel):
-    name: str
-    extras: frozenset[str] = frozenset()
-
-    def __str__(self) -> str:
-        extras = sorted(self.extras or set())
-        return self.name + "".join(f"[{extra}]" for extra in extras)
-
-    def __hash__(self) -> int:
-        return hash((self.__class__.__name__, self.name, self.extras))
+from usethis._types.backend import BackendEnum
+from usethis._types.deps import Dependency
+from usethis.errors import DepGroupError
 
 
 def get_dep_groups() -> dict[str, list[Dependency]]:
@@ -33,8 +29,8 @@ def get_dep_groups() -> dict[str, list[Dependency]]:
     try:
         dep_groups_section = pyproject["dependency-groups"]
     except KeyError:
-        # In the past might have been in [tool.uv.dev-dependencies] section but this
-        # will be deprecated.
+        # In the past might have been in [tool.uv.dev-dependencies] section when using
+        # uv but this will be deprecated, so we don't support it in usethis.
         return {}
 
     try:
@@ -47,7 +43,7 @@ def get_dep_groups() -> dict[str, list[Dependency]]:
             f"{err}\n\n"
             "Please check the section and try again."
         )
-        raise UVDepGroupError(msg) from None
+        raise DepGroupError(msg) from None
     reqs_by_group = {
         group: [Requirement(req_str) for req_str in req_strs]
         for group, req_strs in req_strs_by_group.items()
@@ -94,66 +90,30 @@ def register_default_group(group: str) -> None:
 
 
 def add_default_groups(groups: list[str]) -> None:
-    if UVTOMLManager().path.exists():
-        UVTOMLManager().extend_list(keys=["default-groups"], values=groups)
+    backend = get_backend()
+    if backend is BackendEnum.uv:
+        add_default_groups_via_uv(groups)
+    elif backend is BackendEnum.none:
+        # This is not really a meaningful concept without a package manager
+        pass
     else:
-        PyprojectTOMLManager().extend_list(
-            keys=["tool", "uv", "default-groups"], values=groups
-        )
+        assert_never(backend)
 
 
 def get_default_groups() -> list[str]:
-    try:
-        if UVTOMLManager().path.exists():
-            default_groups = UVTOMLManager()[["default-groups"]]
-        else:
-            default_groups = PyprojectTOMLManager()[["tool", "uv", "default-groups"]]
-        if not isinstance(default_groups, list):
-            default_groups = []
-    except KeyError:
-        default_groups = []
-
-    return default_groups
+    backend = get_backend()
+    if backend is BackendEnum.uv:
+        return get_default_groups_via_uv()
+    elif backend is BackendEnum.none:
+        # This is not really a meaningful concept without a package manager
+        return []
+    else:
+        assert_never(backend)
 
 
 def ensure_dev_group_is_defined() -> None:
     # Ensure dev group exists in dependency-groups
     PyprojectTOMLManager().extend_list(keys=["dependency-groups", "dev"], values=[])
-
-
-def add_deps_to_group(deps: list[Dependency], group: str) -> None:
-    """Add a package as a non-build dependency using PEP 735 dependency groups."""
-    existing_group = get_deps_from_group(group)
-
-    to_add_deps = [
-        dep for dep in deps if not is_dep_satisfied_in(dep, in_=existing_group)
-    ]
-
-    if not to_add_deps:
-        return
-
-    deps_str = ", ".join([f"'{dep}'" for dep in to_add_deps])
-    ies = "y" if len(to_add_deps) == 1 else "ies"
-    tick_print(
-        f"Adding dependenc{ies} {deps_str} to the '{group}' group in 'pyproject.toml'."
-    )
-
-    if usethis_config.frozen:
-        box_print(f"Install the dependenc{ies} {deps_str}.")
-
-    for dep in to_add_deps:
-        try:
-            call_uv_subprocess(
-                ["add", "--group", group, str(dep)],
-                change_toml=True,
-            )
-        except UVSubprocessFailedError as err:
-            msg = f"Failed to add '{dep}' to the '{group}' dependency group:\n{err}"
-            msg += (usethis_config.cpd() / "pyproject.toml").read_text()
-            raise UVDepGroupError(msg) from None
-
-    # Register the group - don't do this before adding the deps in case that step fails
-    register_default_group(group)
 
 
 def is_dep_satisfied_in(dep: Dependency, *, in_: list[Dependency]) -> bool:
@@ -176,21 +136,69 @@ def remove_deps_from_group(deps: list[Dependency], group: str) -> None:
 
     deps_str = ", ".join([f"'{dep}'" for dep in _deps])
     ies = "y" if len(_deps) == 1 else "ies"
-    tick_print(
-        f"Removing dependenc{ies} {deps_str} from the '{group}' group in 'pyproject.toml'."
-    )
+    backend = get_backend()
 
-    for dep in _deps:
-        try:
-            call_uv_subprocess(["remove", "--group", group, str(dep)], change_toml=True)
-        except UVSubprocessFailedError as err:
-            msg = (
-                f"Failed to remove '{dep}' from the '{group}' dependency group:\n{err}"
-            )
-            raise UVDepGroupError(msg) from None
+    if backend is BackendEnum.uv:
+        tick_print(
+            f"Removing dependenc{ies} {deps_str} from the '{group}' group in 'pyproject.toml'."
+        )
+        for dep in _deps:
+            remove_dep_from_group_via_uv(dep, group)
+    elif backend is BackendEnum.none:
+        box_print(f"Remove the {group} dependenc{ies} {deps_str}.")
+    else:
+        assert_never(backend)
 
 
 def is_dep_in_any_group(dep: Dependency) -> bool:
     return is_dep_satisfied_in(
         dep, in_=[dep for group in get_dep_groups().values() for dep in group]
     )
+
+
+def add_deps_to_group(deps: list[Dependency], group: str) -> None:
+    """Add a package as a non-build dependency using PEP 735 dependency groups."""
+    existing_group = get_deps_from_group(group)
+
+    to_add_deps = [
+        dep for dep in deps if not is_dep_satisfied_in(dep, in_=existing_group)
+    ]
+
+    if not to_add_deps:
+        return
+
+    backend = get_backend()
+
+    # Message regarding declaration of the dependencies
+    deps_str = ", ".join([f"'{dep}'" for dep in to_add_deps])
+    ies = "y" if len(to_add_deps) == 1 else "ies"
+    if backend is BackendEnum.uv:
+        tick_print(
+            f"Adding dependenc{ies} {deps_str} to the '{group}' group in 'pyproject.toml'."
+        )
+    elif backend is BackendEnum.none:
+        box_print(f"Add the {group} dependenc{ies} {deps_str}.")
+    else:
+        assert_never(backend)
+
+    # Installation of the dependencies, and declaration if the package manager supports
+    # a combined workflow.
+    if usethis_config.frozen:
+        box_print(f"Install the dependenc{ies} {deps_str}.")
+    for dep in to_add_deps:
+        if backend is BackendEnum.uv:
+            add_dep_to_group_via_uv(dep, group)
+        elif backend is BackendEnum.none:
+            # We've already used a combined message
+            pass
+        else:
+            assert_never(backend)
+
+    # Register the group - don't do this before adding the deps in case that step fails
+    if backend is BackendEnum.uv:
+        register_default_group(group)
+    elif backend is BackendEnum.none:
+        # This is not really a meaningful concept without a package manager
+        pass
+    else:
+        assert_never(backend)

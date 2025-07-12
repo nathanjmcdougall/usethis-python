@@ -2,6 +2,8 @@ from pathlib import Path
 
 import pytest
 
+from usethis._integrations.backend.uv.init import ensure_pyproject_toml
+from usethis._integrations.backend.uv.python import python_pin
 from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
 from usethis._integrations.python.version import get_python_version
 from usethis._integrations.sonarqube.config import (
@@ -13,8 +15,6 @@ from usethis._integrations.sonarqube.errors import (
     InvalidSonarQubeProjectKeyError,
     MissingProjectKeyError,
 )
-from usethis._integrations.uv.init import ensure_pyproject_toml
-from usethis._integrations.uv.python import python_pin
 from usethis._test import change_cwd
 
 

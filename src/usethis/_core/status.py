@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from usethis._console import tick_print
-from usethis._core.enums.status import DevelopmentStatusEnum
+from usethis._integrations.backend.uv.init import ensure_pyproject_toml
 from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._integrations.uv.init import ensure_pyproject_toml
+from usethis._types.status import DevelopmentStatusEnum
 
 
 def use_development_status(

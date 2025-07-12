@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import typer
 
-from usethis._core.enums.ci import CIServiceEnum
-from usethis._core.enums.docstyle import DocStyleEnum
-from usethis._core.enums.status import DevelopmentStatusEnum
-from usethis._options import frozen_opt, offline_opt, quiet_opt
+from usethis._options import backend_opt, frozen_opt, offline_opt, quiet_opt
+from usethis._types.backend import BackendEnum
+from usethis._types.ci import CIServiceEnum
+from usethis._types.docstyle import DocStyleEnum
+from usethis._types.status import DevelopmentStatusEnum
 
 
 def init(  # noqa: PLR0913, PLR0915
@@ -48,6 +49,7 @@ def init(  # noqa: PLR0913, PLR0915
     offline: bool = offline_opt,
     quiet: bool = quiet_opt,
     frozen: bool = frozen_opt,
+    backend: BackendEnum = backend_opt,
     path: str | None = typer.Argument(
         None,
         help="The path to use for the project. Defaults to the current working directory.",
@@ -64,16 +66,22 @@ def init(  # noqa: PLR0913, PLR0915
     from usethis._core.readme import add_readme
     from usethis._core.status import use_development_status
     from usethis._core.tool import use_pre_commit
-    from usethis._integrations.uv.init import opinionated_uv_init
+    from usethis._integrations.backend.uv.init import opinionated_uv_init
     from usethis._toolset.format_ import use_formatters
     from usethis._toolset.lint import use_linters
     from usethis._toolset.spellcheck import use_spellcheckers
     from usethis._toolset.test import use_test_frameworks
     from usethis.errors import UsethisError
 
+    assert isinstance(backend, BackendEnum)
+
     with (
         usethis_config.set(
-            offline=offline, quiet=quiet, frozen=frozen, project_dir=path
+            offline=offline,
+            quiet=quiet,
+            frozen=frozen,
+            backend=backend,
+            project_dir=path,
         ),
         files_manager(),
     ):

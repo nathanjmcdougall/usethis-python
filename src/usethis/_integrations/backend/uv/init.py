@@ -2,10 +2,12 @@ from __future__ import annotations
 
 from usethis._config import usethis_config
 from usethis._console import tick_print
+from usethis._integrations.backend.uv import (  # Use this style to allow test mocking
+    call,
+)
+from usethis._integrations.backend.uv.errors import UVInitError, UVSubprocessFailedError
 from usethis._integrations.file.pyproject_toml.errors import PyprojectTOMLInitError
 from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._integrations.uv import call
-from usethis._integrations.uv.errors import UVInitError, UVSubprocessFailedError
 
 
 def opinionated_uv_init() -> None:

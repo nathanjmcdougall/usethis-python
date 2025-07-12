@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from usethis._config import usethis_config
 from usethis._console import box_print, info_print, tick_print
+from usethis._integrations.backend.uv.call import call_uv_subprocess
+from usethis._integrations.backend.uv.errors import UVSubprocessFailedError
+from usethis._integrations.backend.uv.used import is_uv_used
 from usethis._integrations.pre_commit.errors import PreCommitInstallationError
-from usethis._integrations.uv.call import call_uv_subprocess
-from usethis._integrations.uv.errors import UVSubprocessFailedError
-from usethis._integrations.uv.used import is_uv_used
 
 
 def remove_pre_commit_config() -> None:

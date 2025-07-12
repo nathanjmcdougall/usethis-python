@@ -17,7 +17,7 @@ from usethis._tool.impl.requirements_txt import RequirementsTxtTool
 from usethis._tool.impl.ruff import RuffTool
 
 if TYPE_CHECKING:
-    from usethis._integrations.uv.deps import (
+    from usethis._integrations.backend.uv.deps import (
         Dependency,
     )
 

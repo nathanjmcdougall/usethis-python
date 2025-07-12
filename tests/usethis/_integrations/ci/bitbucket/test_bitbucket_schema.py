@@ -38,6 +38,6 @@ class TestSchemaJSON:
         # TIP: go into debug mode to copy-and-paste into updated schema.json
         assert local_schema_json == online_schema_json
 
-    def test_target_python_version(self):
+    def test_target_python_version(self, usethis_dev_dir: Path):
         # If this test fails, we should bump the version in the command in schema.py
-        assert Path(".python-version").read_text().startswith("3.10")
+        assert (usethis_dev_dir / ".python-version").read_text().startswith("3.10")

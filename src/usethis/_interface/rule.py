@@ -1,6 +1,7 @@
 import typer
 
-from usethis._options import offline_opt, quiet_opt
+from usethis._options import backend_opt, offline_opt, quiet_opt
+from usethis._types.backend import BackendEnum
 
 remove_opt = typer.Option(
     False, "--remove", help="Remove the rule selection or ignore status."
@@ -10,12 +11,13 @@ ignore_opt = typer.Option(
 )
 
 
-def rule(
+def rule(  # noqa: PLR0913
     rules: list[str],
     remove: bool = remove_opt,
     ignore: bool = ignore_opt,
     offline: bool = offline_opt,
     quiet: bool = quiet_opt,
+    backend: BackendEnum = backend_opt,
 ) -> None:
     from usethis._config import usethis_config
     from usethis._config_file import files_manager
@@ -28,7 +30,12 @@ def rule(
     )
     from usethis.errors import UsethisError
 
-    with usethis_config.set(offline=offline, quiet=quiet), files_manager():
+    assert isinstance(backend, BackendEnum)
+
+    with (
+        usethis_config.set(offline=offline, quiet=quiet, backend=backend),
+        files_manager(),
+    ):
         try:
             if remove and not ignore:
                 deselect_rules(rules)

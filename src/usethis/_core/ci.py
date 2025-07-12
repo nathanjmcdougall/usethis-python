@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from usethis._console import box_print, info_print
+from usethis._integrations.backend.uv.init import ensure_pyproject_toml
 from usethis._integrations.ci.bitbucket.config import (
     add_bitbucket_pipeline_config,
     remove_bitbucket_pipeline_config,
 )
-from usethis._integrations.uv.init import ensure_pyproject_toml
 from usethis._tool.impl.codespell import CodespellTool
 from usethis._tool.impl.deptry import DeptryTool
 from usethis._tool.impl.pre_commit import PreCommitTool

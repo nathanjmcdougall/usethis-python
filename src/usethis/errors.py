@@ -31,3 +31,14 @@ class FileDecodeError(FileConfigError):
         NotImplementedError if not overridden.
         """
         raise NotImplementedError
+
+
+class ForbiddenBackendError(UsethisError):
+    """Raised when an unexpected attempt to use a particular backend.
+
+    For example, when the uv backend is not enabled but a uv subprocess is invoked.
+    """
+
+
+class DepGroupError(UsethisError):
+    """Raised when adding or removing a dependency from a group fails."""

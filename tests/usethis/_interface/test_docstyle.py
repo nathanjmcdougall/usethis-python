@@ -3,15 +3,14 @@ from pathlib import Path
 from typer.testing import CliRunner
 
 from usethis._app import app
-from usethis._core.enums.docstyle import DocStyleEnum
-from usethis._interface.docstyle import docstyle
 from usethis._test import change_cwd
 
 
 class TestDocstyle:
     def test_google_runs(self, tmp_path: Path):
         with change_cwd(tmp_path):
-            docstyle(DocStyleEnum.google)
+            runner = CliRunner()
+            runner.invoke(app, ["docstyle", "google"])
 
     def test_invalid_pyproject_toml(self, tmp_path: Path):
         # Arrange

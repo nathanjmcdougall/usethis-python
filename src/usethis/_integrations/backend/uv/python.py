@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import re
 
+from usethis._integrations.backend.uv.call import call_uv_subprocess
+from usethis._integrations.backend.uv.errors import UVUnparsedPythonVersionError
 from usethis._integrations.file.pyproject_toml.requires_python import (
     MissingRequiresPythonError,
     get_requires_python,
@@ -10,8 +12,6 @@ from usethis._integrations.python.version import (
     extract_major_version,
     get_python_version,
 )
-from usethis._integrations.uv.call import call_uv_subprocess
-from usethis._integrations.uv.errors import UVUnparsedPythonVersionError
 
 
 def get_available_python_versions() -> set[str]:

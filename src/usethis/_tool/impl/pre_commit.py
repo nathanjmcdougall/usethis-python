@@ -4,16 +4,14 @@ from pathlib import Path
 
 from usethis._config import usethis_config
 from usethis._console import box_print
+from usethis._integrations.backend.uv.used import is_uv_used
 from usethis._integrations.ci.bitbucket.anchor import (
     ScriptItemAnchor as BitbucketScriptItemAnchor,
 )
 from usethis._integrations.ci.bitbucket.schema import Script as BitbucketScript
 from usethis._integrations.ci.bitbucket.schema import Step as BitbucketStep
-from usethis._integrations.uv.deps import (
-    Dependency,
-)
-from usethis._integrations.uv.used import is_uv_used
 from usethis._tool.base import Tool
+from usethis._types.deps import Dependency
 
 
 class PreCommitTool(Tool):

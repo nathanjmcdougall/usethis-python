@@ -10,6 +10,7 @@ from typing_extensions import assert_never
 from usethis._config import usethis_config
 from usethis._config_file import DotImportLinterManager
 from usethis._console import box_print, info_print, warn_print
+from usethis._integrations.backend.uv.used import is_uv_used
 from usethis._integrations.ci.bitbucket.anchor import (
     ScriptItemAnchor as BitbucketScriptItemAnchor,
 )
@@ -26,13 +27,12 @@ from usethis._integrations.project.imports import (
 )
 from usethis._integrations.project.name import get_project_name
 from usethis._integrations.project.packages import get_importable_packages
-from usethis._integrations.uv.deps import Dependency
-from usethis._integrations.uv.used import is_uv_used
 from usethis._tool.base import Tool
 from usethis._tool.config import ConfigEntry, ConfigItem, ConfigSpec, NoConfigValue
 from usethis._tool.impl.ruff import RuffTool
 from usethis._tool.pre_commit import PreCommitConfig
 from usethis._tool.rule import RuleConfig
+from usethis._types.deps import Dependency
 
 if TYPE_CHECKING:
     from usethis._io import KeyValueFileManager

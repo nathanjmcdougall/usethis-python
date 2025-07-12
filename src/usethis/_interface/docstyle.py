@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import typer
 
-from usethis._core.enums.docstyle import DocStyleEnum
-from usethis._options import frozen_opt, offline_opt, quiet_opt
+from usethis._options import backend_opt, frozen_opt, offline_opt, quiet_opt
+from usethis._types.backend import BackendEnum
+from usethis._types.docstyle import DocStyleEnum
 
 
 def docstyle(
@@ -13,6 +14,7 @@ def docstyle(
     offline: bool = offline_opt,
     quiet: bool = quiet_opt,
     frozen: bool = frozen_opt,
+    backend: BackendEnum = backend_opt,
 ) -> None:
     from usethis._config import usethis_config
     from usethis._config_file import files_manager
@@ -21,9 +23,12 @@ def docstyle(
     from usethis.errors import UsethisError
 
     assert isinstance(style, DocStyleEnum)
+    assert isinstance(backend, BackendEnum)
 
     with (
-        usethis_config.set(offline=offline, quiet=quiet, frozen=frozen),
+        usethis_config.set(
+            offline=offline, quiet=quiet, frozen=frozen, backend=backend
+        ),
         files_manager(),
     ):
         try:

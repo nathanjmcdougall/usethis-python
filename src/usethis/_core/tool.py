@@ -8,6 +8,8 @@ from typing_extensions import assert_never
 
 from usethis._config import usethis_config
 from usethis._console import box_print, tick_print
+from usethis._integrations.backend.uv.call import call_uv_subprocess
+from usethis._integrations.backend.uv.init import ensure_pyproject_toml
 from usethis._integrations.ci.bitbucket.used import is_bitbucket_used
 from usethis._integrations.file.pyproject_toml.valid import ensure_pyproject_validity
 from usethis._integrations.pre_commit.core import (
@@ -21,8 +23,6 @@ from usethis._integrations.pre_commit.hooks import (
     get_hook_ids,
 )
 from usethis._integrations.pytest.core import add_pytest_dir, remove_pytest_dir
-from usethis._integrations.uv.call import call_uv_subprocess
-from usethis._integrations.uv.init import ensure_pyproject_toml
 from usethis._tool.all_ import ALL_TOOLS
 from usethis._tool.impl.codespell import CodespellTool
 from usethis._tool.impl.coverage_py import CoveragePyTool

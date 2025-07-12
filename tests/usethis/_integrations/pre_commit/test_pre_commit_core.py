@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pytest
 
+from usethis._deps import add_deps_to_group
 from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
 from usethis._integrations.pre_commit.core import (
     install_pre_commit_hooks,
@@ -10,8 +11,8 @@ from usethis._integrations.pre_commit.core import (
 )
 from usethis._integrations.pre_commit.errors import PreCommitInstallationError
 from usethis._integrations.pre_commit.hooks import add_placeholder_hook
-from usethis._integrations.uv.deps import Dependency, add_deps_to_group
 from usethis._test import change_cwd
+from usethis._types.deps import Dependency
 
 
 class TestRemovePreCommitConfig:

@@ -2,11 +2,11 @@ from pathlib import Path
 
 import pytest
 
-import usethis._integrations.uv.call
+import usethis._integrations.backend.uv.call
 from usethis._config import usethis_config
+from usethis._integrations.backend.uv.call import call_uv_subprocess
+from usethis._integrations.backend.uv.errors import UVSubprocessFailedError
 from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
-from usethis._integrations.uv.call import call_uv_subprocess
-from usethis._integrations.uv.errors import UVSubprocessFailedError
 from usethis._test import change_cwd
 
 
@@ -35,7 +35,9 @@ class TestCallUVSubprocess:
             return " ".join(args)
 
         monkeypatch.setattr(
-            usethis._integrations.uv.call, "call_subprocess", mock_call_subprocess
+            usethis._integrations.backend.uv.call,
+            "call_subprocess",
+            mock_call_subprocess,
         )
 
         with usethis_config.set(frozen=True, offline=False):

@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import typer
 
-from usethis._core.enums.status import DevelopmentStatusEnum
-from usethis._options import quiet_opt
+from usethis._options import backend_opt, quiet_opt
+from usethis._types.backend import BackendEnum
+from usethis._types.status import DevelopmentStatusEnum
 
 
 def status(
@@ -11,6 +12,7 @@ def status(
         default=..., help="Docstring style to enforce."
     ),
     quiet: bool = quiet_opt,
+    backend_opt: BackendEnum = backend_opt,
 ) -> None:
     from usethis._config import usethis_config
     from usethis._config_file import files_manager
@@ -19,6 +21,7 @@ def status(
     from usethis.errors import UsethisError
 
     assert isinstance(status, DevelopmentStatusEnum)
+    assert isinstance(backend_opt, BackendEnum)
 
     with usethis_config.set(quiet=quiet), files_manager():
         try:
