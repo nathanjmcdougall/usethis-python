@@ -6,6 +6,7 @@ from usethis._tool.impl.codespell import CodespellTool
 from usethis._tool.impl.coverage_py import CoveragePyTool
 from usethis._tool.impl.deptry import DeptryTool
 from usethis._tool.impl.import_linter import ImportLinterTool
+from usethis._tool.impl.mkdocs import MkDocsTool
 from usethis._tool.impl.pre_commit import PreCommitTool
 from usethis._tool.impl.pyproject_fmt import PyprojectFmtTool
 from usethis._tool.impl.pyproject_toml import PyprojectTOMLTool
@@ -18,6 +19,7 @@ SupportedToolType: TypeAlias = (
     | CoveragePyTool
     | DeptryTool
     | ImportLinterTool
+    | MkDocsTool
     | PreCommitTool
     | PyprojectFmtTool
     | PyprojectTOMLTool
@@ -31,6 +33,7 @@ ALL_TOOLS: list[SupportedToolType] = [
     CoveragePyTool(),
     DeptryTool(),
     ImportLinterTool(),
+    MkDocsTool(),
     PreCommitTool(),
     PyprojectFmtTool(),
     PyprojectTOMLTool(),

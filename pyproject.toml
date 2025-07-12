@@ -239,7 +239,7 @@ layers = [
   "codespell | deptry | import_linter | pyproject_fmt | requirements_txt",
   "ruff",
   "pytest : coverage_py",
-  "pre_commit",
+  "pre_commit | mkdocs",
 ]
 containers = [ "usethis._tool.impl" ]
 exhaustive = true

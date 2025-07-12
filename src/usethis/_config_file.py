@@ -8,6 +8,7 @@ from usethis._integrations.file.ini.io_ import INIFileManager
 from usethis._integrations.file.pyproject_toml.io_ import PyprojectTOMLManager
 from usethis._integrations.file.setup_cfg.io_ import SetupCFGManager
 from usethis._integrations.file.toml.io_ import TOMLFileManager
+from usethis._integrations.file.yaml.io_ import YAMLFileManager
 from usethis._integrations.uv.toml import UVTOMLManager
 
 if TYPE_CHECKING:
@@ -24,6 +25,7 @@ def files_manager() -> Iterator[None]:
         DotRuffTOMLManager(),
         DotPytestINIManager(),
         DotImportLinterManager(),
+        MkDocsYMLManager(),
         PytestINIManager(),
         RuffTOMLManager(),
         ToxINIManager(),
@@ -70,6 +72,14 @@ class DotRuffTOMLManager(TOMLFileManager):
     @property
     def relative_path(self) -> Path:
         return Path(".ruff.toml")
+
+
+class MkDocsYMLManager(YAMLFileManager):
+    """Class to manage the mkdocs.yml file."""
+
+    @property
+    def relative_path(self) -> Path:
+        return Path("mkdocs.yml")
 
 
 class PytestINIManager(INIFileManager):
